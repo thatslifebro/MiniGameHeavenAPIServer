@@ -13,15 +13,18 @@ namespace APIServer
 {
     public class JWT
     {
-        const string _secretKey = "kaljf34io8903lajdf";
+        const string _secretKey = "kaljf34io8903lajdfdasfsdgr4t4tr32wr32wres3";
         const Int32 _expireMin = 3;
 
         public static string IssueToken(Int64 player_id)
         {
             try
             {
+                Console.WriteLine("1");
                 var tokenHandler = new JwtSecurityTokenHandler();
+                Console.WriteLine("2");
                 var key = Encoding.ASCII.GetBytes(_secretKey);
+                Console.WriteLine("3");
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new[]
@@ -31,12 +34,15 @@ namespace APIServer
                     Expires = DateTime.UtcNow.AddMinutes(_expireMin),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
+                Console.WriteLine("4");
                 var token = tokenHandler.CreateToken(tokenDescriptor);
+                Console.WriteLine("5");
                 string userToken = tokenHandler.WriteToken(token);
                 return userToken;
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return "";
             }
         }

@@ -42,7 +42,7 @@ public class Auth : ControllerBase
     [HttpPost]
     [Route("login")]
 
-    public async Task<LoginHiveResponse> LoginHive(LoginHiveRequest request)
+    public async Task<LoginHiveResponse> LoginHive([FromBody]LoginHiveRequest request)
     {
         LoginHiveResponse response = new();
         Tuple<ErrorCode, Int64> output;
