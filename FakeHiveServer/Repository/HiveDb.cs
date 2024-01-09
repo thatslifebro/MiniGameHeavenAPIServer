@@ -39,17 +39,17 @@ namespace APIServer.Repository
         {
             try
             {
-                string saltValue = Security.SaltString();
-                string hashingPassword = Security.MakeHashingPassWord(saltValue, pw);
+                var saltValue = Security.SaltString();
+                var hashingPassword = Security.MakeHashingPassWord(saltValue, pw);
 
-                int count = await _queryFactory.Query("account").InsertAsync(new HdbAccountInsert
+                int count = await _queryFactory.Query("account").InsertAsync(new HdbAccount
                 {
-                    player_id = null,
+                    player_id = 0,
                     email = email,
                     salt_value = saltValue,
                     hashed_pw = hashingPassword,
-                    create_dt = DateTime.Now.AddHours(9).ToString("yyyy/MM/dd HH:mm:ss"),
-                    recent_login_dt = null,
+                    create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                    recent_login_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
                 _logger.ZLogDebug(
@@ -65,40 +65,31 @@ namespace APIServer.Repository
             }
         }
 
-        public async Task<Tuple<ErrorCode, Int64>> VerifyUser(string email, string pw)
+        public async Task<(ErrorCode, Int64)> VerifyUser(string email, string pw)
         {
             try
             {
                 Model.DAO.HdbAccount userInfo = await _queryFactory.Query("account")
                                         .Where("Email", email)
                                         .FirstOrDefaultAsync<Model.DAO.HdbAccount>();
-
-                if (userInfo is null || userInfo.player_id == 0)
+                
+                if (userInfo is null)
                 {
-                    return new Tuple<ErrorCode, Int64>(ErrorCode.LoginFailUserNotExist, 0);
+                    return (ErrorCode.LoginFailUserNotExist, 0);
                 }              
 
                 string hashingPassword = Security.MakeHashingPassWord(userInfo.salt_value, pw);
                 if (userInfo.hashed_pw != hashingPassword)
                 {
-                    return new Tuple<ErrorCode, Int64>(ErrorCode.LoginFailPwNotMatch, 0);
+                    return (ErrorCode.LoginFailPwNotMatch, 0);
                 }
 
-                return new Tuple<ErrorCode, Int64>(ErrorCode.None, userInfo.player_id);
+                return (ErrorCode.None, userInfo.player_id);
             }
             catch (Exception e)
             {
-                return new Tuple<ErrorCode, Int64>(ErrorCode.LoginFailException, 0);
+                return (ErrorCode.LoginFailException, 0);
             }
-        }
-
-        public ErrorCode VerifyToken(Int64 player_id,string token)
-        {
-            if(JWT.PlayerIdFromToken(token)==player_id)
-            {
-                return ErrorCode.None;
-            }
-            return ErrorCode.VerifyTokenFail;
         }
 
         void Open()
