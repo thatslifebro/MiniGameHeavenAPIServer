@@ -34,4 +34,18 @@ namespace APIServer.Model.DTO
         [Required]
         public string Token { get; set; }
     }
+
+    public class VerifyTokenBody
+    {
+        [Required]
+        public string Token { get; set; }
+        [Required]
+        public Int64 PlayerId { get; set; }
+    }
+
+    public class VerifyTokenResponse
+    {
+        [Required]
+        public ErrorCode Result { get; set; } = ErrorCode.None;
+    }
 }
