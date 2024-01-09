@@ -42,12 +42,12 @@ namespace APIServer.Repository
                 var saltValue = Security.SaltString();
                 var hashingPassword = Security.MakeHashingPassWord(saltValue, pw);
 
-                int count = await _queryFactory.Query("account").InsertAsync(new HdbAccount
+                int count = await _queryFactory.Query("account_info").InsertAsync(new HdbAccount
                 {
                     player_id = 0,
                     email = email,
                     salt_value = saltValue,
-                    hashed_pw = hashingPassword,
+                    pw = hashingPassword,
                     create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                     recent_login_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
@@ -69,7 +69,7 @@ namespace APIServer.Repository
         {
             try
             {
-                Model.DAO.HdbAccount userInfo = await _queryFactory.Query("account")
+                Model.DAO.HdbAccount userInfo = await _queryFactory.Query("account_info")
                                         .Where("Email", email)
                                         .FirstOrDefaultAsync<Model.DAO.HdbAccount>();
                 
@@ -79,7 +79,7 @@ namespace APIServer.Repository
                 }              
 
                 string hashingPassword = Security.MakeHashingPassWord(userInfo.salt_value, pw);
-                if (userInfo.hashed_pw != hashingPassword)
+                if (userInfo.pw != hashingPassword)
                 {
                     return (ErrorCode.LoginFailPwNotMatch, 0);
                 }
