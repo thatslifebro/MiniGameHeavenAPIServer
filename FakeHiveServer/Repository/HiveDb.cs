@@ -49,7 +49,6 @@ namespace APIServer.Repository
                     salt_value = saltValue,
                     pw = hashingPassword,
                     create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                    recent_login_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
                 _logger.ZLogDebug(
