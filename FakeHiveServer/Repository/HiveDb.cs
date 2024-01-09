@@ -1,13 +1,10 @@
 ﻿using System.Threading.Tasks;
 using System;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualBasic;
 using System.Data;
 using MySqlConnector;
 using SqlKata.Execution;
 using APIServer.Services;
-using System.Reflection;
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Logging;
 using ZLogger;
 using APIServer.Model.DAO;
@@ -32,6 +29,7 @@ namespace APIServer.Repository
             _compiler = new SqlKata.Compilers.MySqlCompiler();
             _queryFactory = new QueryFactory(_dbConn, _compiler);
         }
+
         public void Dispose()
         {
             Close();
@@ -41,11 +39,9 @@ namespace APIServer.Repository
         {
             try
             {
-                
-
                 string saltValue = Security.SaltString();
                 string hashingPassword = Security.MakeHashingPassWord(saltValue, pw);
-                Console.WriteLine(DateTime.Now.AddHours(9).ToString("yyyy/MM/dd HH:mm:ss"));
+
                 int count = await _queryFactory.Query("account").InsertAsync(new HdbAccountInsert
                 {
                     player_id = null,
@@ -55,6 +51,7 @@ namespace APIServer.Repository
                     create_dt = DateTime.Now.AddHours(9).ToString("yyyy/MM/dd HH:mm:ss"),
                     recent_login_dt = null,
                 });
+
                 _logger.ZLogDebug(
                 $"[CreateAccount] email: {email}, salt_value : {saltValue}, hashed_pw:{hashingPassword}");
 
@@ -63,7 +60,7 @@ namespace APIServer.Repository
             catch (Exception ex)
             {
                 _logger.ZLogError(
-                $"[AccoutDb.CreateAccount] ErrorCode: {ErrorCode.CreateAccountFailException}, Email: {email}");
+                $"[AccoutDb.CreateAccount] ErrorCode: {ErrorCode.CreateAccountFailException}");
                 return ErrorCode.CreateAccountFailException;
             }
         }
@@ -79,9 +76,7 @@ namespace APIServer.Repository
                 if (userInfo is null || userInfo.player_id == 0)
                 {
                     return new Tuple<ErrorCode, Int64>(ErrorCode.LoginFailUserNotExist, 0);
-                }
-
-                
+                }              
 
                 string hashingPassword = Security.MakeHashingPassWord(userInfo.salt_value, pw);
                 if (userInfo.hashed_pw != hashingPassword)
@@ -109,7 +104,6 @@ namespace APIServer.Repository
         void Open()
         {
             _dbConn = new MySqlConnection(_dbConfig.Value.HiveDb);
-
             _dbConn.Open();
         }
         void Close()
@@ -117,14 +111,10 @@ namespace APIServer.Repository
             _dbConn.Close();
         }
     }
-
-    
-
 }
 
 
 public class DbConfig
 {
     public string HiveDb { get; set; }
-
 }

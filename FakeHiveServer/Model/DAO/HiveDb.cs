@@ -7,7 +7,6 @@ namespace APIServer.Model.DAO;
 public class HdbAccountInsert
 {
     public Int32? player_id { get; set; }
-
     public string email { get; set; }
     public string hashed_pw { get; set; }
     public string salt_value { get; set; }
@@ -18,7 +17,6 @@ public class HdbAccountInsert
 public class HdbAccount
 {
     public Int32 player_id { get; set; }
-
     public string email { get; set; }
     public string hashed_pw { get; set; }
     public string salt_value { get; set; }

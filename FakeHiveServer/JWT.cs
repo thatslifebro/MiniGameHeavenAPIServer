@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System;
-using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -20,11 +17,8 @@ namespace APIServer
         {
             try
             {
-                Console.WriteLine("1");
                 var tokenHandler = new JwtSecurityTokenHandler();
-                Console.WriteLine("2");
                 var key = Encoding.ASCII.GetBytes(_secretKey);
-                Console.WriteLine("3");
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new[]
@@ -34,9 +28,7 @@ namespace APIServer
                     Expires = DateTime.UtcNow.AddMinutes(_expireMin),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
-                Console.WriteLine("4");
                 var token = tokenHandler.CreateToken(tokenDescriptor);
-                Console.WriteLine("5");
                 string userToken = tokenHandler.WriteToken(token);
                 return userToken;
             }

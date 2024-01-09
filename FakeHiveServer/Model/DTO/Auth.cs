@@ -7,7 +7,6 @@ namespace APIServer.Model.DTO
     {
         [Required]
         public string Email { get; set; }
-
         [Required]
         public string Password { get; set; }
     }
@@ -16,14 +15,12 @@ namespace APIServer.Model.DTO
     {
         [Required]
         public ErrorCode Result { get; set; } = ErrorCode.None;
-
     }
 
     public class LoginHiveRequest
     {
         [Required]
         public string Email { get; set; }
-
         [Required]
         public string Password { get; set; }
     }
@@ -36,6 +33,5 @@ namespace APIServer.Model.DTO
         public Int64 PlayerId { get; set; }
         [Required]
         public string Token { get; set; }
-
     }
 }
