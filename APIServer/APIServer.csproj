@@ -20,7 +20,7 @@
         <PackageReference Include="SqlKata.Execution" Version="2.4.0" />
         <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
         <PackageReference Include="System.Net.Security" Version="4.3.2" />
-        <PackageReference Include="ZLogger" Version="1.7.1" />
+        <PackageReference Include="ZLogger" Version="2.1.0" />
     </ItemGroup>
 
     <ItemGroup>
