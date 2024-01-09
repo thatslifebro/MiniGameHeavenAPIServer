@@ -22,6 +22,19 @@ public class Security
         return stringBuilder.ToString();
     }
 
+    public static string MakeHashingToken(string saltValue, Int64 playerId)
+    {
+        var sha = SHA256.Create();
+        var hash = sha.ComputeHash(Encoding.ASCII.GetBytes(saltValue + playerId));
+        var stringBuilder = new StringBuilder();
+        foreach (var b in hash)
+        {
+            stringBuilder.AppendFormat("{0:x2}", b);
+        }
+
+        return stringBuilder.ToString();
+    }
+
     public static string SaltString()
     {
         var bytes = new Byte[64];
