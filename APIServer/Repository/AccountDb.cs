@@ -34,28 +34,31 @@ public class AccountDb : IAccountDb
         Close();
     }
 
-    public async Task<ErrorCode> CreateAccountAsync(string email, string pw)
+    public async Task<ErrorCode> CreateAccountAsync(Int64 playerId)
     {
         try
         {
-            string saltValue = Security.SaltString();
-            string hashingPassword = Security.MakeHashingPassWord(saltValue, pw);
-            _logger.ZLogDebug(
-                $"[CreateAccount] Email: {email}, SaltValue : {saltValue}, HashingPassword:{hashingPassword}");
-
-            int count = await _queryFactory.Query("account").InsertAsync(new
+            var exist = await _queryFactory.Query("user_info").Where("player_id", playerId).GetAsync<int>();
+            if (exist!=null)
             {
-                Email = email,
-                SaltValue = saltValue,
-                HashedPassword = hashingPassword
+                _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountFail}, PlayerId : {playerId}");
+            }
+
+            int count = await _queryFactory.Query("user_info").InsertAsync(new
+            {
+                uid = 0,
+                player_id = playerId,
+                create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
             });
+
+            _logger.ZLogDebug($"[CreateAccount] PlayerId: {playerId}");
 
             return count != 1 ? ErrorCode.CreateAccountFailInsert : ErrorCode.None;
         }
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                $"[AccountDb.CreateAccount] ErrorCode: {ErrorCode.CreateAccountFailException}, Email: {email}");
+                $"[AccountDb.CreateAccount] ErrorCode: {ErrorCode.CreateAccountFailException}, Email: {playerId}");
             return ErrorCode.CreateAccountFailException;
         }
     }
@@ -64,11 +67,11 @@ public class AccountDb : IAccountDb
     {
         try
         {
-            Model.DAO.AdbUser userInfo = await _queryFactory.Query("user")
+            Model.DAO.AdbUserInfo userInfo = await _queryFactory.Query("user")
                                     .Where("Email", email)
-                                    .FirstOrDefaultAsync<Model.DAO.AdbUser>();
+                                    .FirstOrDefaultAsync<Model.DAO.AdbUserInfo>();
 
-            if (userInfo is null || userInfo.user_id == 0)
+            if (userInfo is null || userInfo.uid == 0)
             {
                 return new Tuple<ErrorCode, long>(ErrorCode.LoginFailUserNotExist, 0);
             }
@@ -81,7 +84,7 @@ public class AccountDb : IAccountDb
                 return new Tuple<ErrorCode, long>(ErrorCode.LoginFailPwNotMatch, 0);
             }
 
-            return new Tuple<ErrorCode, long>(ErrorCode.None, userInfo.user_id);
+            return new Tuple<ErrorCode, long>(ErrorCode.None, userInfo.uid);
         }
         catch (Exception e)
         {

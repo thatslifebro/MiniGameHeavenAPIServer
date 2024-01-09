@@ -6,7 +6,7 @@ namespace APIServer.Services;
 
 public interface IAccountDb : IDisposable
 {
-    public Task<ErrorCode> CreateAccountAsync(string id, string pw);
+    public Task<ErrorCode> CreateAccountAsync(Int64 playerId);
     
     public Task<Tuple<ErrorCode, Int64>> VerifyUser(string email, string pw);
 }

@@ -25,16 +25,10 @@ public class CreateAccount : ControllerBase
     [HttpPost]
     public async Task<CreateAccountRes> Post(CreateAccountReq request)
     {
+        //하이브 인증 미들웨어 통과후 
         var response = new CreateAccountRes();
-        
-        var errorCode = await _accountDb.CreateAccountAsync(request.Email, request.Password);
-        if (errorCode != ErrorCode.None)
-        {
-            response.Result = errorCode;
-            return response;
-        }
-
-        _logger.ZLogInformationWithPayload(EventIdDic[EventType.CreateAccount], new { Email = request.Email }, $"CreateAccount Success");
+        response.Result = await _accountDb.CreateAccountAsync(request.PlayerId);
         return response;
+
     }
 }
