@@ -1,0 +1,34 @@
+# 새로운 유저의 계정 생성
+
+```mermaid
+sequenceDiagram
+	actor User
+	participant Game Server
+	participant Fake Hive Server
+	participant DB
+
+	User->> Fake Hive Server: 로그인 요청
+	Fake Hive Server ->> User : 고유번호와 토큰 전달
+
+	User ->> Game Server : 고유번호와 토큰을 통해 가입 요청
+	Game Server ->> Fake Hive Server : 고유번호와 토큰의 유효성 검증 요청
+	Fake Hive Server -->> Game Server : 유효성 검증
+	alt 검증 실패
+	Game Server -->> User : 계정 생성 실패 응답
+	end
+	
+	Game Server ->> DB : 고유번호를 통해 데이터 조회
+	DB -->> Game Server : 데이터 조회 결과
+	alt 이미 계정 존재
+	Game Server -->> User : 계정 생성 실패 응답
+	end
+
+	Game Server ->> DB : 기본 데이터 생성
+	alt 기본 데이터 생성 실패
+	Game Server ->> DB : RollBack
+	Game Server -->> User : 계정 생성 실패 응답
+	end
+
+	Game Server -->> User : 계정 생성 성공 응답
+
+```
