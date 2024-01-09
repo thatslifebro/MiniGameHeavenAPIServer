@@ -42,7 +42,7 @@ namespace APIServer.Repository
                 var saltValue = Security.SaltString();
                 var hashingPassword = Security.MakeHashingPassWord(saltValue, pw);
 
-                int count = await _queryFactory.Query("account_info").InsertAsync(new HdbAccount
+                int count = await _queryFactory.Query("account_info").InsertAsync(new HdbAccountInfo
                 {
                     player_id = 0,
                     email = email,
@@ -68,9 +68,9 @@ namespace APIServer.Repository
         {
             try
             {
-                Model.DAO.HdbAccount userInfo = await _queryFactory.Query("account_info")
+                Model.DAO.HdbAccountInfo userInfo = await _queryFactory.Query("account_info")
                                         .Where("Email", email)
-                                        .FirstOrDefaultAsync<Model.DAO.HdbAccount>();
+                                        .FirstOrDefaultAsync<Model.DAO.HdbAccountInfo>();
                 
                 if (userInfo is null)
                 {

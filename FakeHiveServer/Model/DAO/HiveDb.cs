@@ -4,7 +4,7 @@ namespace APIServer.Model.DAO;
 
 //HiveDB의 객체는 객체 이름 앞에 Hdb를 붙인다.
 
-public class HdbAccount
+public class HdbAccountInfo
 {
     public Int64 player_id { get; set; }
     public string email { get; set; }
