@@ -41,8 +41,8 @@ public class Login : ControllerBase
             return response;
         }
 
-        // ID, PW 검증
         (ErrorCode errorCode, int uid) = await _accountDb.VerifyUser(request.PlayerId);
+        response.Uid = uid;
         if (errorCode != ErrorCode.None)
         {
             response.Result = errorCode;
