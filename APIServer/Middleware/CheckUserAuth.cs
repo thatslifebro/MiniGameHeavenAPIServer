@@ -48,26 +48,25 @@ public class CheckUserAuthAndLoadUserData
                 return;
             }
 
-
             JsonDocument document = JsonDocument.Parse(bodyStr);
 
-            if (IsInvalidJsonFormatThenSendError(context, document, out string email, out string AuthToken))
+            if (IsInvalidJsonFormatThenSendError(context, document, out string uid, out string token))
             {
                 return;
             }
 
-            (bool isOk, RdbAuthUserData userInfo) = await _memoryDb.GetUserAsync(email);
+            (bool isOk, RdbAuthUserData userInfo) = await _memoryDb.GetUserAsync(uid);
             if (isOk == false)
             {
                 return;
             }
 
-            if (await IsInvalidUserAuthTokenThenSendError(context, userInfo, AuthToken))
+            if (await IsInvalidUserAuthTokenThenSendError(context, userInfo, token))
             {
                 return;
             }
 
-            userLockKey = Services.MemoryDbKeyMaker.MakeUserLockKey(userInfo.Email);
+            userLockKey = Services.MemoryDbKeyMaker.MakeUserLockKey(userInfo.Uid.ToString());
             if (await SetLockAndIsFailThenSendError(context, userLockKey))
             {
                 return;
@@ -102,9 +101,9 @@ public class CheckUserAuthAndLoadUserData
         return true;
     }
 
-    private static async Task<bool> IsInvalidUserAuthTokenThenSendError(HttpContext context, RdbAuthUserData userInfo, string authToken)
+    private static async Task<bool> IsInvalidUserAuthTokenThenSendError(HttpContext context, RdbAuthUserData userInfo, string token)
     {
-        if (string.CompareOrdinal(userInfo.AuthToken, authToken) == 0)
+        if (string.CompareOrdinal(userInfo.Token, token) == 0)
         {
             return false;
         }
@@ -120,18 +119,18 @@ public class CheckUserAuthAndLoadUserData
         return true;
     }
 
-    private bool IsInvalidJsonFormatThenSendError(HttpContext context, JsonDocument document, out string email,
-        out string authToken)
+    private bool IsInvalidJsonFormatThenSendError(HttpContext context, JsonDocument document, out string uid,
+        out string token)
     {
         try
         {
-            email = document.RootElement.GetProperty("Email").GetString();
-            authToken = document.RootElement.GetProperty("AuthToken").GetString();
+            uid = document.RootElement.GetProperty("uid").GetString();
+            token = document.RootElement.GetProperty("AuthToken").GetString();
             return false;
         }
         catch
         {
-            email = ""; authToken = "";
+            uid = ""; token = "";
 
             string errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
             {

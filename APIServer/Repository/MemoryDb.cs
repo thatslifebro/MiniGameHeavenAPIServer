@@ -58,7 +58,7 @@ public class MemoryDb : IMemoryDb
         return result;
     }
 
-    public async Task<ErrorCode> CheckUserAuthAsync(string id, string authToken)
+    public async Task<ErrorCode> CheckUserAuthAsync(string id, string token)
     {
         string key = MemoryDbKeyMaker.MakeUIDKey(id);
         ErrorCode result = ErrorCode.None;
@@ -71,15 +71,15 @@ public class MemoryDb : IMemoryDb
             if (!user.HasValue)
             {
                 s_logger.ZLogError(EventIdDic[EventType.Login],
-                    $"RedisDb.CheckUserAuthAsync: Email = {id}, AuthToken = {authToken}, ErrorMessage:ID does Not Exist");
+                    $"RedisDb.CheckUserAuthAsync: Email = {id}, AuthToken = {token}, ErrorMessage:ID does Not Exist");
                 result = ErrorCode.CheckAuthFailNotExist;
                 return result;
             }
 
-            if (user.Value.Email != id || user.Value.AuthToken != authToken)
+            if (user.Value.Uid.ToString() != id || user.Value.Token != token)
             {
                 s_logger.ZLogError(EventIdDic[EventType.Login],
-                    $"RedisDb.CheckUserAuthAsync: Email = {id}, AuthToken = {authToken}, ErrorMessage = Wrong ID or Auth Token");
+                    $"RedisDb.CheckUserAuthAsync: Email = {id}, AuthToken = {token}, ErrorMessage = Wrong ID or Auth Token");
                 result = ErrorCode.CheckAuthFailNotMatch;
                 return result;
             }
@@ -87,7 +87,7 @@ public class MemoryDb : IMemoryDb
         catch
         {
             s_logger.ZLogError(EventIdDic[EventType.Login],
-                $"RedisDb.CheckUserAuthAsync: Email = {id}, AuthToken = {authToken}, ErrorMessage:Redis Connection Error");
+                $"RedisDb.CheckUserAuthAsync: Email = {id}, AuthToken = {token}, ErrorMessage:Redis Connection Error");
             result = ErrorCode.CheckAuthFailException;
             return result;
         }
@@ -98,7 +98,7 @@ public class MemoryDb : IMemoryDb
 
     public async Task<bool> SetUserStateAsync(RdbAuthUserData user, UserState userState)
     {
-        string uid = MemoryDbKeyMaker.MakeUIDKey(user.Email);
+        string uid = MemoryDbKeyMaker.MakeUIDKey(user.Uid.ToString());
         try
         {
             RedisString<RdbAuthUserData> redis = new(_redisConn, uid, null);
@@ -106,6 +106,7 @@ public class MemoryDb : IMemoryDb
             user.State = userState.ToString();
 
             return await redis.SetAsync(user) != false;
+            return true;
         }
         catch
         {
