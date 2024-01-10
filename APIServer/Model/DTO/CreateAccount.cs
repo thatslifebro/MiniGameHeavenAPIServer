@@ -15,7 +15,6 @@ public class CreateAccountReq
     public string NickName { get; set; }
 }
 
-public class CreateAccountRes
+public class CreateAccountRes : ErrorCodeDTO
 {
-    public ErrorCode Result { get; set; } = ErrorCode.None;
 }

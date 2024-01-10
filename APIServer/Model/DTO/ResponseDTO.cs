@@ -1,4 +1,4 @@
 ﻿public class ErrorCodeDTO
 {
-    public ErrorCode Result { get; set; }
+    public ErrorCode Result { get; set; } = ErrorCode.None;
 }

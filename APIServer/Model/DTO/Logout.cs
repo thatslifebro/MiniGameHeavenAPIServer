@@ -6,7 +6,6 @@ public class LogoutRequest
     public string token { get; set; }
 }
 
-public class LogoutResponse
+public class LogoutResponse : ErrorCodeDTO
 {
-    public ErrorCode Result { get; set; } = ErrorCode.None;
 }
