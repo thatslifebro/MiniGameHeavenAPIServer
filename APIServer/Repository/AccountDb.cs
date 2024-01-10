@@ -2,6 +2,7 @@
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using APIServer.Model.DAO;
 using APIServer.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -66,34 +67,26 @@ public class AccountDb : IAccountDb
         }
     }
 
-    public async Task<Tuple<ErrorCode, long>> VerifyUser(string email, string pw)
+    public async Task<(ErrorCode, int)> VerifyUser(Int64 playerId)
     {
         try
         {
-            Model.DAO.AdbUserInfo userInfo = await _queryFactory.Query("user")
-                                    .Where("Email", email)
-                                    .FirstOrDefaultAsync<Model.DAO.AdbUserInfo>();
+            AdbUserInfo userInfo = await _queryFactory.Query("user_info")
+                                    .Where("player_id", playerId)
+                                    .FirstOrDefaultAsync<AdbUserInfo>();
 
-            if (userInfo is null || userInfo.uid == 0)
+            if (userInfo is null)
             {
-                return new Tuple<ErrorCode, long>(ErrorCode.LoginFailUserNotExist, 0);
+                return (ErrorCode.LoginFailUserNotExist, 0);
             }
 
-            string hashingPassword = Security.MakeHashingPassWord(userInfo.salt_value, pw);
-            if (userInfo.hashed_pw != hashingPassword)
-            {
-                _logger.ZLogError(
-                    $"[AccountDb.VerifyAccount] ErrorCode: {ErrorCode.LoginFailPwNotMatch}, Email: {email}");
-                return new Tuple<ErrorCode, long>(ErrorCode.LoginFailPwNotMatch, 0);
-            }
-
-            return new Tuple<ErrorCode, long>(ErrorCode.None, userInfo.uid);
+            return (ErrorCode.None, userInfo.uid);
         }
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                $"[AccountDb.VerifyAccount] ErrorCode: {ErrorCode.LoginFailException}, Email: {email}");
-            return new Tuple<ErrorCode, long>(ErrorCode.LoginFailException, 0);
+                $"[AccountDb.VerifyAccount] ErrorCode: {ErrorCode.LoginFailException}, PlayerId: {playerId}");
+            return (ErrorCode.LoginFailException, 0);
         }
     }
 

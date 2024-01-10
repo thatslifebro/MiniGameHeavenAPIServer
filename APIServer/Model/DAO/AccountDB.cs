@@ -4,9 +4,10 @@
 
 public class AdbUserInfo
 {
-    public long uid { get; set; }
+    public int uid { get; set; }
 
-    public string email { get; set; }
-    public string hashed_pw { get; set; }
-    public string salt_value { get; set; }
+    public string player_id { get; set; }
+    public string create_dt { get; set; }
+    public string recent_login_dt { get; set; }
+    public string nickname { get; set; }
 }

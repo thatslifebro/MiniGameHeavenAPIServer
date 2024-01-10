@@ -3,6 +3,8 @@ using System.IO;
 using System.Text.Json;
 using APIServer.Repository;
 using APIServer.Services;
+using APIServer.Servicies;
+using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +22,7 @@ builder.Services.AddTransient<IAccountDb, AccountDb>();
 builder.Services.AddTransient<IGameDb, GameDb>();
 builder.Services.AddSingleton<IMemoryDb, MemoryDb>();
 builder.Services.AddSingleton<APIServer.MasterData.IManager, APIServer.MasterData.Manager>();
+builder.Services.AddTransient<IVerifyTokenService, VerifyTokenServicie>();
 builder.Services.AddControllers();
 
 SettingLogger();
@@ -44,8 +47,8 @@ app.UseEndpoints(endpoints => { _ = endpoints.MapControllers(); });
 IMemoryDb redisDB = app.Services.GetRequiredService<IMemoryDb>();
 redisDB.Init(configuration.GetSection("DbConfig")["Redis"]);
 
-APIServer.MasterData.IManager masterDataDB = app.Services.GetRequiredService<APIServer.MasterData.IManager>();
-masterDataDB.Load(configuration.GetSection("DbConfig")["MasterDataDb"]);
+//APIServer.MasterData.IManager masterDataDB = app.Services.GetRequiredService<APIServer.MasterData.IManager>();
+//masterDataDB.Load(configuration.GetSection("DbConfig")["MasterDataDb"]);
 
 
 app.Run(configuration["ServerAddress"]);

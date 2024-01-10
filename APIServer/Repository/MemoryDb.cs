@@ -24,16 +24,15 @@ public class MemoryDb : IMemoryDb
     }
 
 
-    public async Task<ErrorCode> RegistUserAsync(string email, string authToken, long accountId)
+    public async Task<ErrorCode> RegistUserAsync(string token, int uid)
     {
-        string key = MemoryDbKeyMaker.MakeUIDKey(email);
+        string key = MemoryDbKeyMaker.MakeUIDKey(uid.ToString());
         ErrorCode result = ErrorCode.None;
 
         RdbAuthUserData user = new()
         {
-            Email = email,
-            AuthToken = authToken,
-            AccountId = accountId,
+            Uid = uid,
+            Token = token,
             State = UserState.Default.ToString()
         };
 
@@ -43,7 +42,7 @@ public class MemoryDb : IMemoryDb
             if (await redis.SetAsync(user, LoginTimeSpan()) == false)
             {
                 s_logger.ZLogError(EventIdDic[EventType.LoginAddRedis],
-                    $"Email:{email}, AuthToken:{authToken},ErrorMessage:UserBasicAuth, RedisString set Error");
+                    $"Uid:{uid}, Token:{token},ErrorMessage:UserBasicAuth, RedisString set Error");
                 result = ErrorCode.LoginFailAddRedis;
                 return result;
             }
@@ -51,7 +50,7 @@ public class MemoryDb : IMemoryDb
         catch
         {
             s_logger.ZLogError(EventIdDic[EventType.LoginAddRedis],
-                $"Email:{email},AuthToken:{authToken},ErrorMessage:Redis Connection Error");
+                $"Uid:{uid}, Token:{token},ErrorMessage:Redis Connection Error");
             result = ErrorCode.LoginFailAddRedis;
             return result;
         }
