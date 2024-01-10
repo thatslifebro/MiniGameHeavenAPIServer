@@ -33,9 +33,9 @@ public class Login : ControllerBase
     public async Task<LoginResponse> Post(LoginRequest request)
     {
         LoginResponse response = new();
-        var tokenValid = await _verifyTokenService.VerifyTokenToHive(request.PlayerId, request.Token);
+        var hiveTokenValid = await _verifyTokenService.VerifyTokenToHive(request.PlayerId, request.HiveToken);
 
-        if (!tokenValid)
+        if (!hiveTokenValid)
         {
             response.Result = ErrorCode.Hive_Fail_InvalidResponse;
             return response;
@@ -48,7 +48,6 @@ public class Login : ControllerBase
             response.Result = errorCode;
             return response;
         }
-
 
         string token = Security.CreateAuthToken();
         errorCode = await _memoryDb.RegistUserAsync(token, uid);

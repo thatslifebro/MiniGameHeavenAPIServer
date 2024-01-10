@@ -11,7 +11,7 @@ public class LoginRequest
 
     [Required]
 
-    public string Token { get; set; }
+    public string HiveToken { get; set; }
 }
 
 public class LoginResponse

@@ -30,7 +30,7 @@ public class LoginHive : ControllerBase
     {
         LoginHiveResponse response = new();
         (response.Result, response.PlayerId) = await _hiveDb.VerifyUser(request.Email, request.Password);
-        response.Token = Security.MakeHashingToken(_saltValue, response.PlayerId);
+        response.HiveToken = Security.MakeHashingToken(_saltValue, response.PlayerId);
 
         return response;
 

@@ -24,7 +24,7 @@ namespace APIServer.Model.DTO
         [Required]
         public Int64 PlayerId { get; set; }
         [Required]
-        public string Token { get; set; }
+        public string HiveToken { get; set; }
     }
 
 }
