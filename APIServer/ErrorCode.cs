@@ -64,5 +64,10 @@ public enum ErrorCode : UInt16
     GetCharacterListFail = 3014,
 
     //GameDb 4000~ 
-    GetGameDbConnectionFail = 4002
+    GetGameDbConnectionFail = 4002,
+
+
+    // MasterDb 5000 ~
+    MasterDB_Fail_LoadData = 5001,
+    MasterDB_Fail_InvalidData = 5002,
 }

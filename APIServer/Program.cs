@@ -21,7 +21,7 @@ builder.Services.Configure<DbConfig>(configuration.GetSection(nameof(DbConfig)))
 builder.Services.AddTransient<IAccountDb, AccountDb>();
 builder.Services.AddTransient<IGameDb, GameDb>();
 builder.Services.AddSingleton<IMemoryDb, MemoryDb>();
-builder.Services.AddSingleton<APIServer.MasterData.IManager, APIServer.MasterData.Manager>();
+builder.Services.AddSingleton<IMasterDb, MasterDb>();
 builder.Services.AddTransient<IVerifyTokenService, VerifyTokenServicie>();
 builder.Services.AddControllers();
 
@@ -34,9 +34,8 @@ WebApplication app = builder.Build();
 ILoggerFactory loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
 LogManager.SetLoggerFactory(loggerFactory, "Global");
 
-
+app.UseMiddleware<APIServer.Middleware.VersionCheck>();
 app.UseMiddleware<APIServer.Middleware.CheckUserAuthAndLoadUserData>();
-
 
 app.UseRouting();
 #pragma warning disable ASP0014
@@ -47,13 +46,10 @@ app.UseEndpoints(endpoints => { _ = endpoints.MapControllers(); });
 IMemoryDb redisDB = app.Services.GetRequiredService<IMemoryDb>();
 redisDB.Init(configuration.GetSection("DbConfig")["Redis"]);
 
-//APIServer.MasterData.IManager masterDataDB = app.Services.GetRequiredService<APIServer.MasterData.IManager>();
-//masterDataDB.Load(configuration.GetSection("DbConfig")["MasterDataDb"]);
-
+IMasterDb masterDataDB = app.Services.GetRequiredService<IMasterDb>();
+await masterDataDB.Load();
 
 app.Run(configuration["ServerAddress"]);
-
-
 
 void SettingLogger()
 {

@@ -11,8 +11,8 @@ namespace APIServer.Middleware;
 
 public class CheckUserAuthAndLoadUserData
 {
-    private readonly IMemoryDb _memoryDb;
-    private readonly RequestDelegate _next;
+    readonly IMemoryDb _memoryDb;
+    readonly RequestDelegate _next;
 
     public CheckUserAuthAndLoadUserData(RequestDelegate next, IMemoryDb memoryDb)
     {

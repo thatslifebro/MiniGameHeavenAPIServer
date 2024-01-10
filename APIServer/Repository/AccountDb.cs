@@ -14,11 +14,11 @@ namespace APIServer.Repository;
 
 public class AccountDb : IAccountDb
 {
-    private readonly IOptions<DbConfig> _dbConfig;
-    private readonly ILogger<AccountDb> _logger;
-    private IDbConnection _dbConn;
-    private readonly SqlKata.Compilers.MySqlCompiler _compiler;
-    private readonly QueryFactory _queryFactory;
+    readonly IOptions<DbConfig> _dbConfig;
+    readonly ILogger<AccountDb> _logger;
+    IDbConnection _dbConn;
+    readonly SqlKata.Compilers.MySqlCompiler _compiler;
+    readonly QueryFactory _queryFactory;
 
     public AccountDb(ILogger<AccountDb> logger, IOptions<DbConfig> dbConfig)
     {
