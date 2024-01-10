@@ -10,7 +10,7 @@ public class CreateAccountReq
 
     [Required]
 
-    public string Token { get; set; }
+    public string HiveToken { get; set; }
     [Required]
     public string NickName { get; set; }
 }

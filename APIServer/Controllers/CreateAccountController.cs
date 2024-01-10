@@ -30,7 +30,7 @@ public class CreateAccount : ControllerBase
     public async Task<CreateAccountRes> Post(CreateAccountReq request)
     {
         var response = new CreateAccountRes();
-        var tokenValid = await _verifyTokenService.VerifyTokenToHive(request.PlayerId, request.Token);
+        var tokenValid = await _verifyTokenService.VerifyTokenToHive(request.PlayerId, request.HiveToken);
 
         if (!tokenValid)
         {
