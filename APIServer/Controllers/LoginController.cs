@@ -57,6 +57,13 @@ public class Login : ControllerBase
             return response;
         }
 
+        errorCode = await _accountDb.UpdateLastLoginTime(uid);
+        if (errorCode != ErrorCode.None)
+        {
+            response.Result = errorCode;
+            return response;
+        }
+
         _logger.ZLogInformation(EventIdDic[EventType.Login], $"Uid : {uid}, Token : {token}, PlayerId : {request.PlayerId}");
 
         response.Token = token;

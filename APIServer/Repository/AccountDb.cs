@@ -99,6 +99,28 @@ public class AccountDb : IAccountDb
         }
     }
 
+    public async Task<ErrorCode> UpdateLastLoginTime(int uid)
+    {
+        try
+        {
+
+            int count = await _queryFactory.Query("user_info").Where("uid",uid).UpdateAsync(new
+            {
+                recent_login_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+            });
+
+            _logger.ZLogDebug($"[Login] uid: {uid}, count : {count}");
+
+            return count != 1 ? ErrorCode.LoginUpdateRecentLoginFail : ErrorCode.None;
+        }
+        catch (Exception e)
+        {
+            _logger.ZLogError(e,
+                $"[AccountDb.Login] ErrorCode: {ErrorCode.LoginUpdateRecentLoginFailException}, Uid: {uid}");
+            return ErrorCode.CreateAccountFailException;
+        }
+    }
+
     private void Open()
     {
         _dbConn = new MySqlConnection(_dbConfig.Value.AccountDb);
