@@ -50,22 +50,25 @@ public class CheckUserAuthAndLoadUserData
 
             JsonDocument document = JsonDocument.Parse(bodyStr);
 
-            if (IsInvalidJsonFormatThenSendError(context, document, out string uid, out string token))
+            //uid와 토큰이 없을때
+            if (IsInvalidJsonFormatThenSendError(context, document, out int uid, out string token))
             {
                 return;
             }
 
+            //uid를 키로 하는 데이터 없을 때
             (bool isOk, RdbAuthUserData userInfo) = await _memoryDb.GetUserAsync(uid);
-            if (isOk == false)
+            if (await IsInvalidUserAuthTokenNotFound(context, isOk))
             {
                 return;
             }
 
+            //토큰이 일치하지 않을 때
             if (await IsInvalidUserAuthTokenThenSendError(context, userInfo, token))
             {
                 return;
             }
-
+            //이번 api 호출 끝날 때까지 redis키 잠금 만약 이미 잠겨있다면 에러
             userLockKey = Services.MemoryDbKeyMaker.MakeUserLockKey(userInfo.Uid.ToString());
             if (await SetLockAndIsFailThenSendError(context, userLockKey))
             {
@@ -74,7 +77,7 @@ public class CheckUserAuthAndLoadUserData
 
             context.Items[nameof(RdbAuthUserData)] = userInfo;
         }
-
+        // 읽음 위치 초기화
         context.Request.Body.Position = 0;
 
         // Call the next delegate/middleware in the pipeline
@@ -84,7 +87,7 @@ public class CheckUserAuthAndLoadUserData
         _ = await _memoryDb.DelUserReqLockAsync(userLockKey);
     }
 
-    private async Task<bool> SetLockAndIsFailThenSendError(HttpContext context, string AuthToken)
+    async Task<bool> SetLockAndIsFailThenSendError(HttpContext context, string AuthToken)
     {
         if (await _memoryDb.SetUserReqLockAsync(AuthToken))
         {
@@ -101,7 +104,7 @@ public class CheckUserAuthAndLoadUserData
         return true;
     }
 
-    private static async Task<bool> IsInvalidUserAuthTokenThenSendError(HttpContext context, RdbAuthUserData userInfo, string token)
+    static async Task<bool> IsInvalidUserAuthTokenThenSendError(HttpContext context, RdbAuthUserData userInfo, string token)
     {
         if (string.CompareOrdinal(userInfo.Token, token) == 0)
         {
@@ -119,18 +122,18 @@ public class CheckUserAuthAndLoadUserData
         return true;
     }
 
-    private bool IsInvalidJsonFormatThenSendError(HttpContext context, JsonDocument document, out string uid,
+    bool IsInvalidJsonFormatThenSendError(HttpContext context, JsonDocument document, out int uid,
         out string token)
     {
         try
         {
-            uid = document.RootElement.GetProperty("uid").GetString();
-            token = document.RootElement.GetProperty("AuthToken").GetString();
+            uid = document.RootElement.GetProperty("uid").GetInt16();
+            token = document.RootElement.GetProperty("token").GetString();
             return false;
         }
         catch
         {
-            uid = ""; token = "";
+            uid = 0; token = "";
 
             string errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
             {
@@ -138,13 +141,13 @@ public class CheckUserAuthAndLoadUserData
             });
 
             byte[] bytes = Encoding.UTF8.GetBytes(errorJsonResponse);
-            context.Response.Body.Write(bytes, 0, bytes.Length);
+            context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
 
             return true;
         }
     }
 
-    private async Task<bool> IsNullBodyDataThenSendError(HttpContext context, string bodyStr)
+    async Task<bool> IsNullBodyDataThenSendError(HttpContext context, string bodyStr)
     {
         if (string.IsNullOrEmpty(bodyStr) == false)
         {
@@ -159,6 +162,20 @@ public class CheckUserAuthAndLoadUserData
         await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
 
         return true;
+    }
+
+    async Task<bool> IsInvalidUserAuthTokenNotFound(HttpContext context, bool isOk)
+    {
+        if (!isOk)
+        {
+            string errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
+            {
+                result = ErrorCode.AuthTokenKeyNotFound
+            });
+            byte[] bytes = Encoding.UTF8.GetBytes(errorJsonResponse);
+            await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+        }
+        return !isOk;
     }
 
 

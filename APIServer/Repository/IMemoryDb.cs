@@ -10,7 +10,7 @@ public interface IMemoryDb
     public Task<ErrorCode> RegistUserAsync(string token, int uid);
 
     public Task<ErrorCode> CheckUserAuthAsync(string id, string authToken);
-    public Task<(bool, RdbAuthUserData)> GetUserAsync(string id);
+    public Task<(bool, RdbAuthUserData)> GetUserAsync(int id);
 
     public Task<bool> SetUserStateAsync(RdbAuthUserData user, UserState userState);
 
@@ -18,4 +18,5 @@ public interface IMemoryDb
 
     public Task<bool> DelUserReqLockAsync(string key);
 
+    public  Task<ErrorCode> DelUserAuthAsync(int uid);
 }

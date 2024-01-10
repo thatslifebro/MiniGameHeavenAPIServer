@@ -98,15 +98,14 @@ public class MemoryDb : IMemoryDb
 
     public async Task<bool> SetUserStateAsync(RdbAuthUserData user, UserState userState)
     {
-        string uid = MemoryDbKeyMaker.MakeUIDKey(user.Uid.ToString());
+        string key = MemoryDbKeyMaker.MakeUIDKey(user.Uid.ToString());
         try
         {
-            RedisString<RdbAuthUserData> redis = new(_redisConn, uid, null);
+            RedisString<RdbAuthUserData> redis = new(_redisConn, key, null);
 
             user.State = userState.ToString();
 
             return await redis.SetAsync(user) != false;
-            return true;
         }
         catch
         {
@@ -114,9 +113,9 @@ public class MemoryDb : IMemoryDb
         }
     }
 
-    public async Task<(bool, RdbAuthUserData)> GetUserAsync(string id)
+    public async Task<(bool, RdbAuthUserData)> GetUserAsync(int id)
     {
-        string uid = MemoryDbKeyMaker.MakeUIDKey(id);
+        string uid = MemoryDbKeyMaker.MakeUIDKey(id.ToString());
 
         try
         {
@@ -178,6 +177,21 @@ public class MemoryDb : IMemoryDb
         }
     }
 
+    public async Task<ErrorCode> DelUserAuthAsync(int uid)
+    {
+        try
+        {
+            RedisString<RdbAuthUserData> redis = new(_redisConn, MemoryDbKeyMaker.MakeUIDKey(uid.ToString()), null);
+            await redis.DeleteAsync();
+            return ErrorCode.None;
+        }
+        catch
+        {
+            s_logger.ZLogError(
+                   $"RedisDb.DelUserAuthAsync: UID = {uid}, ErrorCode : {ErrorCode.LogoutRedisDelFailException}");
+            return ErrorCode.LogoutRedisDelFailException;
+        }
+    }
 
     public TimeSpan LoginTimeSpan()
     {

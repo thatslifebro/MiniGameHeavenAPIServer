@@ -23,7 +23,7 @@ public enum ErrorCode : UInt16
     LoginUpdateRecentLoginFail = 2008,
     LoginUpdateRecentLoginFailException = 2009,
     AuthTokenMismatch = 2010,
-    AuthTokenNotFound = 2011,
+    AuthTokenKeyNotFound = 2011,
     AuthTokenFailWrongKeyword = 2012,
     AuthTokenFailSetNx = 20013,
     AccountIdMismatch = 2014,
@@ -33,6 +33,8 @@ public enum ErrorCode : UInt16
     CheckAuthFailNotExist = 2018,
     CheckAuthFailNotMatch = 2019,
     CheckAuthFailException = 2020,
+    LogoutRedisDelFail = 2021,
+    LogoutRedisDelFailException= 2022,
 
 
     // Character 3000 ~
