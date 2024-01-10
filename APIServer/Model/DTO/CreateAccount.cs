@@ -11,6 +11,8 @@ public class CreateAccountReq
     [Required]
 
     public string Token { get; set; }
+    [Required]
+    public string NickName { get; set; }
 }
 
 public class CreateAccountRes

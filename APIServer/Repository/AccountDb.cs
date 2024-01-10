@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using APIServer.Services;
 using Microsoft.Extensions.Logging;
@@ -34,20 +35,22 @@ public class AccountDb : IAccountDb
         Close();
     }
 
-    public async Task<ErrorCode> CreateAccountAsync(Int64 playerId)
+    public async Task<ErrorCode> CreateAccountAsync(Int64 playerId, string nickname)
     {
         try
         {
             var exist = await _queryFactory.Query("user_info").Where("player_id", playerId).GetAsync<int>();
-            if (exist!=null)
+            if (exist.Count()!=0)
             {
-                _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountFail}, PlayerId : {playerId}");
+                _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountDuplicateFail}, PlayerId : {playerId}");
+                return ErrorCode.CreateAccountDuplicateFail;
             }
-
+            
             int count = await _queryFactory.Query("user_info").InsertAsync(new
             {
                 uid = 0,
                 player_id = playerId,
+                nickname = nickname,
                 create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
             });
 
@@ -58,7 +61,7 @@ public class AccountDb : IAccountDb
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                $"[AccountDb.CreateAccount] ErrorCode: {ErrorCode.CreateAccountFailException}, Email: {playerId}");
+                $"[AccountDb.CreateAccount] ErrorCode: {ErrorCode.CreateAccountFailException}, PlayerId: {playerId}");
             return ErrorCode.CreateAccountFailException;
         }
     }

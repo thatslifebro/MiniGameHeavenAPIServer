@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using APIServer.Model.DTO;
 using APIServer.Services;
+using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ZLogger;
@@ -13,21 +14,32 @@ namespace APIServer.Controllers;
 [Route("[controller]")]
 public class CreateAccount : ControllerBase
 {
-    private readonly IAccountDb _accountDb;
-    private readonly ILogger<CreateAccount> _logger;
+    readonly IAccountDb _accountDb;
+    readonly ILogger<CreateAccount> _logger;
+    readonly IVerifyTokenService _verifyTokenService;
 
-    public CreateAccount(ILogger<CreateAccount> logger, IAccountDb accountDb)
+
+    public CreateAccount(ILogger<CreateAccount> logger, IAccountDb accountDb, IVerifyTokenService verifyTokenService)
     {
         _logger = logger;
         _accountDb = accountDb;
+        _verifyTokenService = verifyTokenService;
     }
 
     [HttpPost]
     public async Task<CreateAccountRes> Post(CreateAccountReq request)
     {
-        //하이브 인증 미들웨어 통과후 
         var response = new CreateAccountRes();
-        response.Result = await _accountDb.CreateAccountAsync(request.PlayerId);
+        var tokenValid = await _verifyTokenService.VerifyTokenToHive(request.PlayerId, request.Token);
+
+        if (!tokenValid)
+        {
+            response.Result = ErrorCode.Hive_Fail_InvalidResponse;
+            return response;
+        }
+
+        response.Result = await _accountDb.CreateAccountAsync(request.PlayerId, request.NickName);
+
         return response;
 
     }
