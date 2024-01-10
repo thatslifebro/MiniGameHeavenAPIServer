@@ -40,13 +40,21 @@ public class AccountDb : IAccountDb
     {
         try
         {
-            var exist = await _queryFactory.Query("user_info").Where("player_id", playerId).GetAsync<int>();
-            if (exist.Count()!=0)
+            //playerId 중복 체크
+            var existPlayerId = await _queryFactory.Query("user_info").Where("player_id", playerId).GetAsync<Int64>();
+            if (existPlayerId.Count()!=0)
             {
-                _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountDuplicateFail}, PlayerId : {playerId}");
+                _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountAlreadyExistFail}, PlayerId : {playerId}");
                 return ErrorCode.CreateAccountDuplicateFail;
             }
-            
+            //nickname 중복 체크
+            var existNickname = await _queryFactory.Query("user_info").Where("nickname", nickname).GetAsync<string>();
+            if (existNickname.Count() != 0)
+            {
+                _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountDuplicateFail}, nickname : {nickname}");
+                return ErrorCode.CreateAccountDuplicateFail;
+            }
+            //account 생성
             int count = await _queryFactory.Query("user_info").InsertAsync(new
             {
                 uid = 0,
@@ -71,10 +79,11 @@ public class AccountDb : IAccountDb
     {
         try
         {
+            //playerId로 userInfo 조회
             AdbUserInfo userInfo = await _queryFactory.Query("user_info")
                                     .Where("player_id", playerId)
                                     .FirstOrDefaultAsync<AdbUserInfo>();
-
+            //없는 유저라면 에러
             if (userInfo is null)
             {
                 return (ErrorCode.LoginFailUserNotExist, 0);

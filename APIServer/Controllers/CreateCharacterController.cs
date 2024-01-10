@@ -34,15 +34,15 @@ public class CreateCharacter : ControllerBase
 
         CreateCharacterRes response = new();
 
-        (ErrorCode errorCode, long characterId) = await CreateDB(userInfo.AccountId, request.NickName);
-        if (errorCode != ErrorCode.None)
-        {
-            response.Result = errorCode;
-            return response;
-        }
+        //(ErrorCode errorCode, long characterId) = await CreateDB(userInfo.AccountId, request.NickName);
+        //if (errorCode != ErrorCode.None)
+        //{
+        //    response.Result = errorCode;
+        //    return response;
+        //}
 
-        _logger.ZLogInformationWithPayload(EventIdDic[EventType.CreateCharacter], new { request.Email, request.NickName, CharacterId = characterId },
-            $"CreateCharacter Success");
+        //_logger.ZLogInformationWithPayload(EventIdDic[EventType.CreateCharacter], new { request.Email, request.NickName, CharacterId = characterId },
+            //$"CreateCharacter Success");
         return response;
     }
 
