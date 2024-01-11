@@ -222,7 +222,7 @@ public class AccountDb : IAccountDb
         }
     }
 
-    public async Task<(ErrorCode, List<FriendRequestInfo>)> GetFriendRequestList(int uid)
+    public async Task<(ErrorCode, List<FriendRequestInfo>)> GetFriendReceivedReqList(int uid)
     {
         try
         {
