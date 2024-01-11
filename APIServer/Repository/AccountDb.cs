@@ -209,8 +209,8 @@ public class AccountDb : IAccountDb
             List<FriendInfo> friendList = (List<FriendInfo>) await _queryFactory.Query("friend")
                                                 .Join("user_info", "user_info.uid", "friend.friend_uid")
                                                 .Where("friend.uid", uid)
-                                                .Where("accept_yn", true) // FriendInfo에 따라 변경 필요
-                                                .Select("user_info.uid", "user_info.nickname")
+                                                .Where("accept_yn", true) 
+                                                .Select("user_info.uid", "user_info.nickname")// FriendInfo에 따라 변경 필요
                                                 .GetAsync<FriendInfo>();
             return (ErrorCode.None,friendList);
         }
@@ -220,7 +220,27 @@ public class AccountDb : IAccountDb
                                $"[AccountDb.GetFriendList] ErrorCode: {ErrorCode.FriendGetListFailException}, Uid: {uid}");
             return (ErrorCode.FriendGetListFailException, null);
         }
-    }   
+    }
+
+    public async Task<(ErrorCode, List<FriendRequestInfo>)> GetFriendRequestList(int uid)
+    {
+        try
+        {
+            List<FriendRequestInfo> friendList = (List<FriendRequestInfo>)await _queryFactory.Query("friend")
+                                                .Join("user_info", "user_info.uid", "friend.uid")
+                                                .Where("friend.friend_uid", uid)
+                                                .Where("accept_yn", false)
+                                                .Select("user_info.uid", "user_info.nickname")
+                                                .GetAsync<FriendRequestInfo>();
+            return (ErrorCode.None, friendList);
+        }
+        catch (Exception e)
+        {
+            _logger.ZLogError(e,
+                               $"[AccountDb.GetFriendList] ErrorCode: {ErrorCode.FriendGetRequestListFailException}, Uid: {uid}");
+            return (ErrorCode.FriendGetRequestListFailException, null);
+        }
+    }
 
     private void Open()
     {
