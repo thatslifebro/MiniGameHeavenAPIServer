@@ -271,6 +271,7 @@ public class AccountDb : IAccountDb
             AdbFriendInfo frinedInfo = await _queryFactory.Query("friend")
                                     .Where("uid", uid)
                                     .Where("friend_uid", friendUid)
+                                    .Where("accept_yn", true)
                                     .FirstOrDefaultAsync<AdbFriendInfo>();
             if (frinedInfo is null)
             {
