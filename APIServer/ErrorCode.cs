@@ -46,6 +46,7 @@ public enum ErrorCode : UInt16
     FriendDeleteFailDelete = 2031,
     FriendDeleteFailException = 2032,
     FriendDeleteFailSameUid = 2033,
+    FriendDeleteReqFailException = 2034,
 
 
     // Character 3000 ~

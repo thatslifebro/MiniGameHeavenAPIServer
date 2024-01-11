@@ -11,10 +11,10 @@ public class FriendRequestListRequest : RequestDTO
 
 public class FriendRequestListResponse : ErrorCodeDTO
 {
-    public List<FriendRequestInfo> FriendRequestList { get; set; }
+    public IEnumerable<FriendReqInfo> FriendRequestList { get; set; }
 }
 
-public class FriendRequestInfo
+public class FriendReqInfo
 {
     //uid와 nickname만 전달
     public int Uid { get; set; }

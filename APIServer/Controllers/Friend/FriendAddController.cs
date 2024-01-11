@@ -1,5 +1,6 @@
 ﻿using APIServer.Model.DTO.Friend;
 using APIServer.Services;
+using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
@@ -11,12 +12,12 @@ namespace APIServer.Controllers.Friend;
 public class FriendAdd : ControllerBase
 {
     readonly ILogger<FriendAdd> _logger;
-    readonly IAccountDb _accountDb;
+    readonly IFriendService _friendService;
 
-    public FriendAdd(ILogger<FriendAdd> logger, IAccountDb accountDb)
+    public FriendAdd(ILogger<FriendAdd> logger, IFriendService friendService)
     {
         _logger = logger;
-        _accountDb = accountDb;
+        _friendService = friendService;
     }
 
     [HttpPost]
@@ -28,7 +29,7 @@ public class FriendAdd : ControllerBase
             response.Result = ErrorCode.FriendAddFailSameUid;
             return response;
         }
-        response.Result = await _accountDb.AddFriendByUid(request.Uid, request.FriendUid);
+        response.Result = await _friendService.SendFriendReqOrAcceptReq(request.Uid, request.FriendUid);
         return response;
 
     }

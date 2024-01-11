@@ -1,5 +1,6 @@
 ﻿using APIServer.Model.DTO.Friend;
 using APIServer.Services;
+using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
@@ -11,19 +12,19 @@ using System.Threading.Tasks;
 public class FriendReceivedReqList : ControllerBase
 {
     readonly ILogger<FriendReceivedReqList> _logger;
-    readonly IAccountDb _accountDb;
+    readonly IFriendService _friendService;
 
-    public FriendReceivedReqList(ILogger<FriendReceivedReqList> logger, IAccountDb accountDb)
+    public FriendReceivedReqList(ILogger<FriendReceivedReqList> logger, IFriendService friendService)
     {
         _logger = logger;
-        _accountDb = accountDb;
+        _friendService = friendService;
     }
 
     [HttpPost]
     public async Task<FriendRequestListResponse> GetFriendRequestList(FriendRequestListRequest request)
     {
         FriendRequestListResponse response = new();
-        (response.Result, response.FriendRequestList) = await _accountDb.GetFriendReceivedReqList(request.Uid);
+        (response.Result, response.FriendRequestList) = await _friendService.GetFriendReceivedReqList(request.Uid);
         return response;
     }
 }

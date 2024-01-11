@@ -3,20 +3,27 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using APIServer.Model.DAO;
+using System.Data;
 
 
 namespace APIServer.Services;
 
 public interface IAccountDb : IDisposable
 {
+    public IDbConnection ADbConnection();
     public Task<AdbUserInfo> GetUserByPlayerId(Int64 playerId);
+    public Task<AdbUserInfo> GetUserByUid(int uid);
     public Task<AdbUserInfo> GetUserByNickname(string nickname);
     public Task<int> InsertUser(Int64 playerId, string nickname);
     public Task<int> UpdateRecentLogin(int uid);
-    public Task<ErrorCode> AddFriendByUid(int uid, int friendUid);
-    public Task<(ErrorCode, List<FriendInfo>)> GetFriendList(int uid);
-    public Task<(ErrorCode, List<FriendRequestInfo>)> GetFriendReceivedReqList(int uid);
-    public Task<(ErrorCode, List<FriendRequestInfo>)> GetFriendSentReqList(int uid);
-    public Task<ErrorCode> DeleteFriend(int uid, int friendUid);
+    public Task<AdbFriendReqInfo> GetFriendReqInfo(int uid, int friendUid);
+    public Task<int> InsertFriendReq(int uid, int friendUid, bool accept = false);
+    public Task<int> InsertFriendReq(int uid, int friendUid, IDbTransaction transaction, bool accept = false);
+    public Task<int> UpdateFriendReqAccept(int uid, int friendUid, IDbTransaction transaction, bool accept = false);
+    public Task<IEnumerable<FriendUserInfo>> GetFriendUserInfoList(int uid);
+    public Task<IEnumerable<FriendReqInfo>> GetFriendReceivedReqInfoList(int uid);
+    public Task<IEnumerable<FriendReqInfo>> GetFriendSentReqInfoList(int uid);
+    public Task<int> DeleteFriendEachOther(int uid, int friendUid);
+    public Task<int> DeleteFriendReq(int uid, int friendUid);
 
 }

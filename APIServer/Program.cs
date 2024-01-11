@@ -23,6 +23,7 @@ builder.Services.AddTransient<IGameDb, GameDb>();
 builder.Services.AddSingleton<IMemoryDb, MemoryDb>();
 builder.Services.AddSingleton<IMasterDb, MasterDb>();
 builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IFriendService, FriendService>();
 builder.Services.AddControllers();
 
 SettingLogger();

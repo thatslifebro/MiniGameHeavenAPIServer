@@ -12,7 +12,7 @@ public class AdbUserInfo
     public string nickname { get; set; }
 }
 
-public class AdbFriendInfo
+public class AdbFriendReqInfo
 {
     public int uid { get; set; }
 

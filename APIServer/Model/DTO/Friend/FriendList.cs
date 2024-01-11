@@ -11,10 +11,10 @@ public class FriendListRequest : RequestDTO
 
 public class FriendListResponse : ErrorCodeDTO
 {
-    public List<FriendInfo> FriendList { get; set; }
+    public IEnumerable<FriendUserInfo> FriendList { get; set; }
 }
 
-public class FriendInfo
+public class FriendUserInfo
 { 
     public int Uid { get; set; }
     public string NickName { get; set; }
