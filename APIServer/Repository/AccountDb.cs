@@ -41,89 +41,40 @@ public class AccountDb : IAccountDb
         Close();
     }
 
-    public async Task<ErrorCode> CreateAccountAsync(Int64 playerId, string nickname)
+    public async Task<AdbUserInfo> GetUserByPlayerId(Int64 playerId)
     {
-        try
-        {
-            //playerId 중복 체크
-            var existPlayerId = await _queryFactory.Query("user_info").Where("player_id", playerId).GetAsync<Int64>();
-            if (existPlayerId.Count()!=0)
-            {
-                _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountAlreadyExistFail}, PlayerId : {playerId}");
-                return ErrorCode.CreateAccountDuplicateFail;
-            }
-            //nickname 중복 체크
-            var existNickname = await _queryFactory.Query("user_info").Where("nickname", nickname).GetAsync<string>();
-            if (existNickname.Count() != 0)
-            {
-                _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountDuplicateFail}, nickname : {nickname}");
-                return ErrorCode.CreateAccountDuplicateFail;
-            }
-            //account 생성
-            int count = await _queryFactory.Query("user_info").InsertAsync(new
-            {
-                uid = 0,
-                player_id = playerId,
-                nickname = nickname,
-                create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-            });
-
-            _logger.ZLogDebug($"[CreateAccount] PlayerId: {playerId}");
-
-            return count != 1 ? ErrorCode.CreateAccountFailInsert : ErrorCode.None;
-        }
-        catch (Exception e)
-        {
-            _logger.ZLogError(e,
-                $"[AccountDb.CreateAccount] ErrorCode: {ErrorCode.CreateAccountFailException}, PlayerId: {playerId}");
-            return ErrorCode.CreateAccountFailException;
-        }
+        return await _queryFactory.Query("user_info")
+                                .Where("player_id", playerId)
+                                .FirstOrDefaultAsync<AdbUserInfo>();
     }
 
-    public async Task<(ErrorCode, int)> VerifyUser(Int64 playerId)
+    public async Task<AdbUserInfo> GetUserByNickname(string nickname)
     {
-        try
-        {
-            //playerId로 userInfo 조회
-            AdbUserInfo userInfo = await _queryFactory.Query("user_info")
-                                    .Where("player_id", playerId)
-                                    .FirstOrDefaultAsync<AdbUserInfo>();
-            //없는 유저라면 에러
-            if (userInfo is null)
-            {
-                return (ErrorCode.LoginFailUserNotExist, 0);
-            }
-
-            return (ErrorCode.None, userInfo.uid);
-        }
-        catch (Exception e)
-        {
-            _logger.ZLogError(e,
-                $"[AccountDb.VerifyAccount] ErrorCode: {ErrorCode.LoginFailException}, PlayerId: {playerId}");
-            return (ErrorCode.LoginFailException, 0);
-        }
+        return await _queryFactory.Query("user_info")
+                                .Where("nickname", nickname)
+                                .FirstOrDefaultAsync<AdbUserInfo>();
     }
 
-    public async Task<ErrorCode> UpdateLastLoginTime(int uid)
+    public async Task<int> InsertUser(Int64 playerId, string nickname)
     {
-        try
-        {
-            int count = await _queryFactory.Query("user_info").Where("uid",uid).UpdateAsync(new
-            {
-                recent_login_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-            });
-
-            _logger.ZLogDebug($"[Login] uid: {uid}, count : {count}");
-
-            return count != 1 ? ErrorCode.LoginUpdateRecentLoginFail : ErrorCode.None;
-        }
-        catch (Exception e)
-        {
-            _logger.ZLogError(e,
-                $"[AccountDb.Login] ErrorCode: {ErrorCode.LoginUpdateRecentLoginFailException}, Uid: {uid}");
-            return ErrorCode.CreateAccountFailException;
-        }
+        return await _queryFactory.Query("user_info")
+                                .InsertGetIdAsync<int>(new
+                                {
+                                    player_id = playerId,
+                                    nickname = nickname,
+                                    create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                                });
     }
+
+    public async Task<int> UpdateRecentLogin(int uid)
+    {
+        return await _queryFactory.Query("user_info").Where("uid", uid).UpdateAsync(new
+        {
+            recent_login_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+        });
+    }
+
+    
 
     public async Task<ErrorCode> AddFriendByUid(int uid, int friendUid)
     {

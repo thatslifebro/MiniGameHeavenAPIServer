@@ -1,11 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using APIServer.Model.DTO.Auth;
 using APIServer.Repository;
 using APIServer.Services;
-using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using ZLogger;
 using static LogManager;
@@ -29,7 +26,14 @@ public class Logout : ControllerBase
     public async Task<LogoutResponse> Post(LogoutRequest request)
     {
         LogoutResponse response = new();
-        response.Result = await _memoryDb.DelUserAuthAsync(request.Uid);
+        ErrorCode errorCode = await _memoryDb.DelUserAuthAsync(request.Uid);
+        if (errorCode != ErrorCode.None)
+        {
+            response.Result = errorCode;
+            return response;
+        }
+        _logger.ZLogInformation(EventIdDic[EventType.CreateAccount], $"Uid : {request.Uid}");
+
         return response;
     }
 }

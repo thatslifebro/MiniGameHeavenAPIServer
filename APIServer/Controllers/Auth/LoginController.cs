@@ -1,11 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using APIServer.Model.DTO.Auth;
 using APIServer.Repository;
 using APIServer.Services;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using ZLogger;
 using static LogManager;
@@ -16,24 +14,22 @@ namespace APIServer.Controllers.Auth;
 [Route("[controller]")]
 public class Login : ControllerBase
 {
-    private readonly IAccountDb _accountDb;
     private readonly IMemoryDb _memoryDb;
     private readonly ILogger<Login> _logger;
-    readonly IVerifyTokenService _verifyTokenService;
+    readonly IAuthService _authService;
 
-    public Login(ILogger<Login> logger, IAccountDb accountDb, IMemoryDb memoryDb, IVerifyTokenService verifyTokenService)
+    public Login(ILogger<Login> logger, IAccountDb accountDb, IMemoryDb memoryDb, IAuthService authService)
     {
         _logger = logger;
-        _accountDb = accountDb;
         _memoryDb = memoryDb;
-        _verifyTokenService = verifyTokenService;
+        _authService = authService;
     }
 
     [HttpPost]
     public async Task<LoginResponse> Post(LoginRequest request)
     {
         LoginResponse response = new();
-        var hiveTokenValid = await _verifyTokenService.VerifyTokenToHive(request.PlayerId, request.HiveToken);
+        var hiveTokenValid = await _authService.VerifyTokenToHive(request.PlayerId, request.HiveToken);
 
         if (!hiveTokenValid)
         {
@@ -41,7 +37,7 @@ public class Login : ControllerBase
             return response;
         }
 
-        (ErrorCode errorCode, int uid) = await _accountDb.VerifyUser(request.PlayerId);
+        (ErrorCode errorCode, int uid) = await _authService.VerifyUser(request.PlayerId);
         response.Uid = uid;
         if (errorCode != ErrorCode.None)
         {
@@ -57,7 +53,7 @@ public class Login : ControllerBase
             return response;
         }
 
-        errorCode = await _accountDb.UpdateLastLoginTime(uid);
+        errorCode = await _authService.UpdateLastLoginTime(uid);
         if (errorCode != ErrorCode.None)
         {
             response.Result = errorCode;
