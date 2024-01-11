@@ -24,8 +24,8 @@ namespace APIServer.Servicies
             try
             {
                 HttpClient client = new();
-                var hiveResponse = await client.PostAsJsonAsync(_hiveServerAddress, new { PlayerId = playerId, Token = token });
-
+                var hiveResponse = await client.PostAsJsonAsync(_hiveServerAddress, new { PlayerId = playerId, HiveToken = token });
+                
                 if (!ValidateHiveResponse(hiveResponse))
                 {
                     var statusCode = hiveResponse == null ? 0 : hiveResponse.StatusCode;

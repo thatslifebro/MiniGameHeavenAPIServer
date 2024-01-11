@@ -30,7 +30,7 @@ public class VerifyToken : ControllerBase
     public VerifyTokenResponse Verify([FromBody] VerifyTokenBody request) {
         VerifyTokenResponse response = new();
 
-        if (Security.MakeHashingToken(_saltValue, request.PlayerId)!=request.Token)
+        if (Security.MakeHashingToken(_saltValue, request.PlayerId)!=request.HiveToken)
         {
             _logger.ZLogDebug(
                 $"[AccoutDb.CreateAccount] ErrorCode: {ErrorCode.VerifyTokenFail}");

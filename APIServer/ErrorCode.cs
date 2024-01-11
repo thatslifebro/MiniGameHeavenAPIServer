@@ -35,6 +35,10 @@ public enum ErrorCode : UInt16
     CheckAuthFailException = 2020,
     LogoutRedisDelFail = 2021,
     LogoutRedisDelFailException= 2022,
+    FriendAddFailUserNotExist = 2023,
+    FriendAddFailInsert = 2024,
+    FriendAddFailException = 2025,
+    FriendAddFailAlreadyFriend = 2026,
 
 
     // Character 3000 ~

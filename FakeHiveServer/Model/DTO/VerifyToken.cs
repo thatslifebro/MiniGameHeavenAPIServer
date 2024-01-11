@@ -6,7 +6,7 @@ namespace APIServer.Model.DTO
     public class VerifyTokenBody
     {
         [Required]
-        public string Token { get; set; }
+        public string HiveToken { get; set; }
         [Required]
         public Int64 PlayerId { get; set; }
     }
