@@ -11,3 +11,12 @@ public class AdbUserInfo
     public string recent_login_dt { get; set; }
     public string nickname { get; set; }
 }
+
+public class AdbFriendInfo
+{
+    public int uid { get; set; }
+
+    public string friend_uid { get; set; }
+    public bool accept_yn { get; set; }
+    public string create_dt { get; set; }
+}

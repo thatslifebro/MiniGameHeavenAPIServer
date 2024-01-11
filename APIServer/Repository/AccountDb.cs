@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -103,7 +104,6 @@ public class AccountDb : IAccountDb
     {
         try
         {
-
             int count = await _queryFactory.Query("user_info").Where("uid",uid).UpdateAsync(new
             {
                 recent_login_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
@@ -119,6 +119,84 @@ public class AccountDb : IAccountDb
                 $"[AccountDb.Login] ErrorCode: {ErrorCode.LoginUpdateRecentLoginFailException}, Uid: {uid}");
             return ErrorCode.CreateAccountFailException;
         }
+    }
+
+    public async Task<ErrorCode> AddFriendByUid(int uid, int friendUid)
+    {
+        try
+        {
+            AdbUserInfo userInfo = await _queryFactory.Query("user_info")
+                                    .Where("uid", friendUid)
+                                    .FirstOrDefaultAsync<AdbUserInfo>();
+            //없는 유저라면 에러
+            if (userInfo is null)
+            {
+                return ErrorCode.FriendAddFailUserNotExist;
+            }
+
+            //이미 친구신청 했다면 에러
+            AdbFriendInfo frinedInfo = await _queryFactory.Query("friend")
+                                    .Where("uid", uid)
+                                    .Where("friend_uid", friendUid)
+                                    .FirstOrDefaultAsync<AdbFriendInfo>();
+            if (frinedInfo is not null)
+            {
+                return ErrorCode.FriendAddFailAlreadyFriend;
+            }
+
+            //상대방이 친구신청을 하지 않았을 때
+            AdbFriendInfo frinedAddMeInfo = await _queryFactory.Query("friend")
+                                    .Where("uid", friendUid)
+                                    .Where("friend_uid", uid)
+                                    .FirstOrDefaultAsync<AdbFriendInfo>();
+            int count = 0;
+            if (frinedAddMeInfo is null)
+            {
+                count = await _queryFactory.Query("friend").InsertAsync(new
+                {
+                    uid = uid,
+                    friend_uid = friendUid,
+                    create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                });
+                return count != 1 ? ErrorCode.FriendAddFailInsert : ErrorCode.None;
+            }
+
+            //상대방이 친구신청를 했다면 accept_yn을 true로 하여 친구등록
+            var transaction = _dbConn.BeginTransaction();
+
+            count = await _queryFactory.Query("friend").InsertAsync(new
+            {
+                uid = uid,
+                friend_uid = friendUid,
+                create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                accept_yn = true,
+            },transaction);
+            if (count != 1)
+            {
+                transaction.Rollback();
+                return ErrorCode.FriendAddFailInsert;
+            }
+            count = await _queryFactory.Query("friend").Where("uid", friendUid).Where("friend_uid", uid).UpdateAsync(new
+            {
+                accept_yn = true,
+            }, transaction);
+            if (count != 1)
+            {
+                transaction.Rollback();
+                return ErrorCode.FriendAddFailInsert;
+            }
+            transaction.Commit();
+            transaction.Dispose();
+
+            return ErrorCode.None;
+        }
+        catch(Exception e)
+        {
+            _logger.ZLogDebug(
+                $"[AccountDb.Login] ErrorCode: {ErrorCode.FriendAddFailException}, Uid: {uid}, e :{e.Message}");
+            return ErrorCode.FriendAddFailException;
+        }
+
     }
 
     private void Open()
