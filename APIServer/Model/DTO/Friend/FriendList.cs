@@ -11,7 +11,7 @@ public class FriendListRequest : RequestDTO
 
 public class FriendListResponse : ErrorCodeDTO
 {
-    List<FriendInfo> FriendList { get; set; }
+    public List<FriendInfo> FriendList { get; set; }
 }
 
 public class FriendInfo

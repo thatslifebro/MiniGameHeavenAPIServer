@@ -1,4 +1,6 @@
-﻿using System;
+﻿using APIServer.Model.DTO.Friend;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 
@@ -11,4 +13,5 @@ public interface IAccountDb : IDisposable
     public Task<(ErrorCode, int)> VerifyUser(Int64 playerId);
     public Task<ErrorCode> UpdateLastLoginTime(int uid);
     public Task<ErrorCode> AddFriendByUid(int uid, int friendUid);
+    public Task<(ErrorCode,List<FriendInfo>)> GetFriendList(int uid);
 }

@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using APIServer.Model.DAO;
+using APIServer.Model.DTO.Friend;
 using APIServer.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySqlConnector;
+using SqlKata;
 using SqlKata.Execution;
 using ZLogger;
 
@@ -198,6 +201,26 @@ public class AccountDb : IAccountDb
         }
 
     }
+
+    public async Task<(ErrorCode, List<FriendInfo>)> GetFriendList(int uid)
+    {
+        try
+        {
+            List<FriendInfo> friendList = (List<FriendInfo>) await _queryFactory.Query("friend")
+                                                .Join("user_info", "user_info.uid", "friend.friend_uid")
+                                                .Where("friend.uid", uid)
+                                                .Where("accept_yn", true) // FriendInfo에 따라 변경 필요
+                                                .Select("user_info.uid", "user_info.nickname")
+                                                .GetAsync<FriendInfo>();
+            return (ErrorCode.None,friendList);
+        }
+        catch (Exception e)
+        {
+            _logger.ZLogError(e,
+                               $"[AccountDb.GetFriendList] ErrorCode: {ErrorCode.FriendGetListFailException}, Uid: {uid}");
+            return (ErrorCode.FriendGetListFailException, null);
+        }
+    }   
 
     private void Open()
     {
