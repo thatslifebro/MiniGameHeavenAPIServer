@@ -14,8 +14,8 @@ namespace APIServer.Controllers.Auth;
 [Route("[controller]")]
 public class Login : ControllerBase
 {
-    private readonly IMemoryDb _memoryDb;
-    private readonly ILogger<Login> _logger;
+    readonly IMemoryDb _memoryDb;
+    readonly ILogger<Login> _logger;
     readonly IAuthService _authService;
 
     public Login(ILogger<Login> logger, IAccountDb accountDb, IMemoryDb memoryDb, IAuthService authService)
@@ -37,7 +37,7 @@ public class Login : ControllerBase
             return response;
         }
 
-        (ErrorCode errorCode, int uid) = await _authService.VerifyUser(request.PlayerId);
+        (var errorCode, var uid) = await _authService.VerifyUser(request.PlayerId);
         response.Uid = uid;
         if (errorCode != ErrorCode.None)
         {
@@ -45,7 +45,7 @@ public class Login : ControllerBase
             return response;
         }
 
-        string token = Security.CreateAuthToken();
+        var token = Security.CreateAuthToken();
         errorCode = await _memoryDb.RegistUserAsync(token, uid);
         if (errorCode != ErrorCode.None)
         {

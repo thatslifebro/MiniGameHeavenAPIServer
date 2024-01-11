@@ -7,9 +7,15 @@ public static class LogManager
     public enum EventType
     {
         CreateAccount = 101,
-        Login = 201,
-        LoginAddRedis = 202, 
-        CreateCharacter = 205,
+        Login = 102,
+        LoginAddRedis = 103,
+        Logout = 104,
+        FriendAdd = 201,
+        FriendList = 202,
+        FriendReceivedReqList = 203,
+        FriendSentReqList = 204,
+        FriendDelete = 205,
+        FriendCancelReq = 206,
     }
 
     private static ILoggerFactory s_loggerFactory;
@@ -19,7 +25,13 @@ public static class LogManager
         { EventType.CreateAccount, new EventId((int)EventType.CreateAccount, "CreateAccount") },
         { EventType.Login, new EventId((int)EventType.Login, "Login") },
         { EventType.LoginAddRedis, new EventId((int)EventType.LoginAddRedis, "LoginAddRedis") },
-        { EventType.CreateCharacter, new EventId((int)EventType.CreateCharacter, "CreateCharacter") },
+        { EventType.Logout, new EventId((int)EventType.Logout, "Logout") },
+        { EventType.FriendAdd, new EventId((int)EventType.FriendAdd, "FriendAdd") },
+        { EventType.FriendList, new EventId((int)EventType.FriendList, "FriendList") },
+        { EventType.FriendReceivedReqList, new EventId((int)EventType.FriendReceivedReqList, "FriendReceivedReqList") },
+        { EventType.FriendSentReqList, new EventId((int)EventType.FriendSentReqList, "FriendSentReqList") },
+        { EventType.FriendDelete, new EventId((int)EventType.FriendDelete, "FriendDelete") },
+        { EventType.FriendCancelReq, new EventId((int)EventType.FriendCancelReq, "FriendCancelReq") },
     };
 
     public static ILogger Logger { get; private set; }

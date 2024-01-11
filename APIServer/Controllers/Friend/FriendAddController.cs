@@ -4,6 +4,8 @@ using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using ZLogger;
+using static LogManager;
 
 namespace APIServer.Controllers.Friend;
 
@@ -29,7 +31,16 @@ public class FriendAdd : ControllerBase
             response.Result = ErrorCode.FriendAddFailSameUid;
             return response;
         }
-        response.Result = await _friendService.SendFriendReqOrAcceptReq(request.Uid, request.FriendUid);
+        
+        var errorCode = await _friendService.SendFriendReqOrAcceptReq(request.Uid, request.FriendUid);
+        if(errorCode != ErrorCode.None)
+        {
+            response.Result = errorCode;
+            return response;
+        }
+
+        _logger.ZLogInformation(EventIdDic[EventType.FriendAdd], $"Uid : {request.Uid}");
+
         return response;
 
     }

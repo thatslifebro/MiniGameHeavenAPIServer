@@ -36,7 +36,7 @@ public class CreateAccount : ControllerBase
             return response;
         }
 
-        ErrorCode errorCode = await _authService.CreateAccountAsync(request.PlayerId, request.NickName);
+        var errorCode = await _authService.CreateAccountAsync(request.PlayerId, request.NickName);
         if (errorCode != ErrorCode.None)
         {
             response.Result = errorCode;

@@ -13,8 +13,8 @@ namespace APIServer.Controllers.Auth;
 [Route("[controller]")]
 public class Logout : ControllerBase
 {
-    private readonly IMemoryDb _memoryDb;
-    private readonly ILogger<Logout> _logger;
+    readonly IMemoryDb _memoryDb;
+    readonly ILogger<Logout> _logger;
 
     public Logout(ILogger<Logout> logger, IAccountDb accountDb, IMemoryDb memoryDb)
     {
@@ -26,7 +26,7 @@ public class Logout : ControllerBase
     public async Task<LogoutResponse> Post(LogoutRequest request)
     {
         LogoutResponse response = new();
-        ErrorCode errorCode = await _memoryDb.DelUserAuthAsync(request.Uid);
+        var errorCode = await _memoryDb.DelUserAuthAsync(request.Uid);
         if (errorCode != ErrorCode.None)
         {
             response.Result = errorCode;
