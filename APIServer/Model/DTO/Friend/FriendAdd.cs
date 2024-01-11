@@ -1,7 +1,10 @@
-﻿namespace APIServer.Model.DTO.Friend;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace APIServer.Model.DTO.Friend;
 
 public class FriendAddRequest : RequestDTO
 {
+    [Required]
     public int FriendUid { get; set; }
 }
 

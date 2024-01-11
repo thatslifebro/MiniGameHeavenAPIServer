@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace APIServer.Model.DTO.Friend;
 
 public class FriendRequestListRequest : RequestDTO
 {
+    [Required]
     public int FriendUid { get; set; }
 }
 
