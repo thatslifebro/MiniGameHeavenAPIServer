@@ -39,6 +39,7 @@ public enum ErrorCode : UInt16
     FriendAddFailInsert = 2024,
     FriendAddFailException = 2025,
     FriendAddFailAlreadyFriend = 2026,
+    FriendAddFailSameUid = 2027,
 
 
     // Character 3000 ~

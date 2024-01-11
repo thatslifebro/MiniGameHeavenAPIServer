@@ -23,6 +23,11 @@ public class FriendAdd : ControllerBase
     public async Task<FriendAddResponse> AddFriend(FriendAddRequest request)
     {
         FriendAddResponse response = new();
+        if(request.Uid == request.FriendUid)
+        {
+            response.Result = ErrorCode.FriendAddFailSameUid;
+            return response;
+        }
         response.Result = await _accountDb.AddFriendByUid(request.Uid, request.FriendUid);
         return response;
 
