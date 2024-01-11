@@ -15,5 +15,6 @@ public interface IAccountDb : IDisposable
     public Task<ErrorCode> AddFriendByUid(int uid, int friendUid);
     public Task<(ErrorCode, List<FriendInfo>)> GetFriendList(int uid);
     public Task<(ErrorCode, List<FriendRequestInfo>)> GetFriendReceivedReqList(int uid);
+    public Task<(ErrorCode, List<FriendRequestInfo>)> GetFriendSentReqList(int uid);
 
 }

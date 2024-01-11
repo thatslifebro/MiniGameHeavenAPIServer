@@ -242,6 +242,26 @@ public class AccountDb : IAccountDb
         }
     }
 
+    public async Task<(ErrorCode, List<FriendRequestInfo>)> GetFriendSentReqList(int uid)
+    {
+        try
+        {
+            List<FriendRequestInfo> friendList = (List<FriendRequestInfo>)await _queryFactory.Query("friend")
+                                                .Join("user_info", "user_info.uid", "friend.friend_uid")
+                                                .Where("friend.uid", uid)
+                                                .Where("accept_yn", false)
+                                                .Select("user_info.uid", "user_info.nickname")
+                                                .GetAsync<FriendRequestInfo>();
+            return (ErrorCode.None, friendList);
+        }
+        catch (Exception e)
+        {
+            _logger.ZLogError(e,
+                               $"[AccountDb.GetFriendList] ErrorCode: {ErrorCode.FriendGetRequestListFailException}, Uid: {uid}");
+            return (ErrorCode.FriendGetRequestListFailException, null);
+        }
+    }
+
     private void Open()
     {
         _dbConn = new MySqlConnection(_dbConfig.Value.AccountDb);
