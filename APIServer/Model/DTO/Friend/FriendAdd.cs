@@ -1,8 +1,7 @@
-﻿namespace APIServer.Model.DTO;
+﻿namespace APIServer.Model.DTO.Friend;
 
-public class FriendAddRequest
+public class FriendAddRequest : RequestDTO
 {
-    public int Uid { get; set; }
     public int FriendUid { get; set; }
 }
 

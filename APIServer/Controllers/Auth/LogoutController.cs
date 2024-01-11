@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using APIServer.Model.DTO;
+using APIServer.Model.DTO.Auth;
 using APIServer.Repository;
 using APIServer.Services;
 using APIServer.Servicies.Interfaces;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using ZLogger;
 using static LogManager;
 
-namespace APIServer.Controllers;
+namespace APIServer.Controllers.Auth;
 
 [ApiController]
 [Route("[controller]")]
@@ -29,7 +29,7 @@ public class Logout : ControllerBase
     public async Task<LogoutResponse> Post(LogoutRequest request)
     {
         LogoutResponse response = new();
-        response.Result = await _memoryDb.DelUserAuthAsync(request.uid);
+        response.Result = await _memoryDb.DelUserAuthAsync(request.Uid);
         return response;
     }
 }

@@ -1,10 +1,10 @@
-﻿using APIServer.Model.DTO;
+﻿using APIServer.Model.DTO.Friend;
 using APIServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace APIServer.Controllers;
+namespace APIServer.Controllers.Friend;
 
 [ApiController]
 [Route("[controller]")]

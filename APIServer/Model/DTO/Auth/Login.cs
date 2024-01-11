@@ -2,12 +2,12 @@
 using System.ComponentModel.DataAnnotations;
 
 
-namespace APIServer.Model.DTO;
+namespace APIServer.Model.DTO.Auth;
 
 public class LoginRequest
 {
     [Required]
-    public Int64 PlayerId { get; set; }
+    public long PlayerId { get; set; }
 
     [Required]
 
