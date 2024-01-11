@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using APIServer.Controllers.Friend;
 using APIServer.Model.DAO;
 using APIServer.Model.DTO.Friend;
 using APIServer.Services;
@@ -259,6 +260,32 @@ public class AccountDb : IAccountDb
             _logger.ZLogError(e,
                                $"[AccountDb.GetFriendList] ErrorCode: {ErrorCode.FriendGetRequestListFailException}, Uid: {uid}");
             return (ErrorCode.FriendGetRequestListFailException, null);
+        }
+    }
+
+    public async Task<ErrorCode> DeleteFriend(int uid, int friendUid)
+    {
+        try
+        {
+            //친구가 아니라면
+            AdbFriendInfo frinedInfo = await _queryFactory.Query("friend")
+                                    .Where("uid", uid)
+                                    .Where("friend_uid", friendUid)
+                                    .FirstOrDefaultAsync<AdbFriendInfo>();
+            if (frinedInfo is null)
+            {
+                return ErrorCode.FriendDeleteFailNotFriend;
+            }
+
+            int count = await _queryFactory.Query("friend")
+                                    .WhereRaw($"(uid={uid} AND friend_uid={friendUid}) OR (uid={friendUid} AND friend_uid={uid})")
+                                    .DeleteAsync();
+            return count != 2 ? ErrorCode.FriendDeleteFailDelete : ErrorCode.None;
+        }
+        catch (Exception e)
+        {
+            _logger.ZLogError(e,$"[AccountDb.GetFriendList] ErrorCode: {ErrorCode.FriendDeleteFailException}, Uid: {uid}");
+            return ErrorCode.FriendDeleteFailException;
         }
     }
 

@@ -6,8 +6,6 @@ namespace APIServer.Model.DTO.Friend;
 
 public class FriendListRequest : RequestDTO
 {
-    [Required]
-    public int FriendUid { get; set; }
 }
 
 
