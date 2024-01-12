@@ -20,6 +20,10 @@ public class FriendDelete : ControllerBase
         _friendService = friendService;
     }
 
+    /// <summary>
+    /// 친구를 삭제하는 API
+    /// 서로 친구를 삭제합니다.
+    /// </summary>
     [HttpDelete]
     public async Task<FriendDeleteResponse> DeleteFriend(FriendDeleteRequest request)
     {

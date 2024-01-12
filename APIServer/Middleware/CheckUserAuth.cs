@@ -22,6 +22,7 @@ public class CheckUserAuthAndLoadUserData
 
     public async Task Invoke(HttpContext context)
     {
+        //로그인, 회원가입 api는 토큰 검사를 하지 않는다.
         string formString = context.Request.Path.Value;
         if (string.Compare(formString, "/Login", StringComparison.OrdinalIgnoreCase) == 0 ||
             string.Compare(formString, "/CreateAccount", StringComparison.OrdinalIgnoreCase) == 0)

@@ -23,6 +23,10 @@ public class FriendList : ControllerBase
         _friendService = friendService;
     }
 
+    /// <summary>
+    /// 친구 목록 조회 API
+    /// 친구 목록과 친구 정보를 불러옵니다.
+    /// </summary>
     [HttpPost]
     public async Task<FriendListResponse> GetFriendList(FriendListRequest request)
     {

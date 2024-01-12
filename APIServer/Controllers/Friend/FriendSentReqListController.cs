@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using static LogManager;
 using ZLogger;
 
-// 보낸 친구요청 리스트
 // user_info에 역대 최고기록, 현재시즌기록, 이전시즌기록 추가해서 api에 3가지 옵션을 줄수 있게 변경 후 각 옵션별 orderby 정렬 필요.
 [ApiController]
 [Route("[controller]")]
@@ -22,6 +21,10 @@ public class FriendSentReqList : ControllerBase
         _friendService = friendService;
     }
 
+    /// <summary>
+    /// 보낸 친구 요청 조회 API
+    /// 내가 받은 친구 요청 목록을 조회합니다.
+    /// </summary>
     [HttpPost]
     public async Task<FriendRequestListResponse> GetFriendSentList(FriendRequestListRequest request)
     {

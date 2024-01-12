@@ -33,35 +33,44 @@ public class FriendService : IFriendService
         try
         {
             AdbUserInfo userInfo = await _accountDb.GetUserByUid(friendUid);
-            //없는 유저라면 에러
+            //없는 유저일 때
             if (userInfo is null)
             {
+                _logger.ZLogDebug(
+                $"[Friend.SendFriendReqOrAcceptReq] ErrorCode: {ErrorCode.FriendAddFailUserNotExist}, Uid: {uid}, FriendUid : {friendUid}");
                 return ErrorCode.FriendAddFailUserNotExist;
             }
-            //이미 친구신청 했다면 에러
+            //이미 친구신청 했을 때
             AdbFriendReqInfo friendReqInfo = await _accountDb.GetFriendReqInfo(uid, friendUid);
             if (friendReqInfo is not null)
             {
+                _logger.ZLogDebug(
+                $"[Friend.SendFriendReqOrAcceptReq] ErrorCode: {ErrorCode.FriendAddFailAlreadyFriend}, Uid: {uid}, FriendUid : {friendUid}");
                 return ErrorCode.FriendAddFailAlreadyFriend;
             }
             //친구 요청
             friendReqInfo = await _accountDb.GetFriendReqInfo(friendUid, uid);
-            int count = 0;
+            var rowCount = 0;
             if (friendReqInfo is null)
             {
-                count = await _accountDb.InsertFriendReq(uid, friendUid);
-                return count != 1 ? ErrorCode.FriendAddFailInsert : ErrorCode.None;
+                rowCount = await _accountDb.InsertFriendReq(uid, friendUid);
+                if(rowCount != 1)
+                {
+                    _logger.ZLogDebug(
+                    $"[Friend.SendFriendReqOrAcceptReq] ErrorCode: {ErrorCode.FriendAddFailInsert}, Uid: {uid}, FriendUid : {friendUid}");
+                    return ErrorCode.FriendAddFailInsert;
+                }
+                return ErrorCode.None;
             }
             //친구 요청 승낙
             return await AcceptFriendRequest(uid, friendUid);
         }
         catch (Exception e)
         {
-            _logger.ZLogDebug(
-                $"[AccountDb.Login] ErrorCode: {ErrorCode.FriendAddFailException}, Uid: {uid}, e :{e.Message}");
+            _logger.ZLogError(e,
+                $"[Friend.SendFriendReqOrAcceptReq] ErrorCode: {ErrorCode.FriendAddFailException}, Uid: {uid}, FriendUid : {friendUid}");
             return ErrorCode.FriendAddFailException;
         }
-
     }
 
     public async Task<(ErrorCode, IEnumerable<FriendUserInfo>)> GetFriendList(int uid)
@@ -73,7 +82,7 @@ public class FriendService : IFriendService
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                               $"[AccountDb.GetFriendList] ErrorCode: {ErrorCode.FriendGetListFailException}, Uid: {uid}");
+                               $"[Friend.GetFriendList] ErrorCode: {ErrorCode.FriendGetListFailException}, Uid: {uid}");
             return (ErrorCode.FriendGetListFailException, null);
         }
     }
@@ -87,7 +96,7 @@ public class FriendService : IFriendService
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                               $"[AccountDb.GetFriendList] ErrorCode: {ErrorCode.FriendGetRequestListFailException}, Uid: {uid}");
+                               $"[Friend.GetFriendList] ErrorCode: {ErrorCode.FriendGetRequestListFailException}, Uid: {uid}");
             return (ErrorCode.FriendGetRequestListFailException, null);
         }
     }
@@ -101,7 +110,7 @@ public class FriendService : IFriendService
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                               $"[AccountDb.GetFriendList] ErrorCode: {ErrorCode.FriendGetRequestListFailException}, Uid: {uid}");
+                               $"[Friend.GetFriendSentReqList] ErrorCode: {ErrorCode.FriendGetRequestListFailException}, Uid: {uid}");
             return (ErrorCode.FriendGetRequestListFailException, null);
         }
     }
@@ -110,19 +119,27 @@ public class FriendService : IFriendService
     {
         try
         {
-            //친구가 아니라면
+            //친구가 아닐 때
             AdbFriendReqInfo friendInfo = await _accountDb.GetFriendReqInfo(uid, friendUid);
             if (friendInfo is null || friendInfo.accept_yn==false)
             {
+                _logger.ZLogDebug(
+                $"[Friend.DeleteFriend] ErrorCode: {ErrorCode.FriendDeleteFailNotFriend}, Uid: {uid}, FriendUid : {friendUid}");
                 return ErrorCode.FriendDeleteFailNotFriend;
             }
 
-            int count = await _accountDb.DeleteFriendEachOther(uid, friendUid);
-            return count != 2 ? ErrorCode.FriendDeleteFailDelete : ErrorCode.None;
+            var rowCount = await _accountDb.DeleteFriendEachOther(uid, friendUid);
+            if(rowCount != 2)
+            {
+                _logger.ZLogDebug(
+                                   $"[Friend.DeleteFriend] ErrorCode: {ErrorCode.FriendDeleteFailDelete}, Uid: {uid}, FriendUid : {friendUid}");
+                return ErrorCode.FriendDeleteFailDelete;
+            }
+            return ErrorCode.None;
         }
         catch (Exception e)
         {
-            _logger.ZLogError(e, $"[AccountDb.GetFriendList] ErrorCode: {ErrorCode.FriendDeleteFailException}, Uid: {uid}");
+            _logger.ZLogError(e, $"[Friend.DeleteFriend] ErrorCode: {ErrorCode.FriendDeleteFailException}, Uid: {uid}, FriendUid : {friendUid}");
             return ErrorCode.FriendDeleteFailException;
         }
     }
@@ -131,19 +148,26 @@ public class FriendService : IFriendService
     {
         try
         {
-            //이미 친구라면
+            //친구 요청을 안했거나 친구 상태 일때
             AdbFriendReqInfo friendInfo = await _accountDb.GetFriendReqInfo(uid, friendUid);
             if (friendInfo is null || friendInfo.accept_yn == true)
             {
-                return ErrorCode.FriendDeleteFailNotFriend;
+                _logger.ZLogDebug(
+                $"[Friend.DeleteFriendReq] ErrorCode: {ErrorCode.FriendDeleteReqFailNotFriend}, Uid: {uid}, FriendUid : {friendUid}");
+                return ErrorCode.FriendDeleteReqFailNotFriend;
             }
 
-            int count = await _accountDb.DeleteFriendReq(uid, friendUid);
-            return count != 1 ? ErrorCode.FriendDeleteFailDelete : ErrorCode.None;
+            var rowCount = await _accountDb.DeleteFriendReq(uid, friendUid);
+            if (rowCount != 1)
+            {
+                _logger.ZLogDebug(
+                $"[Friend.DeleteFriendReq] ErrorCode: {ErrorCode.FriendDeleteReqFailDelete}, Uid: {uid}, FriendUid : {friendUid}");
+            }
+            return ErrorCode.None;
         }
         catch (Exception e)
         {
-            _logger.ZLogError(e, $"[AccountDb.GetFriendList] ErrorCode: {ErrorCode.FriendDeleteReqFailException}, Uid: {uid}");
+            _logger.ZLogError(e, $"[Friend.DeleteFriendReq] ErrorCode: {ErrorCode.FriendDeleteReqFailException}, Uid: {uid}, FriendUid : {friendUid}");
             return ErrorCode.FriendDeleteReqFailException;
         }
     }
@@ -153,15 +177,19 @@ public class FriendService : IFriendService
         var transaction = _accountDb.ADbConnection().BeginTransaction();
         try
         {
-            int count = await _accountDb.InsertFriendReq(uid, friendUid, transaction, true);
-            if (count != 1)
+            var rowCount = await _accountDb.InsertFriendReq(uid, friendUid, transaction, true);
+            if (rowCount != 1)
             {
+                _logger.ZLogDebug(
+                $"[Friend.AcceptFriendRequest] ErrorCode: {ErrorCode.FriendAddFailInsert}, Uid: {uid}, FriendUid : {friendUid}");
                 transaction.Rollback();
                 return ErrorCode.FriendAddFailInsert;
             }
-            count = await _accountDb.UpdateFriendReqAccept(uid, friendUid, transaction, true);
-            if (count != 1)
+            rowCount = await _accountDb.UpdateFriendReqAccept(uid, friendUid, transaction, true);
+            if (rowCount != 1)
             {
+                _logger.ZLogDebug(
+                $"[Friend.AcceptFriendRequest] ErrorCode: {ErrorCode.FriendAddFailInsert}, Uid: {uid}, FriendUid : {friendUid}");
                 transaction.Rollback();
                 return ErrorCode.FriendAddFailInsert;
             }
@@ -170,9 +198,9 @@ public class FriendService : IFriendService
         }
         catch(Exception e)
         {
-            _logger.ZLogDebug(
-                $"[AccountDb.Login] ErrorCode: {ErrorCode.FriendAddFailException}, Uid: {uid}, e :{e.Message}");
-            return ErrorCode.FriendAddFailException;
+            _logger.ZLogError(e,
+                $"[Friend.AcceptFriendRequest] ErrorCode: {ErrorCode.FriendAcceptFailException}, Uid: {uid}, FriendUid : {friendUid}");
+            return ErrorCode.FriendAcceptFailException;
         }
         finally
         {

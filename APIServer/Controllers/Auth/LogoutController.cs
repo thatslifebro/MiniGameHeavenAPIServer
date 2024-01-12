@@ -22,6 +22,10 @@ public class Logout : ControllerBase
         _memoryDb = memoryDb;
     }
 
+    /// <summary>
+    /// 로그아웃 API </br>
+    /// 해당 유저의 토큰을 삭제합니다.
+    /// </summary>
     [HttpDelete]
     public async Task<LogoutResponse> Post(LogoutRequest request)
     {

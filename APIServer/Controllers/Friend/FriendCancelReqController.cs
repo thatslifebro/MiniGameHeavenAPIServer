@@ -21,6 +21,10 @@ public class FriendCancelReq : ControllerBase
         _friendService = friendService;
     }
 
+    /// <summary>
+    /// 보낸 친구요청을 취소하는 API
+    /// 보낸 친구 요청을 취소합니다.
+    /// </summary>
     [HttpDelete]
     public async Task<FriendDeleteResponse> DeleteFriendReq(FriendDeleteRequest request)
     {

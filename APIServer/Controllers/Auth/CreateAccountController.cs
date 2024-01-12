@@ -25,6 +25,10 @@ public class CreateAccount : ControllerBase
         _authService = authService;
     }
 
+    /// <summary>
+    /// 계정 생성 API </br>
+    /// 하이브 토큰을 검증하고, 계정이 없다면 계정을 생성합니다.
+    /// </summary>
     [HttpPost]
     public async Task<CreateAccountRes> Post(CreateAccountReq request)
     {

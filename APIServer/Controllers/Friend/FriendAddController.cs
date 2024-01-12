@@ -22,6 +22,10 @@ public class FriendAdd : ControllerBase
         _friendService = friendService;
     }
 
+    /// <summary>
+    /// 친구 요청을 보내거나 친구 요청을 수락하는 API </br>
+    /// 상대 방의 친구 요청 유무에 따라 친구 수락 혹은 친구 요청 보내기를 수행합니다.
+    /// </summary>
     [HttpPost]
     public async Task<FriendAddResponse> AddFriend(FriendAddRequest request)
     {
