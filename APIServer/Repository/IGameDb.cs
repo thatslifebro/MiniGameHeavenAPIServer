@@ -13,4 +13,7 @@ public interface IGameDb
     public Task<int> InsertInitGameList(int uid);
     public Task<int> InsertGame(int uid, int gameId);
     public Task<GdbGameInfo> GetGameInfo(int uid, int gameId);
+    public Task<int> UpdateBestscore(int uid, int gameId, int score);
+    public Task<int> UpdateBestscoreCurSeason(int uid, int gameId, int score);
+    public Task<int> UpdateRecentPlayDt(int uid, int gameId);
 }

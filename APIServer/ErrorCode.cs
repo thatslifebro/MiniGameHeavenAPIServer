@@ -61,6 +61,7 @@ public enum ErrorCode : UInt16
     GameUnlockFailInsert = 2204,
     GameUnlockFailException = 2205,
     GameInfoFailException = 2206,
+    GameSaveFailException = 2207,
 
 
     // Character 3000 ~

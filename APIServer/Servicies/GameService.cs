@@ -74,6 +74,30 @@ public class GameService :IGameService
         }
     }
 
+    public async Task<ErrorCode> SaveGame(int uid, int gameId, int score)
+    {
+        try
+        {
+            var row = await _gameDb.UpdateBestscore(uid, gameId, score);
+            if(row == 0)
+            {
+                row = await _gameDb.UpdateBestscoreCurSeason(uid, gameId, score);
+                if(row == 0)
+                {
+                    await _gameDb.UpdateRecentPlayDt(uid, gameId);
+                }
+            }
+            
+            return ErrorCode.None;
+        }
+        catch (Exception e)
+        {
+            _logger.ZLogError(e,
+                               $"[Game.GameSave] ErrorCode: {ErrorCode.GameSaveFailException}, Uid: {uid}");
+            return ErrorCode.GameSaveFailException;
+        }
+    }
+
     public async Task<ErrorCode> InitGameList(int uid)
     {
         try

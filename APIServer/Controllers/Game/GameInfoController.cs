@@ -22,8 +22,8 @@ public class GameInfo : ControllerBase
     }
 
     /// <summary>
-    /// 보유 게임 정보 조회 API
-    /// 보유한 게임의 목록과 정보를 조회합니다.
+    /// 게임 정보 조회 API
+    /// 게임의 정보(아이템 보유 현황, 플레이 캐릭터(코스튬,스킨), 최고점수 등)을 조회합니다.
     /// </summary>
     [HttpPost]
     public async Task<GameInfoResponse> GetGameInfo(GameInfoRequest request)

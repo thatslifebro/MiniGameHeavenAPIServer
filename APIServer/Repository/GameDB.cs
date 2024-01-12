@@ -71,10 +71,46 @@ public class GameDb : IGameDb
     public async Task<GdbGameInfo> GetGameInfo(int uid, int gameId)
     {
         return await _queryFactory.Query("game").Join("master_db.game_info", "game.game_id", "game_info.game_id")
-                                            .Select("game.game_id", "game_name", "bestscore","game.create_dt", "new_record_dt", "recent_play_dt") // GdbGameInfo 추가예정
+                                            .Select("game.game_id", "game_name", "bestscore","game.create_dt", "new_record_dt", "recent_play_dt", "bestscore_cur_season", "bestscore_prev_season") // GdbGameInfo 추가예정
                                             .Where("uid", uid)
                                             .Where("game.game_id", gameId)
                                             .FirstOrDefaultAsync<GdbGameInfo>();
+    }
+
+    public async Task<int> UpdateBestscore(int uid, int gameId, int score)
+    {
+        return await _queryFactory.Query("game").Where("uid", uid)
+                                                .Where("game_id", gameId)
+                                                .Where("bestscore", "<", score)
+                                                .UpdateAsync(new 
+                                                { 
+                                                    bestscore = score,
+                                                    bestscore_cur_season = score,
+                                                    new_record_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                                                    recent_play_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
+                                                });
+    }
+
+    public async Task<int> UpdateBestscoreCurSeason(int uid, int gameId, int score)
+    {
+        return await _queryFactory.Query("game").Where("uid", uid)
+                                                .Where("game_id", gameId)
+                                                .Where("bestscore_cur_season", "<", score)
+                                                .UpdateAsync(new
+                                                {
+                                                    bestscore_cur_season = score,
+                                                    recent_play_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
+                                                });
+    }
+
+    public async Task<int> UpdateRecentPlayDt(int uid, int gameId)
+    {
+        return await _queryFactory.Query("game").Where("uid", uid)
+                                                .Where("game_id", gameId)
+                                                .UpdateAsync(new
+                                                {
+                                                    recent_play_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
+                                                });
     }
 
     private void Open()

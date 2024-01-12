@@ -19,6 +19,7 @@ public static class LogManager
         GameList = 301,
         GameUnlock = 302,
         GameInfo = 303,
+        GameSave = 304,
     }
 
     private static ILoggerFactory s_loggerFactory;
@@ -38,6 +39,7 @@ public static class LogManager
         { EventType.GameList, new EventId((int)EventType.GameList, "GameList") },
         { EventType.GameUnlock, new EventId((int)EventType.GameUnlock, "GameUnlock") },
         { EventType.GameInfo, new EventId((int)EventType.GameInfo, "GameInfo") },
+        { EventType.GameSave, new EventId((int)EventType.GameSave, "GameSave") },
     };
 
     public static ILogger Logger { get; private set; }
