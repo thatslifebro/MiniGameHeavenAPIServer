@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using APIServer.Model.DAO;
+using APIServer.Model.DTO.Friend;
 using APIServer.Repository;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -37,9 +39,25 @@ public class GameDb : IGameDb
         Close();
     }
 
+    public async Task<IEnumerable<GdbGameInfo>> GetGameList(int uid)
+    {
+        return await _queryFactory.Query("game").Join("master_db.game_info", "game.game_id", "game_info.game_id")
+            .Select("game.game_id", "game_name", "bestscore","game.create_dt")
+            .Where("uid", uid)
+            .OrderBy("uid")
+            .GetAsync<GdbGameInfo>();
+    }
 
-    
-   
+    public async Task<int> InsertInitGameList(int uid)
+    {
+        var now = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+        return await _queryFactory.Query("game").InsertAsync(new[] { "uid", "game_id", "create_dt" }, new[]
+        {
+            new object[]{uid,1,now},
+            new object[]{uid,2,now},
+            new object[]{uid,3,now},
+        });
+    }
 
     private void Open()
     {

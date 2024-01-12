@@ -16,6 +16,7 @@ public static class LogManager
         FriendSentReqList = 204,
         FriendDelete = 205,
         FriendCancelReq = 206,
+        GameList = 301,
     }
 
     private static ILoggerFactory s_loggerFactory;
@@ -32,6 +33,7 @@ public static class LogManager
         { EventType.FriendSentReqList, new EventId((int)EventType.FriendSentReqList, "FriendSentReqList") },
         { EventType.FriendDelete, new EventId((int)EventType.FriendDelete, "FriendDelete") },
         { EventType.FriendCancelReq, new EventId((int)EventType.FriendCancelReq, "FriendCancelReq") },
+        { EventType.GameList, new EventId((int)EventType.GameList, "GameList") },
     };
 
     public static ILogger Logger { get; private set; }

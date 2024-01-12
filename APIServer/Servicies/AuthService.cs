@@ -49,7 +49,7 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<ErrorCode> CreateAccountAsync(Int64 playerId, string nickname)
+    public async Task<(ErrorCode, int)> CreateAccountAsync(Int64 playerId, string nickname)
     {
         try
         {
@@ -58,31 +58,43 @@ public class AuthService : IAuthService
             if (existUser is not null)
             {
                 _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountAlreadyExistFail}, PlayerId : {playerId}");
-                return ErrorCode.CreateAccountDuplicateFail;
+                return (ErrorCode.CreateAccountDuplicateFail,0);
             }
             //nickname 중복 체크
             existUser = await _accountDb.GetUserByNickname(nickname);
             if (existUser is not null)
             {
                 _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountDuplicateFail}, nickname : {nickname}");
-                return ErrorCode.CreateAccountDuplicateFail;
+                return (ErrorCode.CreateAccountDuplicateFail,0);
             }
             //account 생성
-            int count = await _accountDb.InsertUser(playerId, nickname);
-
-            if (count != 1)
-            {
-                _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountFailInsert}, count : {count}");
-                return ErrorCode.CreateAccountFailInsert;
-            }
-
-            return ErrorCode.None;
+            return (ErrorCode.None, await _accountDb.InsertUser(playerId, nickname));
         }
         catch (Exception e)
         {
             _logger.ZLogError(e,
                 $"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountFailException}, PlayerId: {playerId}");
-            return ErrorCode.CreateAccountFailException;
+            return (ErrorCode.CreateAccountFailException,0);
+        }
+    }
+    public async Task<ErrorCode> DeleteAccountAsync(int uid)
+    {
+        try
+        {
+            // 게임 데이터도 다 지워야함.
+            var rowCount = await _accountDb.DeleteAccount(uid);
+            if(rowCount != 1)
+            {
+                _logger.ZLogDebug($"[DeleteAccountAsync] ErrorCode: {ErrorCode.DeleteAccountFail}, uid : {uid}");
+                return ErrorCode.DeleteAccountFail;
+            }
+            return ErrorCode.None;
+        }
+        catch (Exception e)
+        {
+            _logger.ZLogError(e,
+                $"[DeleteAccountAsync] ErrorCode: {ErrorCode.DeleteAccountFailException}, uid: {uid}");
+            return ErrorCode.DeleteAccountFailException;
         }
     }
 

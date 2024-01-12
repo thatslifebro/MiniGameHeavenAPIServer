@@ -67,12 +67,20 @@ public class AccountDb : IAccountDb
     public async Task<int> InsertUser(Int64 playerId, string nickname)
     {
         return await _queryFactory.Query("user_info")
-                                .InsertAsync(new
+                                .InsertGetIdAsync<int>(new
                                 {
                                     player_id = playerId,
                                     nickname = nickname,
                                     create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                                    recent_login_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                                 });
+    }
+
+    public async Task<int> DeleteAccount(int uid)
+    {
+        return await _queryFactory.Query("user_info")
+                                .Where("uid", uid)
+                                .DeleteAsync();
     }
     
     public IDbConnection ADbConnection()
@@ -127,36 +135,36 @@ public class AccountDb : IAccountDb
         }, transaction);
     }
 
-    public async Task<IEnumerable<FriendUserInfo>> GetFriendUserInfoList(int uid, string orderby)
+    public async Task<IEnumerable<AdbFriendUserInfo>> GetFriendUserInfoList(int uid, string orderby)
     {
         return await _queryFactory.Query("friend")
                                 .Join("user_info", "user_info.uid", "friend.friend_uid")
                                 .Where("friend.uid", uid)
                                 .Where("accept_yn", true)
-                                .Select("user_info.uid", "nickname", $"{orderby}")// FriendUserInfo에 따라 변경 필요
+                                .Select("user_info.uid", "nickname", $"{orderby}, recent_login_dt")// AdbFriendUserInfo에 따라 변경 필요
                                 .OrderByDesc(orderby)
                                 .OrderBy("nickname")
-                                .GetAsync<FriendUserInfo>();
+                                .GetAsync<AdbFriendUserInfo>();
     }
 
-    public async Task<IEnumerable<FriendReqInfo>> GetFriendReceivedReqInfoList(int uid)
+    public async Task<IEnumerable<AdbFriendReqListInfo>> GetFriendReceivedReqInfoList(int uid)
     {
         return await _queryFactory.Query("friend")
                                 .Join("user_info", "user_info.uid", "friend.uid")
                                 .Where("friend.friend_uid", uid)
                                 .Where("accept_yn", false)
-                                .Select("user_info.uid", "user_info.nickname")
-                                .GetAsync<FriendReqInfo>();
+                                .Select("user_info.uid", "user_info.nickname", "friend.create_dt")
+                                .GetAsync<AdbFriendReqListInfo>();
     }
 
-    public async Task<IEnumerable<FriendReqInfo>> GetFriendSentReqInfoList(int uid)
+    public async Task<IEnumerable<AdbFriendReqListInfo>> GetFriendSentReqInfoList(int uid)
     {
         return await _queryFactory.Query("friend")
                                 .Join("user_info", "user_info.uid", "friend.friend_uid")
                                 .Where("friend.uid", uid)
                                 .Where("accept_yn", false)
-                                .Select("user_info.uid", "user_info.nickname")
-                                .GetAsync<FriendReqInfo>();
+                                .Select("user_info.uid", "user_info.nickname", "friend.create_dt")
+                                .GetAsync<AdbFriendReqListInfo>();
     }
 
     public async Task<int> DeleteFriendEachOther(int uid, int friendUid)
