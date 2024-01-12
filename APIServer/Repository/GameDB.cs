@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using APIServer.Controllers.Game;
 using APIServer.Model.DAO;
 using APIServer.Model.DTO.Friend;
 using APIServer.Repository;
@@ -39,13 +40,13 @@ public class GameDb : IGameDb
         Close();
     }
 
-    public async Task<IEnumerable<GdbGameInfo>> GetGameList(int uid)
+    public async Task<IEnumerable<GdbGameListInfo>> GetGameList(int uid)
     {
         return await _queryFactory.Query("game").Join("master_db.game_info", "game.game_id", "game_info.game_id")
             .Select("game.game_id", "game_name", "bestscore","game.create_dt")
             .Where("uid", uid)
             .OrderBy("uid")
-            .GetAsync<GdbGameInfo>();
+            .GetAsync<GdbGameListInfo>();
     }
 
     public async Task<int> InsertInitGameList(int uid)
@@ -65,6 +66,15 @@ public class GameDb : IGameDb
             new { uid = uid,
                 game_id = gameId,
                 create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")});
+    }
+
+    public async Task<GdbGameInfo> GetGameInfo(int uid, int gameId)
+    {
+        return await _queryFactory.Query("game").Join("master_db.game_info", "game.game_id", "game_info.game_id")
+                                            .Select("game.game_id", "game_name", "bestscore","game.create_dt") // GdbGameInfo 추가예정
+                                            .Where("uid", uid)
+                                            .Where("game.game_id", gameId)
+                                            .FirstOrDefaultAsync<GdbGameInfo>();
     }
 
     private void Open()

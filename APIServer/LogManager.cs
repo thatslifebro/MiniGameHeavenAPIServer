@@ -18,6 +18,7 @@ public static class LogManager
         FriendCancelReq = 206,
         GameList = 301,
         GameUnlock = 302,
+        GameInfo = 303,
     }
 
     private static ILoggerFactory s_loggerFactory;
@@ -36,6 +37,7 @@ public static class LogManager
         { EventType.FriendCancelReq, new EventId((int)EventType.FriendCancelReq, "FriendCancelReq") },
         { EventType.GameList, new EventId((int)EventType.GameList, "GameList") },
         { EventType.GameUnlock, new EventId((int)EventType.GameUnlock, "GameUnlock") },
+        { EventType.GameInfo, new EventId((int)EventType.GameInfo, "GameInfo") },
     };
 
     public static ILogger Logger { get; private set; }

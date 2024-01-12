@@ -5,12 +5,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace APIServer.Model.DTO.Friend;
 
-public class GameListRequest : RequestDTO
+public class GameInfoRequest : RequestDTO
 {
+    public int GameId { get; set; }
 }
 
 
-public class GameListResponse : ErrorCodeDTO
+public class GameInfoResponse : ErrorCodeDTO
 {
-    public IEnumerable<GdbGameListInfo> GameList { get; set; }
+    public GdbGameInfo GameInfo { get; set; }
 }
