@@ -59,6 +59,14 @@ public class GameDb : IGameDb
         });
     }
 
+    public async Task<int> InsertGame(int uid,int gameId)
+    {
+        return await _queryFactory.Query("game").InsertAsync(
+            new { uid = uid,
+                game_id = gameId,
+                create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")});
+    }
+
     private void Open()
     {
         _dbConn = new MySqlConnection(_dbConfig.Value.GameDb);

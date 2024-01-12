@@ -38,6 +38,27 @@ public class GameService :IGameService
         }
     }
 
+    public async Task<ErrorCode> UnlockGame(int uid, int gameId)
+    {
+        try
+        {
+            var rowCount = await _gameDb.InsertGame(uid, gameId);
+            if(rowCount != 1)
+            {
+                _logger.ZLogDebug(
+                $"[Game.SetNewUserGameList] ErrorCode: {ErrorCode.GameUnlockFailInsert}, Uid: {uid}");
+                return ErrorCode.GameUnlockFailInsert;
+            }
+            return ErrorCode.None;
+        }
+        catch (Exception e)
+        {
+            _logger.ZLogError(e,
+                $"[Game.GameUnlock] ErrorCode: {ErrorCode.GameUnlockFailException}, Uid: {uid}");
+            return ErrorCode.GameUnlockFailException;
+        }
+    }
+
     public async Task<ErrorCode> InitGameList(int uid)
     {
         try

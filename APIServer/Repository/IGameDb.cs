@@ -11,4 +11,5 @@ public interface IGameDb
 {
     public Task<IEnumerable<GdbGameInfo>> GetGameList(int uid);
     public Task<int> InsertInitGameList(int uid);
+    public Task<int> InsertGame(int uid, int gameId);
 }
