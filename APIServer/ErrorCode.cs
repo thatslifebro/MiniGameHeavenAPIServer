@@ -40,16 +40,18 @@ public enum ErrorCode : UInt16
     FriendAddFailException = 2025,
     FriendAddFailAlreadyFriend = 2026,
     FriendAddFailSameUid = 2027,
-    FriendGetListFailException = 2028,
-    FriendGetRequestListFailException = 2029,
-    FriendDeleteFailNotFriend = 2030,
-    FriendDeleteFailDelete = 2031,
-    FriendDeleteFailException = 2032,
-    FriendDeleteFailSameUid = 2033,
-    FriendDeleteReqFailNotFriend = 2034,
-    FriendDeleteReqFailDelete = 2035,
-    FriendDeleteReqFailException = 2036,
-    FriendAcceptFailException = 2037,
+    FriendGetListFailOrderby = 2028,
+    FriendGetListFailException = 2029,
+    FriendGetRequestListFailException = 2030,
+    FriendDeleteFailNotFriend = 2031,
+    FriendDeleteFailDelete = 2032,
+    FriendDeleteFailException = 2033,
+    FriendDeleteFailSameUid = 2034,
+    FriendDeleteReqFailNotFriend = 2035,
+    FriendDeleteReqFailDelete = 2036,
+    FriendDeleteReqFailException = 2037,
+    FriendAcceptFailException = 2038,
+
 
 
     // Character 3000 ~

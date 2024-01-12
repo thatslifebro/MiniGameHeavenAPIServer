@@ -20,7 +20,7 @@ public interface IAccountDb : IDisposable
     public Task<int> InsertFriendReq(int uid, int friendUid, bool accept = false);
     public Task<int> InsertFriendReq(int uid, int friendUid, IDbTransaction transaction, bool accept = false);
     public Task<int> UpdateFriendReqAccept(int uid, int friendUid, IDbTransaction transaction, bool accept = false);
-    public Task<IEnumerable<FriendUserInfo>> GetFriendUserInfoList(int uid);
+    public Task<IEnumerable<FriendUserInfo>> GetFriendUserInfoList(int uid, string orderby);
     public Task<IEnumerable<FriendReqInfo>> GetFriendReceivedReqInfoList(int uid);
     public Task<IEnumerable<FriendReqInfo>> GetFriendSentReqInfoList(int uid);
     public Task<int> DeleteFriendEachOther(int uid, int friendUid);

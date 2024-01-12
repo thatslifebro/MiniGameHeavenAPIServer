@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 using APIServer.Model.DTO.Friend;
 using System.Collections.Generic;
 using APIServer.Servicies.Interfaces;
+using System.Linq;
 
 namespace APIServer.Servicies;
 
@@ -19,11 +20,8 @@ public class FriendService : IFriendService
 {
     readonly ILogger<FriendService> _logger;
     readonly IAccountDb _accountDb;
-    readonly IMemoryDb _memoryDb;
-    string _hiveServerAddress;
-    public FriendService(ILogger<FriendService> logger, IAccountDb accountDb, IMemoryDb memoryDb)
+    public FriendService(ILogger<FriendService> logger, IAccountDb accountDb)
     {
-        _memoryDb = memoryDb;
         _accountDb = accountDb;
         _logger = logger;
     }
@@ -73,11 +71,17 @@ public class FriendService : IFriendService
         }
     }
 
-    public async Task<(ErrorCode, IEnumerable<FriendUserInfo>)> GetFriendList(int uid)
+    public async Task<(ErrorCode, IEnumerable<FriendUserInfo>)> GetFriendList(int uid, string orderby)
     {
         try
         {
-            return (ErrorCode.None, await _accountDb.GetFriendUserInfoList(uid));
+            if(!new[] {"bestscore_ever", "bestscore_prev_season", "bestscore_cur_season" }.Contains(orderby))
+            {
+                _logger.ZLogDebug(
+                $"[Friend.GetFriendList] ErrorCode: {ErrorCode.FriendGetListFailOrderby}, orderby: {orderby}");
+                return (ErrorCode.FriendGetListFailOrderby, null);
+            }
+            return (ErrorCode.None, await _accountDb.GetFriendUserInfoList(uid, orderby));
         }
         catch (Exception e)
         {

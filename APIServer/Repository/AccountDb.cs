@@ -127,13 +127,15 @@ public class AccountDb : IAccountDb
         }, transaction);
     }
 
-    public async Task<IEnumerable<FriendUserInfo>> GetFriendUserInfoList(int uid)
+    public async Task<IEnumerable<FriendUserInfo>> GetFriendUserInfoList(int uid, string orderby)
     {
         return await _queryFactory.Query("friend")
                                 .Join("user_info", "user_info.uid", "friend.friend_uid")
                                 .Where("friend.uid", uid)
                                 .Where("accept_yn", true)
-                                .Select("user_info.uid", "user_info.nickname")// FriendUserInfo에 따라 변경 필요
+                                .Select("user_info.uid", "nickname", $"{orderby}")// FriendUserInfo에 따라 변경 필요
+                                .OrderByDesc(orderby)
+                                .OrderBy("nickname")
                                 .GetAsync<FriendUserInfo>();
     }
 

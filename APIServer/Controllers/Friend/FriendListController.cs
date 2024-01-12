@@ -26,12 +26,13 @@ public class FriendList : ControllerBase
     /// <summary>
     /// 친구 목록 조회 API
     /// 친구 목록과 친구 정보를 불러옵니다.
+    /// orderby에 따라서 역대 점수, 현재 시즌 점수, 이전 시즌 점수 순으로 정렬가능 합니다.
     /// </summary>
     [HttpPost]
-    public async Task<FriendListResponse> GetFriendList(FriendListRequest request)
+    public async Task<FriendListResponse> GetFriendList(FriendListRequest request, [FromQuery(Name = "orderby")] string orderby = "bestscore_ever")
     {
         FriendListResponse response = new();
-        (response.Result, response.FriendList) = await _friendService.GetFriendList(request.Uid);
+        (response.Result, response.FriendList) = await _friendService.GetFriendList(request.Uid, orderby);
 
         _logger.ZLogInformation(EventIdDic[EventType.FriendList], $"Uid : {request.Uid}");
         return response;
