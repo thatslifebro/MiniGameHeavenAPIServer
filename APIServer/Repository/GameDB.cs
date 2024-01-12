@@ -71,7 +71,7 @@ public class GameDb : IGameDb
     public async Task<GdbGameInfo> GetGameInfo(int uid, int gameId)
     {
         return await _queryFactory.Query("game").Join("master_db.game_info", "game.game_id", "game_info.game_id")
-                                            .Select("game.game_id", "game_name", "bestscore","game.create_dt") // GdbGameInfo 추가예정
+                                            .Select("game.game_id", "game_name", "bestscore","game.create_dt", "new_record_dt", "recent_play_dt") // GdbGameInfo 추가예정
                                             .Where("uid", uid)
                                             .Where("game.game_id", gameId)
                                             .FirstOrDefaultAsync<GdbGameInfo>();

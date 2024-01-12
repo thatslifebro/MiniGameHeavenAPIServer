@@ -16,5 +16,7 @@ public class GdbGameInfo
     public string game_name { get; set; }
     public int bestscore { get; set; }
     public string create_dt { get; set; }
+    public string new_record_dt { get; set; }
+    public string recent_play_dt { get; set; }
     // 아이템1 레벨 및 개수, 아이템2 레벨 및 개수, 대표 캐릭터 정보(레벨, 코스튬) 추가예정
 }

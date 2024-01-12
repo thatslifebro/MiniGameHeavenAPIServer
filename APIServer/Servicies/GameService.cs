@@ -1,4 +1,5 @@
 ﻿using APIServer.Controllers.Friend;
+using APIServer.Controllers.Game;
 using APIServer.Model.DAO;
 using APIServer.Model.DTO.Friend;
 using APIServer.Services;
@@ -24,7 +25,7 @@ public class GameService :IGameService
         _gameDb = gameDb;
     }
 
-    public async Task<(ErrorCode, IEnumerable<GdbGameInfo>)> GetGameList(int uid)
+    public async Task<(ErrorCode, IEnumerable<GdbGameListInfo>)> GetGameList(int uid)
     {
         try
         {
@@ -56,6 +57,20 @@ public class GameService :IGameService
             _logger.ZLogError(e,
                 $"[Game.GameUnlock] ErrorCode: {ErrorCode.GameUnlockFailException}, Uid: {uid}");
             return ErrorCode.GameUnlockFailException;
+        }
+    }
+
+    public async Task<(ErrorCode, GdbGameInfo)> GetGameInfo(int uid, int gameId)
+    {
+        try
+        {
+            return (ErrorCode.None, await _gameDb.GetGameInfo(uid,gameId));
+        }
+        catch (Exception e)
+        {
+            _logger.ZLogError(e,
+                $"[Game.GetGameList] ErrorCode: {ErrorCode.GameInfoFailException}, Uid: {uid}");
+            return (ErrorCode.GameInfoFailException, null);
         }
     }
 
