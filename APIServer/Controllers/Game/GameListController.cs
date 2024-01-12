@@ -26,7 +26,7 @@ public class GameList : ControllerBase
     /// 보유한 게임의 목록과 정보를 조회합니다.
     /// </summary>
     [HttpPost]
-    public async Task<GameListResponse> GetFriendList(GameListRequest request)
+    public async Task<GameListResponse> GetGameList(GameListRequest request)
     {
         GameListResponse response = new();
         (response.Result, response.GameList) = await _gameService.GetGameList(request.Uid);
