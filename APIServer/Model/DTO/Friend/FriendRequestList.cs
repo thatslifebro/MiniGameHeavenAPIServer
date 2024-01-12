@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using APIServer.Model.DAO;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,12 +12,5 @@ public class FriendRequestListRequest : RequestDTO
 
 public class FriendRequestListResponse : ErrorCodeDTO
 {
-    public IEnumerable<FriendReqInfo> FriendRequestList { get; set; }
-}
-
-public class FriendReqInfo
-{
-    //uid와 nickname만 전달
-    public int Uid { get; set; }
-    public string NickName { get; set; }
+    public IEnumerable<AdbFriendReqListInfo> FriendRequestList { get; set; }
 }

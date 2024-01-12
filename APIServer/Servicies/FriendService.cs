@@ -71,7 +71,7 @@ public class FriendService : IFriendService
         }
     }
 
-    public async Task<(ErrorCode, IEnumerable<FriendUserInfo>)> GetFriendList(int uid, string orderby)
+    public async Task<(ErrorCode, IEnumerable<AdbFriendUserInfo>)> GetFriendList(int uid, string orderby)
     {
         try
         {
@@ -91,7 +91,7 @@ public class FriendService : IFriendService
         }
     }
 
-    public async Task<(ErrorCode, IEnumerable<FriendReqInfo>)> GetFriendReceivedReqList(int uid)
+    public async Task<(ErrorCode, IEnumerable<AdbFriendReqListInfo>)> GetFriendReceivedReqList(int uid)
     {
         try
         {
@@ -105,7 +105,7 @@ public class FriendService : IFriendService
         }
     }
 
-    public async Task<(ErrorCode, IEnumerable<FriendReqInfo>)> GetFriendSentReqList(int uid)
+    public async Task<(ErrorCode, IEnumerable<AdbFriendReqListInfo>)> GetFriendSentReqList(int uid)
     {
         try
         {
