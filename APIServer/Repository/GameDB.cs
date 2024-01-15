@@ -15,11 +15,13 @@ using ZLogger;
 
 namespace APIServer.Services;
 
+
 public class GameDb : IGameDb
 {
     readonly ILogger<GameDb> _logger;
     readonly IOptions<DbConfig> _dbConfig;
-        
+
+    const int InitCharacterId = 1;
     IDbConnection _dbConn;
     SqlKata.Compilers.MySqlCompiler _compiler;
     QueryFactory _queryFactory;
@@ -111,6 +113,22 @@ public class GameDb : IGameDb
                                                 {
                                                     recent_play_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
                                                 });
+    }
+
+    public async Task<int> InsertInitCharacter(int uid)
+    {
+        return await _queryFactory.Query("game").InsertAsync(
+            new
+            {
+                uid = uid,
+                char_id = InitCharacterId,
+                create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
+            });
+    }
+
+    public IDbConnection GDbConnection()
+    {
+        return _queryFactory.Connection;
     }
 
     private void Open()

@@ -49,7 +49,7 @@ public class CreateAccount : ControllerBase
             return response;
         }
 
-        errorCode = await _gameService.InitGameList(uid);
+        errorCode = await _gameService.InitNewUserGameData(uid);
         if (errorCode != ErrorCode.None)
         {
             // 게임 데이터 생성 실패시 앞서 만든 계정 다시 삭제.

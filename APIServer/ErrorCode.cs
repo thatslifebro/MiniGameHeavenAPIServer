@@ -39,6 +39,9 @@ public enum ErrorCode : UInt16
     LogoutRedisDelFailException= 2022,
     DeleteAccountFail = 2023,
     DeleteAccountFailException = 2024,
+    InitNewUserGameDataFailException = 2025,
+    InitNewUserGameDataFailCharacter = 2026,
+    InitNewUserGameDataFailGameList = 2027,
 
     FriendAddFailUserNotExist = 2101,
     FriendAddFailInsert = 2102,

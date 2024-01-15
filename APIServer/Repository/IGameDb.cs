@@ -2,6 +2,7 @@
 using APIServer.Model.DTO.Friend;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 
 
@@ -16,4 +17,6 @@ public interface IGameDb
     public Task<int> UpdateBestscore(int uid, int gameId, int score);
     public Task<int> UpdateBestscoreCurSeason(int uid, int gameId, int score);
     public Task<int> UpdateRecentPlayDt(int uid, int gameId);
+    public Task<int> InsertInitCharacter(int uid);
+    public IDbConnection GDbConnection();
 }

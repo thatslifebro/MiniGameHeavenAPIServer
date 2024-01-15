@@ -98,25 +98,35 @@ public class GameService :IGameService
         }
     }
 
-    public async Task<ErrorCode> InitGameList(int uid)
+    public async Task<ErrorCode> InitNewUserGameData(int uid)
     {
+        var transaction = _gameDb.GDbConnection().BeginTransaction();
         try
         {
             var rowCount = await _gameDb.InsertInitGameList(uid);
             if (rowCount != 3)
             {
-                _logger.ZLogDebug(
-                $"[Game.SetNewUserGameList] ErrorCode: {ErrorCode.GameSetNewUserListFailInsert}, Uid: {uid}");
-                return ErrorCode.GameSetNewUserListFailInsert;
+                transaction.Rollback();
+                return ErrorCode.InitNewUserGameDataFailGameList;
             }
-
+            rowCount = await _gameDb.InsertInitCharacter(uid);
+            if (rowCount != 1)
+            {
+                transaction.Rollback();
+                return ErrorCode.InitNewUserGameDataFailCharacter;
+            }
+            transaction.Commit();
             return ErrorCode.None;
         }
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                $"[Game.SetNewUserGameList] ErrorCode: {ErrorCode.GameSetNewUserListFailException}, Uid: {uid}");
+                $"[Game.InitNewUserGameData] ErrorCode: {ErrorCode.InitNewUserGameDataFailException}, Uid: {uid}");
             return ErrorCode.GameSetNewUserListFailException;
+        }
+        finally
+        {
+            transaction.Dispose();
         }
     }
 }
