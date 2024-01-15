@@ -23,7 +23,7 @@ public class CheckUserAuthAndLoadUserData
     public async Task Invoke(HttpContext context)
     {
         //로그인, 회원가입 api는 토큰 검사를 하지 않는다.
-        string formString = context.Request.Path.Value;
+        var formString = context.Request.Path.Value;
         if (string.Compare(formString, "/Login", StringComparison.OrdinalIgnoreCase) == 0 ||
             string.Compare(formString, "/CreateAccount", StringComparison.OrdinalIgnoreCase) == 0)
         {
@@ -37,7 +37,7 @@ public class CheckUserAuthAndLoadUserData
         // 다중 읽기 허용 함수 -> 파일 형식으로 임시 변환
         context.Request.EnableBuffering();
 
-        string userLockKey = "";
+        var userLockKey = "";
 
         using (StreamReader reader = new(context.Request.Body, Encoding.UTF8, true, 4096, true))
         {
@@ -94,31 +94,29 @@ public class CheckUserAuthAndLoadUserData
         {
             return false;
         }
+        context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
 
-
-        string errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
+        var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
         {
             result = ErrorCode.AuthTokenFailSetNx
         });
-        byte[] bytes = Encoding.UTF8.GetBytes(errorJsonResponse);
-        await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+        await context.Response.WriteAsync(errorJsonResponse);
         return true;
     }
 
-    static async Task<bool> IsInvalidUserAuthTokenThenSendError(HttpContext context, RdbAuthUserData userInfo, string token)
+    async Task<bool> IsInvalidUserAuthTokenThenSendError(HttpContext context, RdbAuthUserData userInfo, string token)
     {
         if (string.CompareOrdinal(userInfo.Token, token) == 0)
         {
             return false;
         }
 
-
-        string errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
         {
             result = ErrorCode.AuthTokenFailWrongAuthToken
         });
-        byte[] bytes = Encoding.UTF8.GetBytes(errorJsonResponse);
-        await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+        await context.Response.WriteAsync(errorJsonResponse);
 
         return true;
     }
@@ -128,21 +126,19 @@ public class CheckUserAuthAndLoadUserData
     {
         try
         {
-            uid = document.RootElement.GetProperty("uid").GetInt16();
+            uid = document.RootElement.GetProperty("uid").GetInt32();
             token = document.RootElement.GetProperty("token").GetString();
             return false;
         }
         catch
         {
             uid = 0; token = "";
-
-            string errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
             {
                 result = ErrorCode.AuthTokenFailWrongKeyword
             });
-
-            byte[] bytes = Encoding.UTF8.GetBytes(errorJsonResponse);
-            context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+            context.Response.WriteAsync(errorJsonResponse);
 
             return true;
         }
@@ -154,13 +150,13 @@ public class CheckUserAuthAndLoadUserData
         {
             return false;
         }
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
 
-        string errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
+        var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
         {
             result = ErrorCode.InValidRequestHttpBody
         });
-        byte[] bytes = Encoding.UTF8.GetBytes(errorJsonResponse);
-        await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+        await context.Response.WriteAsync(errorJsonResponse);
 
         return true;
     }
@@ -169,18 +165,19 @@ public class CheckUserAuthAndLoadUserData
     {
         if (!isOk)
         {
-            string errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
+            var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
             {
                 result = ErrorCode.AuthTokenKeyNotFound
             });
-            byte[] bytes = Encoding.UTF8.GetBytes(errorJsonResponse);
-            await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+            await context.Response.WriteAsync(errorJsonResponse);
         }
         return !isOk;
     }
 
 
-    public class MiddlewareResponse
+    class MiddlewareResponse
     {
         public ErrorCode result { get; set; }
     }

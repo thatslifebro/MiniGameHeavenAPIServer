@@ -1,6 +1,7 @@
 ﻿using APIServer.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 using System.Threading.Tasks;
 using ZLogger;
 
@@ -24,28 +25,42 @@ public class VersionCheck
     {
         var appVersion = context.Request.Headers["AppVersion"].ToString();
         var masterDataVersion = context.Request.Headers["MasterDataVersion"].ToString();
-        if (!VersionCompare(appVersion, masterDataVersion))
+        if (!(await VersionCompare(appVersion, masterDataVersion, context)))
         {
-            context.Response.StatusCode = StatusCodes.Status426UpgradeRequired;
-            await context.Response.WriteAsync("VersionCheck Error");
             return;
         }
         await _next(context);
     }
 
-    bool VersionCompare(string appVersion, string masterDataVersion)
+    async Task<bool> VersionCompare(string appVersion, string masterDataVersion, HttpContext context)
     {
         if (!appVersion.Equals(_masterDb._version!.app_version))
         {
+            context.Response.StatusCode = StatusCodes.Status426UpgradeRequired;
+            string errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
+            {
+                result = ErrorCode.InValidAppVersion
+            });
+            await context.Response.WriteAsync(errorJsonResponse);
             return false;
         }
 
         if (!masterDataVersion.Equals(_masterDb._version!.master_data_version))
         {
+            context.Response.StatusCode = StatusCodes.Status426UpgradeRequired;
+            string errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
+            {
+                result = ErrorCode.InvalidMasterDataVersion
+            });
+            await context.Response.WriteAsync(errorJsonResponse);
             return false;
         }
 
         return true;
+    }
+    class MiddlewareResponse
+    {
+        public ErrorCode result { get; set; }
     }
 }
 
