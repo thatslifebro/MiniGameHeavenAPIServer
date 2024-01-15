@@ -71,8 +71,8 @@ public class AccountDb : IAccountDb
                                 {
                                     player_id = playerId,
                                     nickname = nickname,
-                                    create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                                    recent_login_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                                    create_dt = DateTime.Now,
+                                    recent_login_dt = DateTime.Now,
                                 });
     }
 
@@ -92,7 +92,7 @@ public class AccountDb : IAccountDb
     {
         return await _queryFactory.Query("user_info").Where("uid", uid).UpdateAsync(new
         {
-            recent_login_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+            recent_login_dt = DateTime.Now,
         });
     }
 
@@ -112,7 +112,7 @@ public class AccountDb : IAccountDb
                                     uid = uid,
                                     friend_uid = friendUid,
                                     accept_yn = accept,
-                                    create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                                    create_dt = DateTime.Now,
                                 });
     }
     public async Task<int> InsertFriendReq(int uid, int friendUid, IDbTransaction transaction, bool accept = false)
@@ -123,7 +123,7 @@ public class AccountDb : IAccountDb
                                     uid = uid,
                                     friend_uid = friendUid,
                                     accept_yn = accept,
-                                    create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                                    create_dt = DateTime.Now,
                                 }, transaction);
     }
 

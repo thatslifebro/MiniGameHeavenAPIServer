@@ -68,7 +68,7 @@ public class GameDb : IGameDb
         return await _queryFactory.Query("game").InsertAsync(
             new { uid = uid,
                 game_id = gameId,
-                create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")});
+                create_dt = DateTime.Now});
     }
 
     public async Task<GdbGameInfo> GetGameInfo(int uid, int gameId)
@@ -89,8 +89,8 @@ public class GameDb : IGameDb
                                                 { 
                                                     bestscore = score,
                                                     bestscore_cur_season = score,
-                                                    new_record_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                                                    recent_play_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
+                                                    new_record_dt = DateTime.Now,
+                                                    recent_play_dt = DateTime.Now
                                                 });
     }
 
@@ -102,7 +102,7 @@ public class GameDb : IGameDb
                                                 .UpdateAsync(new
                                                 {
                                                     bestscore_cur_season = score,
-                                                    recent_play_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
+                                                    recent_play_dt = DateTime.Now
                                                 });
     }
 
@@ -112,7 +112,7 @@ public class GameDb : IGameDb
                                                 .Where("game_id", gameId)
                                                 .UpdateAsync(new
                                                 {
-                                                    recent_play_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
+                                                    recent_play_dt = DateTime.Now
                                                 });
     }
 
@@ -123,7 +123,7 @@ public class GameDb : IGameDb
             {
                 uid = uid,
                 char_id = InitCharacterId,
-                create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
+                create_dt = DateTime.Now
             }, transaction);
     }
 
