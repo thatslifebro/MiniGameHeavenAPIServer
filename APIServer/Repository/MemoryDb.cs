@@ -27,7 +27,7 @@ public class MemoryDb : IMemoryDb
 
     public async Task<ErrorCode> RegistUserAsync(string token, int uid)
     {
-        string key = MemoryDbKeyMaker.MakeUIDKey(uid.ToString());
+        var key = MemoryDbKeyMaker.MakeUIDKey(uid.ToString());
         ErrorCode result = ErrorCode.None;
 
         RdbAuthUserData user = new()
@@ -59,7 +59,7 @@ public class MemoryDb : IMemoryDb
 
     public async Task<ErrorCode> CheckUserAuthAsync(string id, string token)
     {
-        string key = MemoryDbKeyMaker.MakeUIDKey(id);
+        var key = MemoryDbKeyMaker.MakeUIDKey(id);
         ErrorCode result = ErrorCode.None;
 
         try
@@ -94,7 +94,7 @@ public class MemoryDb : IMemoryDb
 
     public async Task<bool> SetUserStateAsync(RdbAuthUserData user, UserState userState)
     {
-        string key = MemoryDbKeyMaker.MakeUIDKey(user.Uid.ToString());
+        var key = MemoryDbKeyMaker.MakeUIDKey(user.Uid.ToString());
         try
         {
             RedisString<RdbAuthUserData> redis = new(_redisConn, key, null);
@@ -111,7 +111,7 @@ public class MemoryDb : IMemoryDb
 
     public async Task<(bool, RdbAuthUserData)> GetUserAsync(int id)
     {
-        string uid = MemoryDbKeyMaker.MakeUIDKey(id.ToString());
+        var uid = MemoryDbKeyMaker.MakeUIDKey(id.ToString());
 
         try
         {
