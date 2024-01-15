@@ -74,28 +74,6 @@ public class MasterDb : IMasterDb
         return true;
     }
 
-    QueryFactory CraeteQueryFactory(MySqlConnection connection)
-    {
-        SqlKata.Compilers.MySqlCompiler compiler = new();
-        return new QueryFactory(connection, compiler);
-    }
-
-    async Task<bool> LoadItem(QueryFactory queryFactory)
-    {
-        IEnumerable<ItemData> loadedDatas = await queryFactory.Query($"MasterDb.Item").GetAsync<ItemData>();
-        if (loadedDatas is null)
-        {
-            return false;
-        }
-
-        foreach (ItemData loadedData in loadedDatas)
-        {
-            _itemDatas.Add(loadedData.ItemCode, loadedData);
-        }
-
-        return true;
-    }
-
     private void Open()
     {
         _dbConn = new MySqlConnection(_dbConfig.Value.MasterDb);
