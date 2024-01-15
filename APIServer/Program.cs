@@ -34,7 +34,6 @@ WebApplication app = builder.Build();
 
 //log setting
 ILoggerFactory loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
-LogManager.SetLoggerFactory(loggerFactory, "Global");
 
 app.UseMiddleware<APIServer.Middleware.VersionCheck>();
 app.UseMiddleware<APIServer.Middleware.CheckUserAuthAndLoadUserData>();
@@ -43,10 +42,6 @@ app.UseRouting();
 #pragma warning disable ASP0014
 app.UseEndpoints(endpoints => { _ = endpoints.MapControllers(); });
 #pragma warning restore ASP0014
-
-
-IMemoryDb redisDB = app.Services.GetRequiredService<IMemoryDb>();
-redisDB.Init(configuration.GetSection("DbConfig")["Redis"]);
 
 IMasterDb masterDataDB = app.Services.GetRequiredService<IMasterDb>();
 await masterDataDB.Load();

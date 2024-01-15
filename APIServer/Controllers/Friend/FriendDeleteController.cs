@@ -4,7 +4,6 @@ using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using static LogManager;
 using ZLogger;
 
 [ApiController]
@@ -40,7 +39,7 @@ public class FriendDelete : ControllerBase
             return response;
         }
 
-        _logger.ZLogInformation(EventIdDic[EventType.FriendDelete], $"Uid : {request.Uid}");
+        _logger.ZLogInformation($"[FriendDelete] Uid : {request.Uid}");
         return response;
     }
 }

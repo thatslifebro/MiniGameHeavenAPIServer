@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using static LogManager;
 using ZLogger;
 using APIServer.Model.DTO.Friend;
 
@@ -31,7 +30,7 @@ public class GameUnlock : ControllerBase
     GameUnlockResponse response = new();
     response.Result = await _gameService.UnlockGame(request.Uid, request.GameId);
     
-    _logger.ZLogInformation(EventIdDic[EventType.GameUnlock], $"Uid : {request.Uid}, GameId : {request.GameId}");
+    _logger.ZLogInformation($"[GameUnlock] Uid : {request.Uid}, GameId : {request.GameId}");
         return response;
     }
 }

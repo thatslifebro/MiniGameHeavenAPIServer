@@ -200,5 +200,5 @@ public class DbConfig
     public string MasterDb { get; set; }
     public string AccountDb { get; set; }
     public string GameDb { get; set; }
-    public string Memcached { get; set; }
+    public string Redis { get; set; }
 }

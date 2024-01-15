@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using ZLogger;
-using static LogManager;
 
 namespace APIServer.Controllers.Friend;
 
@@ -43,7 +42,7 @@ public class FriendAdd : ControllerBase
             return response;
         }
 
-        _logger.ZLogInformation(EventIdDic[EventType.FriendAdd], $"Uid : {request.Uid}");
+        _logger.ZLogInformation($"[FriendAdd] Uid : {request.Uid}");
 
         return response;
 

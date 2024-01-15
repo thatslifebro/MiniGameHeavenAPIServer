@@ -11,6 +11,8 @@ public enum ErrorCode : UInt16
     InValidRequestHttpBody = 1003,
     AuthTokenFailWrongAuthToken = 1006,
     Hive_Fail_InvalidResponse = 1010,
+    InValidAppVersion = 1011,
+    InvalidMasterDataVersion = 1012,
 
     // Account 2000 ~
     CreateAccountFailException = 2001,
@@ -25,7 +27,7 @@ public enum ErrorCode : UInt16
     AuthTokenMismatch = 2010,
     AuthTokenKeyNotFound = 2011,
     AuthTokenFailWrongKeyword = 2012,
-    AuthTokenFailSetNx = 20013,
+    AuthTokenFailSetNx = 2013,
     AccountIdMismatch = 2014,
     DuplicatedLogin = 2015,
     CreateAccountFailInsert = 2016,

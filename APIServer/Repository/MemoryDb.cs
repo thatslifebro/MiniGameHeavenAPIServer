@@ -3,26 +3,27 @@ using APIServer.Services;
 using CloudStructures;
 using CloudStructures.Structures;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
+using System.Net;
 using System.Threading.Tasks;
 using ZLogger;
-using static LogManager;
 
 namespace APIServer.Repository;
 
 public class MemoryDb : IMemoryDb
 {
-    public RedisConnection _redisConn;
-    private static readonly ILogger<MemoryDb> s_logger = GetLogger<MemoryDb>();
+    readonly RedisConnection _redisConn;
+    readonly ILogger<MemoryDb> _logger;
+    readonly IOptions<DbConfig> _dbConfig;
 
-    public void Init(string address)
+    public MemoryDb(ILogger<MemoryDb> logger, IOptions<DbConfig> dbConfig)
     {
-        RedisConfig config = new("default", address);
+        _logger = logger;
+        _dbConfig = dbConfig;
+        RedisConfig config = new ("default", _dbConfig.Value.Redis);
         _redisConn = new RedisConnection(config);
-
-        s_logger.ZLogDebug($"userDbAddress:{address}");
     }
-
 
     public async Task<ErrorCode> RegistUserAsync(string token, int uid)
     {
@@ -41,16 +42,14 @@ public class MemoryDb : IMemoryDb
             RedisString<RdbAuthUserData> redis = new(_redisConn, key, LoginTimeSpan());
             if (await redis.SetAsync(user, LoginTimeSpan()) == false)
             {
-                s_logger.ZLogError(EventIdDic[EventType.LoginAddRedis],
-                    $"Uid:{uid}, Token:{token},ErrorMessage:UserBasicAuth, RedisString set Error");
+                _logger.ZLogError($"[RegistUserAsync] Uid:{uid}, Token:{token},ErrorMessage:UserBasicAuth, RedisString set Error");
                 result = ErrorCode.LoginFailAddRedis;
                 return result;
             }
         }
         catch
         {
-            s_logger.ZLogError(EventIdDic[EventType.LoginAddRedis],
-                $"Uid:{uid}, Token:{token},ErrorMessage:Redis Connection Error");
+            _logger.ZLogError($"[RegistUserAsync] Uid:{uid}, Token:{token},ErrorMessage:Redis Connection Error");
             result = ErrorCode.LoginFailAddRedis;
             return result;
         }
@@ -70,24 +69,21 @@ public class MemoryDb : IMemoryDb
 
             if (!user.HasValue)
             {
-                s_logger.ZLogError(EventIdDic[EventType.Login],
-                    $"RedisDb.CheckUserAuthAsync: Email = {id}, AuthToken = {token}, ErrorMessage:ID does Not Exist");
+                _logger.ZLogError( $"[CheckUserAuthAsync] Email = {id}, AuthToken = {token}, ErrorMessage:ID does Not Exist");
                 result = ErrorCode.CheckAuthFailNotExist;
                 return result;
             }
 
             if (user.Value.Uid.ToString() != id || user.Value.Token != token)
             {
-                s_logger.ZLogError(EventIdDic[EventType.Login],
-                    $"RedisDb.CheckUserAuthAsync: Email = {id}, AuthToken = {token}, ErrorMessage = Wrong ID or Auth Token");
+                _logger.ZLogError($"[CheckUserAuthAsync] Email = {id}, AuthToken = {token}, ErrorMessage = Wrong ID or Auth Token");
                 result = ErrorCode.CheckAuthFailNotMatch;
                 return result;
             }
         }
         catch
         {
-            s_logger.ZLogError(EventIdDic[EventType.Login],
-                $"RedisDb.CheckUserAuthAsync: Email = {id}, AuthToken = {token}, ErrorMessage:Redis Connection Error");
+            _logger.ZLogError($"[CheckUserAuthAsync] Email = {id}, AuthToken = {token}, ErrorMessage:Redis Connection Error");
             result = ErrorCode.CheckAuthFailException;
             return result;
         }
@@ -123,8 +119,8 @@ public class MemoryDb : IMemoryDb
             RedisResult<RdbAuthUserData> user = await redis.GetAsync();
             if (!user.HasValue)
             {
-                s_logger.ZLogError(
-                    $"RedisDb.UserStartCheckAsync: UID = {uid}, ErrorMessage = Not Assigned User, RedisString get Error");
+                _logger.ZLogError(
+                    $"[GetUserAsync] UID = {uid}, ErrorMessage = Not Assigned User, RedisString get Error");
                 return (false, null);
             }
 
@@ -132,7 +128,7 @@ public class MemoryDb : IMemoryDb
         }
         catch
         {
-            s_logger.ZLogError($"UID:{uid},ErrorMessage:ID does Not Exist");
+            _logger.ZLogError($"[GetUserAsync] UID:{uid},ErrorMessage:ID does Not Exist");
             return (false, null);
         }
     }
@@ -187,8 +183,8 @@ public class MemoryDb : IMemoryDb
         }
         catch
         {
-            s_logger.ZLogError(
-                   $"RedisDb.DelUserAuthAsync: UID = {uid}, ErrorCode : {ErrorCode.LogoutRedisDelFailException}");
+            _logger.ZLogError(
+                   $"[DelUserAuthAsync] UID = {uid}, ErrorCode : {ErrorCode.LogoutRedisDelFailException}");
             return ErrorCode.LogoutRedisDelFailException;
         }
     }

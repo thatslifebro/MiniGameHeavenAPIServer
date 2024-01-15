@@ -5,7 +5,6 @@ using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using static LogManager;
 using ZLogger;
 
 namespace APIServer.Controllers.Friend;
@@ -34,7 +33,7 @@ public class FriendList : ControllerBase
         FriendListResponse response = new();
         (response.Result, response.FriendList) = await _friendService.GetFriendList(request.Uid, orderby);
 
-        _logger.ZLogInformation(EventIdDic[EventType.FriendList], $"Uid : {request.Uid}");
+        _logger.ZLogInformation($"[FriendList] Uid : {request.Uid}");
         return response;
     } 
 }

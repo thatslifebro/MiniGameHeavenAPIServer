@@ -5,7 +5,6 @@ using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ZLogger;
-using static LogManager;
 
 namespace APIServer.Controllers.Auth;
 
@@ -59,7 +58,7 @@ public class CreateAccount : ControllerBase
             return response;
         }
 
-        _logger.ZLogInformation(EventIdDic[EventType.CreateAccount], $"PlayerId : {request.PlayerId}");
+        _logger.ZLogInformation($"[CreateAccount] PlayerId : {request.PlayerId}");
 
         return response;
 

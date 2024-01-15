@@ -6,7 +6,6 @@ using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ZLogger;
-using static LogManager;
 
 namespace APIServer.Controllers.Auth;
 
@@ -64,7 +63,7 @@ public class Login : ControllerBase
             return response;
         }
 
-        _logger.ZLogInformation(EventIdDic[EventType.Login], $"Uid : {uid}, Token : {token}, PlayerId : {request.PlayerId}");
+        _logger.ZLogInformation($"[Login] Uid : {uid}, Token : {token}, PlayerId : {request.PlayerId}");
 
         response.Token = token;
         return response;

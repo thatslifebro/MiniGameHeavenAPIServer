@@ -5,7 +5,6 @@ using APIServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ZLogger;
-using static LogManager;
 
 namespace APIServer.Controllers.Auth;
 
@@ -36,7 +35,7 @@ public class Logout : ControllerBase
             response.Result = errorCode;
             return response;
         }
-        _logger.ZLogInformation(EventIdDic[EventType.CreateAccount], $"Uid : {request.Uid}");
+        _logger.ZLogInformation($"[Logout] Uid : {request.Uid}");
 
         return response;
     }

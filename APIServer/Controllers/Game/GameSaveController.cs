@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using static LogManager;
 using ZLogger;
 using APIServer.Model.DTO.Friend;
 
@@ -31,7 +30,7 @@ public class GameSave : ControllerBase
      GameSaveResponse response = new();
     response.Result = await _gameService.SaveGame(request.Uid, request.GameId, request.Score);
     
-    _logger.ZLogInformation(EventIdDic[EventType.GameSave], $"Uid : {request.Uid}, GameId : {request.GameId}, Score : {request.Score}");
+    _logger.ZLogInformation($"[GameSave] Uid : {request.Uid}, GameId : {request.GameId}, Score : {request.Score}");
         return response;
     }
 }
