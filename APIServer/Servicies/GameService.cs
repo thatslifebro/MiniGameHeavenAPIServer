@@ -78,6 +78,14 @@ public class GameService :IGameService
     {
         try
         {
+            var gameInfo = await _gameDb.GetGameInfo(uid, gameId);
+
+            if (gameInfo == null)
+            {
+                _logger.ZLogError($"[Game.GameSave] ErrorCode: {ErrorCode.GameSaveFailGameLocked}, Uid: {uid}");
+                return ErrorCode.GameSaveFailException;
+            }
+
             var row = await _gameDb.UpdateBestscore(uid, gameId, score);
             if(row == 0)
             {
