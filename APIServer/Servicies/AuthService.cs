@@ -33,12 +33,12 @@ public class AuthService : IAuthService
             HttpClient client = new();
             var hiveResponse = await client.PostAsJsonAsync(_hiveServerAddress, new { PlayerId = playerId, HiveToken = token });
 
-            if (!ValidateHiveResponse(hiveResponse))
+            if (hiveResponse == null || !ValidateHiveResponse(hiveResponse))
             {
-                var statusCode = hiveResponse == null ? 0 : hiveResponse.StatusCode;
-                _logger.ZLogDebug($"[VerifyTokenToHive Service] ErrorCode:{ErrorCode.Hive_Fail_InvalidResponse}, PlayerID = {playerId}, Token = {token}, StatusCode = {statusCode}");
+                _logger.ZLogDebug($"[VerifyTokenToHive Service] ErrorCode:{ErrorCode.Hive_Fail_InvalidResponse}, PlayerID = {playerId}, Token = {token}, StatusCode = {hiveResponse?.StatusCode}");
                 return false;
             }
+
             var authResult = await hiveResponse.Content.ReadFromJsonAsync<ErrorCodeDTO>();
             return ValidateHiveAuthErrorCode(authResult);
         }
@@ -53,15 +53,13 @@ public class AuthService : IAuthService
     {
         try
         {
-            //playerId 중복 체크
-            var existUser = await _accountDb.GetUserByPlayerId(playerId);
-            if (existUser is not null)
+            if(string.IsNullOrEmpty(nickname))
             {
-                _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountAlreadyExistFail}, PlayerId : {playerId}");
-                return (ErrorCode.CreateAccountDuplicateFail,0);
+                _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountNicknameFail}, nickname : {nickname}");
+                return (ErrorCode.CreateAccountNicknameFail,0);
             }
             //nickname 중복 체크
-            existUser = await _accountDb.GetUserByNickname(nickname);
+            var existUser = await _accountDb.GetUserByNickname(nickname);
             if (existUser is not null)
             {
                 _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountDuplicateFail}, nickname : {nickname}");
@@ -104,7 +102,7 @@ public class AuthService : IAuthService
         {
             //playerId로 userInfo 조회
             AdbUserInfo userInfo = await _accountDb.GetUserByPlayerId(playerId);
-            //없는 유저라면 에러
+            //없는 유저라면 생성.
             if (userInfo is null)
             {
                 return (ErrorCode.LoginFailUserNotExist, 0);
@@ -144,7 +142,7 @@ public class AuthService : IAuthService
 
     public bool ValidateHiveResponse(HttpResponseMessage? response)
     {
-        if (response == null || response.StatusCode != System.Net.HttpStatusCode.OK)
+        if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
             return false;
         }

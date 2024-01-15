@@ -103,13 +103,13 @@ public class GameService :IGameService
         var transaction = _gameDb.GDbConnection().BeginTransaction();
         try
         {
-            var rowCount = await _gameDb.InsertInitGameList(uid);
+            var rowCount = await _gameDb.InsertInitGameList(uid, transaction);
             if (rowCount != 3)
             {
                 transaction.Rollback();
                 return ErrorCode.InitNewUserGameDataFailGameList;
             }
-            rowCount = await _gameDb.InsertInitCharacter(uid);
+            rowCount = await _gameDb.InsertInitCharacter(uid, transaction);
             if (rowCount != 1)
             {
                 transaction.Rollback();

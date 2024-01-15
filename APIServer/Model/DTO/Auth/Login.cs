@@ -10,8 +10,8 @@ public class LoginRequest
     public long PlayerId { get; set; }
 
     [Required]
-
     public string HiveToken { get; set; }
+    public string Nickname { get; set; }
 }
 
 public class LoginResponse

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using System.Transactions;
 using APIServer.Controllers.Game;
 using APIServer.Model.DAO;
 using APIServer.Model.DTO.Friend;
@@ -51,7 +52,7 @@ public class GameDb : IGameDb
             .GetAsync<GdbGameListInfo>();
     }
 
-    public async Task<int> InsertInitGameList(int uid)
+    public async Task<int> InsertInitGameList(int uid, IDbTransaction transaction)
     {
         var now = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
         return await _queryFactory.Query("game").InsertAsync(new[] { "uid", "game_id", "create_dt" }, new[]
@@ -59,7 +60,7 @@ public class GameDb : IGameDb
             new object[]{uid,1,now},
             new object[]{uid,2,now},
             new object[]{uid,3,now},
-        });
+        },transaction);
     }
 
     public async Task<int> InsertGame(int uid,int gameId)
@@ -115,15 +116,15 @@ public class GameDb : IGameDb
                                                 });
     }
 
-    public async Task<int> InsertInitCharacter(int uid)
+    public async Task<int> InsertInitCharacter(int uid, IDbTransaction transaction)
     {
-        return await _queryFactory.Query("game").InsertAsync(
+        return await _queryFactory.Query("char_info").InsertAsync(
             new
             {
                 uid = uid,
                 char_id = InitCharacterId,
                 create_dt = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
-            });
+            }, transaction);
     }
 
     public IDbConnection GDbConnection()

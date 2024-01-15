@@ -16,7 +16,7 @@ public enum ErrorCode : UInt16
 
     // Account 2000 ~
     CreateAccountFailException = 2001,
-    CreateAccountAlreadyExistFail = 2002,
+    CreateAccountNicknameFail = 2002,
     CreateAccountDuplicateFail = 2003,
     LoginFailException = 2004,
     LoginFailUserNotExist = 2005,
