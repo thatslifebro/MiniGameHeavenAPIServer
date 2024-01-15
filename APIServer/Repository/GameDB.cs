@@ -43,6 +43,145 @@ public class GameDb : IGameDb
         Close();
     }
 
+    public async Task<AdbUserInfo> GetUserByPlayerId(Int64 playerId)
+    {
+        return await _queryFactory.Query("user_info")
+                                .Where("player_id", playerId)
+                                .FirstOrDefaultAsync<AdbUserInfo>();
+    }
+
+    public async Task<AdbUserInfo> GetUserByUid(int uid)
+    {
+        return await _queryFactory.Query("user_info")
+                                .Where("uid", uid)
+                                .FirstOrDefaultAsync<AdbUserInfo>();
+    }
+
+    public async Task<AdbUserInfo> GetUserByNickname(string nickname)
+    {
+        return await _queryFactory.Query("user_info")
+                                .Where("nickname", nickname)
+                                .FirstOrDefaultAsync<AdbUserInfo>();
+    }
+
+    public async Task<int> InsertUser(Int64 playerId, string nickname)
+    {
+        return await _queryFactory.Query("user_info")
+                                .InsertGetIdAsync<int>(new
+                                {
+                                    player_id = playerId,
+                                    nickname = nickname,
+                                    create_dt = DateTime.Now,
+                                    recent_login_dt = DateTime.Now,
+                                });
+    }
+
+    public async Task<int> DeleteAccount(int uid)
+    {
+        return await _queryFactory.Query("user_info")
+                                .Where("uid", uid)
+                                .DeleteAsync();
+    }
+
+    public IDbConnection ADbConnection()
+    {
+        return _queryFactory.Connection;
+    }
+
+    public async Task<int> UpdateRecentLogin(int uid)
+    {
+        return await _queryFactory.Query("user_info").Where("uid", uid).UpdateAsync(new
+        {
+            recent_login_dt = DateTime.Now,
+        });
+    }
+
+    public async Task<AdbFriendReqInfo> GetFriendReqInfo(int uid, int friendUid)
+    {
+        return await _queryFactory.Query("friend")
+                                .Where("uid", uid)
+                                .Where("friend_uid", friendUid)
+                                .FirstOrDefaultAsync<AdbFriendReqInfo>();
+    }
+
+    public async Task<int> InsertFriendReq(int uid, int friendUid, bool accept = false)
+    {
+        return await _queryFactory.Query("friend")
+                                .InsertAsync(new
+                                {
+                                    uid = uid,
+                                    friend_uid = friendUid,
+                                    accept_yn = accept,
+                                    create_dt = DateTime.Now,
+                                });
+    }
+    public async Task<int> InsertFriendReq(int uid, int friendUid, IDbTransaction transaction, bool accept = false)
+    {
+        return await _queryFactory.Query("friend")
+                                .InsertAsync(new
+                                {
+                                    uid = uid,
+                                    friend_uid = friendUid,
+                                    accept_yn = accept,
+                                    create_dt = DateTime.Now,
+                                }, transaction);
+    }
+
+    public async Task<int> UpdateFriendReqAccept(int uid, int friendUid, IDbTransaction transaction, bool accept = false)
+    {
+        return await _queryFactory.Query("friend").Where("uid", friendUid).Where("friend_uid", uid).UpdateAsync(new
+        {
+            accept_yn = accept,
+        }, transaction);
+    }
+
+    public async Task<IEnumerable<AdbFriendUserInfo>> GetFriendUserInfoList(int uid, string orderby)
+    {
+        return await _queryFactory.Query("friend")
+                                .Join("user_info", "user_info.uid", "friend.friend_uid")
+                                .Where("friend.uid", uid)
+                                .Where("accept_yn", true)
+                                .Select("user_info.uid", "nickname", $"{orderby}, recent_login_dt")// AdbFriendUserInfo에 따라 변경 필요
+                                .OrderByDesc(orderby)
+                                .OrderBy("nickname")
+                                .GetAsync<AdbFriendUserInfo>();
+    }
+
+    public async Task<IEnumerable<AdbFriendReqListInfo>> GetFriendReceivedReqInfoList(int uid)
+    {
+        return await _queryFactory.Query("friend")
+                                .Join("user_info", "user_info.uid", "friend.uid")
+                                .Where("friend.friend_uid", uid)
+                                .Where("accept_yn", false)
+                                .Select("user_info.uid", "user_info.nickname", "friend.create_dt")
+                                .GetAsync<AdbFriendReqListInfo>();
+    }
+
+    public async Task<IEnumerable<AdbFriendReqListInfo>> GetFriendSentReqInfoList(int uid)
+    {
+        return await _queryFactory.Query("friend")
+                                .Join("user_info", "user_info.uid", "friend.friend_uid")
+                                .Where("friend.uid", uid)
+                                .Where("accept_yn", false)
+                                .Select("user_info.uid", "user_info.nickname", "friend.create_dt")
+                                .GetAsync<AdbFriendReqListInfo>();
+    }
+
+    public async Task<int> DeleteFriendEachOther(int uid, int friendUid)
+    {
+        return await _queryFactory.Query("friend")
+                                .WhereRaw($"(uid={uid} AND friend_uid={friendUid}) OR (uid={friendUid} AND friend_uid={uid})")
+                                .DeleteAsync();
+    }
+
+    public async Task<int> DeleteFriendReq(int uid, int friendUid)
+    {
+        return await _queryFactory.Query("friend")
+                                .Where("uid", uid)
+                                .Where("friend_uid", friendUid)
+                                .DeleteAsync();
+    }
+
     public async Task<IEnumerable<GdbGameListInfo>> GetGameList(int uid)
     {
         return await _queryFactory.Query("game").Join("master_db.game_info", "game.game_id", "game_info.game_id")
@@ -132,6 +271,10 @@ public class GameDb : IGameDb
         return _queryFactory.Connection;
     }
 
+
+    
+
+
     private void Open()
     {
         _dbConn = new MySqlConnection(_dbConfig.Value.GameDb);
@@ -143,4 +286,11 @@ public class GameDb : IGameDb
     {
         _dbConn.Close();
     }
+}
+
+public class DbConfig
+{
+    public string MasterDb { get; set; }
+    public string GameDb { get; set; }
+    public string Redis { get; set; }
 }

@@ -16,13 +16,13 @@ namespace APIServer.Servicies;
 public class AuthService : IAuthService
 {
     readonly ILogger<AuthService> _logger;
-    readonly IAccountDb _accountDb;
+    readonly IGameDb _gameDb;
     readonly IMemoryDb _memoryDb;
     string _hiveServerAddress;
-    public AuthService(ILogger<AuthService> logger, IConfiguration configuration, IAccountDb accountDb, IMemoryDb memoryDb)
+    public AuthService(ILogger<AuthService> logger, IConfiguration configuration, IGameDb gameDb, IMemoryDb memoryDb)
     {
         _memoryDb = memoryDb;
-        _accountDb = accountDb;
+        _gameDb = gameDb;
         _logger = logger;
         _hiveServerAddress = configuration.GetSection("HiveServerAddress").Value + "/verifytoken";
     }
@@ -59,14 +59,14 @@ public class AuthService : IAuthService
                 return (ErrorCode.CreateAccountNicknameFail,0);
             }
             //nickname 중복 체크
-            var existUser = await _accountDb.GetUserByNickname(nickname);
+            var existUser = await _gameDb.GetUserByNickname(nickname);
             if (existUser is not null)
             {
                 _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountDuplicateFail}, nickname : {nickname}");
                 return (ErrorCode.CreateAccountDuplicateFail,0);
             }
             //account 생성
-            return (ErrorCode.None, await _accountDb.InsertUser(playerId, nickname));
+            return (ErrorCode.None, await _gameDb.InsertUser(playerId, nickname));
         }
         catch (Exception e)
         {
@@ -80,7 +80,7 @@ public class AuthService : IAuthService
         try
         {
             // 게임 데이터도 다 지워야함.
-            var rowCount = await _accountDb.DeleteAccount(uid);
+            var rowCount = await _gameDb.DeleteAccount(uid);
             if(rowCount != 1)
             {
                 _logger.ZLogDebug($"[DeleteAccountAsync] ErrorCode: {ErrorCode.DeleteAccountFail}, uid : {uid}");
@@ -101,7 +101,7 @@ public class AuthService : IAuthService
         try
         {
             //playerId로 userInfo 조회
-            AdbUserInfo userInfo = await _accountDb.GetUserByPlayerId(playerId);
+            AdbUserInfo userInfo = await _gameDb.GetUserByPlayerId(playerId);
             //없는 유저라면 생성.
             if (userInfo is null)
             {
@@ -122,7 +122,7 @@ public class AuthService : IAuthService
     {
         try
         {
-            int count = await _accountDb.UpdateRecentLogin(uid);
+            int count = await _gameDb.UpdateRecentLogin(uid);
 
             if (count != 1)
             {

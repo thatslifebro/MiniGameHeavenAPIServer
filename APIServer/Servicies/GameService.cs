@@ -16,11 +16,9 @@ namespace APIServer.Servicies;
 public class GameService :IGameService
 {
     readonly ILogger<GameService> _logger;
-    readonly IAccountDb _accountDb;
     readonly IGameDb _gameDb;
-    public GameService(ILogger<GameService> logger, IAccountDb accountDb, IGameDb gameDb)
+    public GameService(ILogger<GameService> logger, IGameDb gameDb)
     {
-        _accountDb = accountDb;
         _logger = logger;
         _gameDb = gameDb;
     }

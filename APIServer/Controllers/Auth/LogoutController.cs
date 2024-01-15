@@ -15,7 +15,7 @@ public class Logout : ControllerBase
     readonly IMemoryDb _memoryDb;
     readonly ILogger<Logout> _logger;
 
-    public Logout(ILogger<Logout> logger, IAccountDb accountDb, IMemoryDb memoryDb)
+    public Logout(ILogger<Logout> logger, IMemoryDb memoryDb)
     {
         _logger = logger;
         _memoryDb = memoryDb;

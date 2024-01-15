@@ -19,7 +19,7 @@ public class Login : ControllerBase
     readonly IAuthService _authService;
     readonly IGameService _gameService;
 
-    public Login(ILogger<Login> logger, IAccountDb accountDb, IMemoryDb memoryDb, IAuthService authService, IGameService gameService)
+    public Login(ILogger<Login> logger, IMemoryDb memoryDb, IAuthService authService, IGameService gameService)
     {
         _logger = logger;
         _memoryDb = memoryDb;

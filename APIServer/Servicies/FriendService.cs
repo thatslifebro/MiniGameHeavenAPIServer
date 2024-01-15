@@ -19,10 +19,10 @@ namespace APIServer.Servicies;
 public class FriendService : IFriendService
 {
     readonly ILogger<FriendService> _logger;
-    readonly IAccountDb _accountDb;
-    public FriendService(ILogger<FriendService> logger, IAccountDb accountDb)
+    readonly IGameDb _gameDb;
+    public FriendService(ILogger<FriendService> logger, IGameDb gameDb)
     {
-        _accountDb = accountDb;
+        _gameDb = gameDb;
         _logger = logger;
     }
 
@@ -30,7 +30,7 @@ public class FriendService : IFriendService
     {
         try
         {
-            AdbUserInfo userInfo = await _accountDb.GetUserByUid(friendUid);
+            AdbUserInfo userInfo = await _gameDb.GetUserByUid(friendUid);
             //없는 유저일 때
             if (userInfo is null)
             {
@@ -39,7 +39,7 @@ public class FriendService : IFriendService
                 return ErrorCode.FriendAddFailUserNotExist;
             }
             //이미 친구신청 했을 때
-            AdbFriendReqInfo friendReqInfo = await _accountDb.GetFriendReqInfo(uid, friendUid);
+            AdbFriendReqInfo friendReqInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
             if (friendReqInfo is not null)
             {
                 _logger.ZLogDebug(
@@ -47,11 +47,11 @@ public class FriendService : IFriendService
                 return ErrorCode.FriendAddFailAlreadyFriend;
             }
             //친구 요청
-            friendReqInfo = await _accountDb.GetFriendReqInfo(friendUid, uid);
+            friendReqInfo = await _gameDb.GetFriendReqInfo(friendUid, uid);
             var rowCount = 0;
             if (friendReqInfo is null)
             {
-                rowCount = await _accountDb.InsertFriendReq(uid, friendUid);
+                rowCount = await _gameDb.InsertFriendReq(uid, friendUid);
                 if(rowCount != 1)
                 {
                     _logger.ZLogDebug(
@@ -81,7 +81,7 @@ public class FriendService : IFriendService
                 $"[Friend.GetFriendList] ErrorCode: {ErrorCode.FriendGetListFailOrderby}, orderby: {orderby}");
                 return (ErrorCode.FriendGetListFailOrderby, null);
             }
-            return (ErrorCode.None, await _accountDb.GetFriendUserInfoList(uid, orderby));
+            return (ErrorCode.None, await _gameDb.GetFriendUserInfoList(uid, orderby));
         }
         catch (Exception e)
         {
@@ -95,7 +95,7 @@ public class FriendService : IFriendService
     {
         try
         {
-            return (ErrorCode.None, await _accountDb.GetFriendReceivedReqInfoList(uid));
+            return (ErrorCode.None, await _gameDb.GetFriendReceivedReqInfoList(uid));
         }
         catch (Exception e)
         {
@@ -109,7 +109,7 @@ public class FriendService : IFriendService
     {
         try
         {
-            return (ErrorCode.None, await _accountDb.GetFriendSentReqInfoList(uid));
+            return (ErrorCode.None, await _gameDb.GetFriendSentReqInfoList(uid));
         }
         catch (Exception e)
         {
@@ -124,7 +124,7 @@ public class FriendService : IFriendService
         try
         {
             //친구가 아닐 때
-            AdbFriendReqInfo friendInfo = await _accountDb.GetFriendReqInfo(uid, friendUid);
+            AdbFriendReqInfo friendInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
             if (friendInfo is null || friendInfo.accept_yn==false)
             {
                 _logger.ZLogDebug(
@@ -132,7 +132,7 @@ public class FriendService : IFriendService
                 return ErrorCode.FriendDeleteFailNotFriend;
             }
 
-            var rowCount = await _accountDb.DeleteFriendEachOther(uid, friendUid);
+            var rowCount = await _gameDb.DeleteFriendEachOther(uid, friendUid);
             if(rowCount != 2)
             {
                 _logger.ZLogDebug(
@@ -153,7 +153,7 @@ public class FriendService : IFriendService
         try
         {
             //친구 요청을 안했거나 친구 상태 일때
-            AdbFriendReqInfo friendInfo = await _accountDb.GetFriendReqInfo(uid, friendUid);
+            AdbFriendReqInfo friendInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
             if (friendInfo is null || friendInfo.accept_yn == true)
             {
                 _logger.ZLogDebug(
@@ -161,7 +161,7 @@ public class FriendService : IFriendService
                 return ErrorCode.FriendDeleteReqFailNotFriend;
             }
 
-            var rowCount = await _accountDb.DeleteFriendReq(uid, friendUid);
+            var rowCount = await _gameDb.DeleteFriendReq(uid, friendUid);
             if (rowCount != 1)
             {
                 _logger.ZLogDebug(
@@ -178,10 +178,10 @@ public class FriendService : IFriendService
 
     async Task<ErrorCode> AcceptFriendRequest(int uid, int friendUid)
     {
-        var transaction = _accountDb.ADbConnection().BeginTransaction();
+        var transaction = _gameDb.ADbConnection().BeginTransaction();
         try
         {
-            var rowCount = await _accountDb.InsertFriendReq(uid, friendUid, transaction, true);
+            var rowCount = await _gameDb.InsertFriendReq(uid, friendUid, transaction, true);
             if (rowCount != 1)
             {
                 _logger.ZLogDebug(
@@ -189,7 +189,7 @@ public class FriendService : IFriendService
                 transaction.Rollback();
                 return ErrorCode.FriendAddFailInsert;
             }
-            rowCount = await _accountDb.UpdateFriendReqAccept(uid, friendUid, transaction, true);
+            rowCount = await _gameDb.UpdateFriendReqAccept(uid, friendUid, transaction, true);
             if (rowCount != 1)
             {
                 _logger.ZLogDebug(
