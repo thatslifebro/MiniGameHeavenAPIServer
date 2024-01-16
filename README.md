@@ -19,8 +19,7 @@
 | -------------------------------------------- | --------- |
 | [로그인]						              | ✅        |
 | [로그아웃]								       | ✅        |
-| [유저 등록] - 데이터 정의 하며 개발 중 		 | ⬜        |
-| [게임 데이터 로드]	- 데이터 정의 이후 개발 예정		 | ⬜        |
+| [게임 데이터 로드]	                		 | ⬜        |
 
 - **친구 기능**
 
@@ -52,6 +51,14 @@
 | [출석 정보 조회]					| ⬜        |
 | [출석 체크]						| ⬜        |
 
+- **우편 기능**
+
+| 기능                                            | 완료 여부 |
+| ----------------------------------------------- | --------- |
+| [우편함 조회]										| ⬜        |
+| [우편 아이템 수령]	(일반 수령 및 가챠 수령 구현)		| ⬜        |
+| 우편 삭제                                       | ⬜        |
+
 
 - **캐릭터 기능**
 
@@ -62,15 +69,6 @@
 | [코스튬 조회]								  | ⬜        |
 | [캐릭터 코스튬 변경]								  | ⬜        |
 | [캐릭터 스킨 변경]						      | ⬜        |
-
-
-- **우편 기능**
-
-| 기능                                            | 완료 여부 |
-| ----------------------------------------------- | --------- |
-| [우편함 조회]										| ⬜        |
-| [우편 아이템 수령]								 | ⬜        |
-| 우편 삭제                                       | ⬜        |
 
 - **배틀 기능**
 
@@ -114,12 +112,6 @@
 | ----------------------------------------------- | --------- |
 | [썬칩 금메달 교환]								 | ⬜        |
 
-- **수령 기능**
- 
-| 기능                                            | 완료 여부 |
-| ----------------------------------------------- | --------- |
-| [일반 수령]								      | ⬜        |
-| [가챠 수령]									| ⬜        |
 
 - **사용자 기능**
 
@@ -141,7 +133,6 @@
 | [푸드 변환]								  | ⬜        |
 | [푸드 기어 변환]								  | ⬜        |
 
-- 게임 데이터 로드**
 
 
 ## 하이브 로그인
@@ -247,13 +238,19 @@ Content-Type: application/json
 1. 최근 로그인 시간 갱신
 
 클라이언트 → 서버 전송 데이터
+- Header 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
+| 앱 버전 정보           |     |
+| 게임 데이터 정보      |      |
+
+- Body 데이터
 
 | 종류                  | 설명                             |
 | --------------------- | -------------------------------- |
 | 고유번호               | Hive 로그인시 받은 playerId |
 | 토큰                  | Hive 로그인시 받은 token |
-| 앱 버전 정보        | 헤더에 포함 |
-| 게임 데이터 정보     | 헤더에 포함 |
 
 
 #### 요청 및 응답 예시
@@ -262,13 +259,14 @@ Content-Type: application/json
 
 ```
 POST http://localhost:11500/login
-Content-Type: application/json
 
+AppVersion : "0.1",
+MasterDataVersion : "0.1"
+
+Content-Type: application/json
 {
     "PlayerId" : 58347,
     "Token" : "efaee4517404318a8d14f6053767ff74dcf9aw30910b9116dafd3fa4ce408a45!",
-    "AppVersion" : "0.1",
-    "MasterDataVersion" : "0.1"
 }
 ```
 
@@ -299,12 +297,14 @@ Content-Type: application/json
 
 클라이언트 → 서버 전송 데이터
 
+- Header 데이터
+
 | 종류                  | 설명                             |
 | --------------------- | -------------------------------- |
 | 유저아이디               | 게임서버의 uid |
 | 토큰                | 레디스에 저장되어 있는 토큰 |
-| 앱 버전 정보        | 헤더에 포함 |
-| 게임 데이터 정보     | 헤더에 포함 |
+| 앱 버전 정보        |  |
+| 게임 데이터 정보     |  |
 
 
 #### 요청 및 응답 예시
@@ -313,13 +313,14 @@ Content-Type: application/json
 
 ```
 DELETE http://localhost:11500/logout
-Content-Type: application/json
 
+AppVersion : "0.1",
+MasterDataVersion : "0.1"
+Uid : 1
+Token : "c9v3arfa83vaugm0rxb7txm0c!"
+
+Content-Type: application/json
 {
-    "uid" : 1,
-    "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
-    "AppVersion" : "0.1",
-    "MasterDataVersion" : "0.1"
 }
 ```
 
@@ -354,6 +355,7 @@ Content-Type: application/json
   bestscore_prev_season - 이전 시즌 기록
 
 클라이언트 → 서버 전송 데이터
+- Header 데이터
 
 | 종류                  | 설명                             |
 | --------------------- | -------------------------------- |
@@ -361,6 +363,11 @@ Content-Type: application/json
 | 토큰                | 레디스에 저장되어 있는 토큰 |
 | 앱 버전 정보        | 헤더에 포함 |
 | 게임 데이터 정보     | 헤최고더에 포함 |
+
+- Query String 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
 | 정렬조건 | 정렬조건 (역대 최고 기록, 현재 시즌 기록, 이전 시즌 기록) - 쿼리스트링 |
 
 
@@ -370,13 +377,14 @@ Content-Type: application/json
 
 ```
 POST http://localhost:11500/friendlist?orderby=bestscore_ever
-Content-Type: application/json
 
+AppVersion : "0.1",
+MasterDataVersion : "0.1"
+Uid : 1
+Token : "c9v3arfa83vaugm0rxb7txm0c!"
+
+Content-Type: application/json
 {
-    "uid" : 1,
-    "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
-    "AppVersion" : "0.1",
-    "MasterDataVersion" : "0.1"
 }
 ```
 
@@ -423,12 +431,19 @@ Content-Type: application/json
 
 클라이언트 → 서버 전송 데이터
 
+- Header 데이터
+
 | 종류                  | 설명                             |
 | --------------------- | -------------------------------- |
 | 유저아이디               | 게임서버의 uid |
 | 토큰                | 레디스에 저장되어 있는 토큰 |
 | 앱 버전 정보        | 헤더에 포함 |
 | 게임 데이터 정보     | 헤더에 포함 |
+
+- Body 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
 | 친구 아이디 | 친구로 등록할 유저의 아이디 |
 
 
@@ -439,13 +454,15 @@ Content-Type: application/json
 
 ```
 POST http://localhost:11500/friendadd
+
+AppVersion : "0.1",
+MasterDataVersion : "0.1"
+Uid : 1
+Token : "c9v3arfa83vaugm0rxb7txm0c!"
+
 Content-Type: application/json
 
 {
-    "uid" : 1,
-    "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
-    "AppVersion" : "0.1",
-    "MasterDataVersion" : "0.1",
     "friendId" : 2
 }
 ```
@@ -474,6 +491,8 @@ Content-Type: application/json
 
 클라이언트 → 서버 전송 데이터
 
+- Header 데이터
+
 | 종류                  | 설명                             |
 | --------------------- | -------------------------------- |
 | 유저아이디               | 게임서버의 uid |
@@ -489,13 +508,16 @@ Content-Type: application/json
 
 ```
 POST http://localhost:11500/friendreceivedreqlist
+
+AppVersion : "0.1",
+MasterDataVersion : "0.1"
+Uid : 1
+Token : "c9v3arfa83vaugm0rxb7txm0c!"
+
+
 Content-Type: application/json
 
 {
-    "uid" : 1,
-    "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
-    "AppVersion" : "0.1",
-    "MasterDataVersion" : "0.1"
 }
 ```
 
@@ -529,6 +551,8 @@ Content-Type: application/json
 
 클라이언트 → 서버 전송 데이터
 
+- Header 데이터
+
 | 종류                  | 설명                             |
 | --------------------- | -------------------------------- |
 | 유저아이디               | 게임서버의 uid |
@@ -544,13 +568,16 @@ Content-Type: application/json
 
 ```
 POST http://localhost:11500/friendsentreqlist
+
+AppVersion : "0.1",
+MasterDataVersion : "0.1"
+Uid : 1
+Token : "c9v3arfa83vaugm0rxb7txm0c!"
+
+
 Content-Type: application/json
 
 {
-    "uid" : 1,
-    "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
-    "AppVersion" : "0.1",
-    "MasterDataVersion" : "0.1"
 }
 ```
 
@@ -585,12 +612,19 @@ Content-Type: application/json
 
 클라이언트 → 서버 전송 데이터
 
+- Header 데이터
+
 | 종류                  | 설명                             |
 | --------------------- | -------------------------------- |
 | 유저아이디               | 게임서버의 uid |
 | 토큰                | 레디스에 저장되어 있는 토큰 |
 | 앱 버전 정보        | 헤더에 포함 |
 | 게임 데이터 정보     | 헤더에 포함 |
+
+- Body 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
 | 친구 아이디 | 친구로 등록할 유저의 아이디 |
 
 
@@ -600,13 +634,15 @@ Content-Type: application/json
 
 ```
 DELETE http://localhost:11500/friendsentreqlist
+
+AppVersion : "0.1",
+MasterDataVersion : "0.1"
+Uid : 1
+Token : "c9v3arfa83vaugm0rxb7txm0c!"
+
 Content-Type: application/json
 
 {
-    "uid" : 1,
-    "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
-    "AppVersion" : "0.1",
-    "MasterDataVersion" : "0.1",
     "friendId" : 2
 }
 ```
@@ -636,12 +672,19 @@ Content-Type: application/json
 
 클라이언트 → 서버 전송 데이터
 
+- Header 데이터
+
 | 종류                  | 설명                             |
 | --------------------- | -------------------------------- |
 | 유저아이디               | 게임서버의 uid |
 | 토큰                | 레디스에 저장되어 있는 토큰 |
 | 앱 버전 정보        | 헤더에 포함 |
 | 게임 데이터 정보     | 헤더에 포함 |
+
+- Body 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
 | 친구 아이디 | 친구로 등록할 유저의 아이디 |
 
 
@@ -651,13 +694,15 @@ Content-Type: application/json
 
 ```
 DELETE http://localhost:11500/friendcancelreq
+
+AppVersion : "0.1",
+MasterDataVersion : "0.1"
+Uid : 1
+Token : "c9v3arfa83vaugm0rxb7txm0c!"
+
 Content-Type: application/json
 
 {
-    "uid" : 1,
-    "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
-    "AppVersion" : "0.1",
-    "MasterDataVersion" : "0.1",
     "friendId" : 2
 }
 ```
@@ -685,6 +730,7 @@ Content-Type: application/json
 
 
 클라이언트 → 서버 전송 데이터
+- Header 데이터
 
 | 종류                  | 설명                             |
 | --------------------- | -------------------------------- |
@@ -700,13 +746,15 @@ Content-Type: application/json
 
 ```
 POST http://localhost:11500/GameList
+
+AppVersion : "0.1",
+MasterDataVersion : "0.1"
+Uid : 1
+Token : "c9v3arfa83vaugm0rxb7txm0c!"
+
 Content-Type: application/json
 
 {
-    "uid" : 1,
-    "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
-    "AppVersion" : "0.1",
-    "MasterDataVersion" : "0.1",
 }
 ```
 
@@ -717,13 +765,13 @@ Content-Type: application/json
 {
     "gameList": [
         {
-            "game_id": 1,
+            "game_key": 1,
             "game_name": "뚫어뚫어",
             "bestscore": 0,
             "create_dt": "01/12/2024 15:17:00"
         },
         {
-            "game_id": 12,
+            "game_key": 12,
             "game_name": "놓아놓아",
             "bestscore": 1000,
             "create_dt": "01/12/2024 15:50:35"
@@ -747,6 +795,7 @@ Content-Type: application/json
 
 
 클라이언트 → 서버 전송 데이터
+- Header 데이터
 
 | 종류                  | 설명                             |
 | --------------------- | -------------------------------- |
@@ -755,6 +804,11 @@ Content-Type: application/json
 | 앱 버전 정보        | 헤더에 포함 |
 | 게임 데이터 정보     | 헤더에 포함 |
 
+- Body 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
+| 게임 키             | 게임의 고유 키 |
 
 #### 요청 및 응답 예시
 
@@ -762,13 +816,16 @@ Content-Type: application/json
 
 ```
 POST http://localhost:11500/GameUnlock
+
+AppVersion : "0.1",
+MasterDataVersion : "0.1"
+Uid : 1
+Token : "c9v3arfa83vaugm0rxb7txm0c!"
+
 Content-Type: application/json
 
 {
-    "uid" : 1,
-    "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
-    "AppVersion" : "0.1",
-    "MasterDataVersion" : "0.1",
+    "gameKey": 4
 }
 ```
 
@@ -794,6 +851,7 @@ Content-Type: application/json
 - 현재 아이템 및 캐릭터 정보가 없어 점수만 조회가능.
 
 클라이언트 → 서버 전송 데이터
+- Header 데이터
 
 | 종류                  | 설명                             |
 | --------------------- | -------------------------------- |
@@ -802,6 +860,11 @@ Content-Type: application/json
 | 앱 버전 정보        | 헤더에 포함 |
 | 게임 데이터 정보     | 헤더에 포함 |
 
+- Body 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
+| 게임 키             | 게임의 고유 키 |
 
 #### 요청 및 응답 예시
 
@@ -809,13 +872,16 @@ Content-Type: application/json
 
 ```
 POST http://localhost:11500/GameUnlock
+
+AppVersion : "0.1",
+MasterDataVersion : "0.1"
+Uid : 1
+Token : "c9v3arfa83vaugm0rxb7txm0c!"
+
 Content-Type: application/json
 
 {
-    "uid" : 1,
-    "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
-    "AppVersion" : "0.1",
-    "MasterDataVersion" : "0.1",
+    "gameKey": 4
 }
 ```
 
@@ -825,7 +891,7 @@ Content-Type: application/json
 ```
 {
     "gameInfo": {
-        "game_id": 12,
+        "game_key": 12,
         "game_name": "놓아놓아",
         "bestscore": 1000,
         "create_dt": "01/12/2024 15:50:35",
@@ -842,6 +908,7 @@ Content-Type: application/json
 
 ## 게임 결과 저장
 **컨텐츠 설명**
+- 미완성
 - 게임 결과를 저장합니다.
 
 **로직**
