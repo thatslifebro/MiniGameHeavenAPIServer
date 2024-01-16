@@ -9,6 +9,8 @@ public enum ErrorCode : UInt16
     UnhandleException = 1001,
     RedisFailException = 1002,
     InValidRequestHttpBody = 1003,
+    TokenDoesNotExist = 1004,
+    UidDoesNotExist = 1005,
     AuthTokenFailWrongAuthToken = 1006,
     Hive_Fail_InvalidResponse = 1010,
     InValidAppVersion = 1011,
