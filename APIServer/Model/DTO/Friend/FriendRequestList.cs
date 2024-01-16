@@ -5,11 +5,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace APIServer.Model.DTO.Friend;
 
-public class FriendRequestListRequest : RequestDTO
-{
-}
-
-
 public class FriendRequestListResponse : ErrorCodeDTO
 {
     public IEnumerable<AdbFriendReqListInfo> FriendRequestList { get; set; }

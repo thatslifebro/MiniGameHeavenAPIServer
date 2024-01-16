@@ -1,4 +1,5 @@
-﻿using APIServer.Model.DTO.Friend;
+﻿using APIServer.Model.DTO;
+using APIServer.Model.DTO.Friend;
 using APIServer.Services;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -26,23 +27,23 @@ public class FriendAdd : ControllerBase
     /// 상대 방의 친구 요청 유무에 따라 친구 수락 혹은 친구 요청 보내기를 수행합니다.
     /// </summary>
     [HttpPost]
-    public async Task<FriendAddResponse> AddFriend(FriendAddRequest request)
+    public async Task<FriendAddResponse> AddFriend([FromHeader] HeaderDTO header, FriendAddRequest request)
     {
         FriendAddResponse response = new();
-        if(request.Uid == request.FriendUid)
+        if(header.Uid == request.FriendUid)
         {
             response.Result = ErrorCode.FriendAddFailSameUid;
             return response;
         }
         
-        var errorCode = await _friendService.SendFriendReqOrAcceptReq(request.Uid, request.FriendUid);
+        var errorCode = await _friendService.SendFriendReqOrAcceptReq(header.Uid, request.FriendUid);
         if(errorCode != ErrorCode.None)
         {
             response.Result = errorCode;
             return response;
         }
 
-        _logger.ZLogInformation($"[FriendAdd] Uid : {request.Uid}");
+        _logger.ZLogInformation($"[FriendAdd] Uid : {header.Uid}");
 
         return response;
 

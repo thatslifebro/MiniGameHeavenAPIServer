@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using ZLogger;
 using APIServer.Model.DTO.Friend;
+using APIServer.Model.DTO;
 
 namespace APIServer.Controllers.Game;
 
@@ -25,12 +26,12 @@ public class GameUnlock : ControllerBase
     /// 게임을 잠금 해제합니다.
     /// </summary>
     [HttpPost]
-    public async Task<GameUnlockResponse> UnlockGame(GameUnlockRequest request)
+    public async Task<GameUnlockResponse> UnlockGame([FromHeader] HeaderDTO header, GameUnlockRequest request)
     {
     GameUnlockResponse response = new();
-    response.Result = await _gameService.UnlockGame(request.Uid, request.GameKey);
+    response.Result = await _gameService.UnlockGame(header.Uid, request.GameKey);
     
-    _logger.ZLogInformation($"[GameUnlock] Uid : {request.Uid}, GameId : {request.GameKey}");
+    _logger.ZLogInformation($"[GameUnlock] Uid : {header.Uid}, GameId : {request.GameKey}");
         return response;
     }
 }

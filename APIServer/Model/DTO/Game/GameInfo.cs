@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace APIServer.Model.DTO.Friend;
 
-public class GameInfoRequest : RequestDTO
+public class GameInfoRequest
 {
     public int GameKey { get; set; }
 }

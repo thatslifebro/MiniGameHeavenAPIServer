@@ -109,9 +109,9 @@ public class MemoryDb : IMemoryDb
         }
     }
 
-    public async Task<(bool, RdbAuthUserData)> GetUserAsync(int id)
+    public async Task<(bool, RdbAuthUserData)> GetUserAsync(string id)
     {
-        var uid = MemoryDbKeyMaker.MakeUIDKey(id.ToString());
+        var uid = MemoryDbKeyMaker.MakeUIDKey(id);
 
         try
         {

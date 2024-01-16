@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using APIServer.Model.DTO;
 using APIServer.Model.DTO.Auth;
 using APIServer.Repository;
 using APIServer.Services;
@@ -26,7 +27,7 @@ public class Logout : ControllerBase
     /// 해당 유저의 토큰을 삭제합니다.
     /// </summary>
     [HttpDelete]
-    public async Task<LogoutResponse> Post(LogoutRequest request)
+    public async Task<LogoutResponse> Post([FromHeader] HeaderDTO request)
     {
         LogoutResponse response = new();
         var errorCode = await _memoryDb.DelUserAuthAsync(request.Uid);

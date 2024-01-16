@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using ZLogger;
 using APIServer.Model.DTO.Friend;
+using APIServer.Model.DTO;
 
 namespace APIServer.Controllers.Game;
 
@@ -25,12 +26,12 @@ public class GameInfo : ControllerBase
     /// 게임의 정보(아이템 보유 현황, 플레이 캐릭터(코스튬,스킨), 최고점수 등)을 조회합니다.
     /// </summary>
     [HttpPost]
-    public async Task<GameInfoResponse> GetGameInfo(GameInfoRequest request)
+    public async Task<GameInfoResponse> GetGameInfo([FromHeader] HeaderDTO header, GameInfoRequest request)
     {
     GameInfoResponse response = new();
-    (response.Result, response.GameInfo) = await _gameService.GetGameInfo(request.Uid, request.GameKey);
+    (response.Result, response.GameInfo) = await _gameService.GetGameInfo(header.Uid, request.GameKey);
     
-    _logger.ZLogInformation($"[GameInfo] Uid : {request.Uid}, GameId : {request.GameKey}");
+    _logger.ZLogInformation($"[GameInfo] Uid : {header.Uid}, GameId : {request.GameKey}");
         return response;
     }
 }

@@ -33,59 +33,80 @@ public class CheckUserAuthAndLoadUserData
             return;
         }
 
-        // https://devblogs.microsoft.com/dotnet/re-reading-asp-net-core-request-bodies-with-enablebuffering/
-        // 다중 읽기 허용 함수 -> 파일 형식으로 임시 변환
-        context.Request.EnableBuffering();
-
-        var userLockKey = "";
-
-        using (StreamReader reader = new(context.Request.Body, Encoding.UTF8, true, 4096, true))
+        // token이 있는지 검사하고 있다면 저장
+        var (isTokenNotExist, token) = await IsTokenNotExistOrReturnToken(context);
+        if(isTokenNotExist)
         {
-            string bodyStr = await reader.ReadToEndAsync();
-
-            // body String에 어떤 문자열도 없을때
-            if (await IsNullBodyDataThenSendError(context, bodyStr))
-            {
-                return;
-            }
-
-            JsonDocument document = JsonDocument.Parse(bodyStr);
-
-            //uid와 토큰이 없을때
-            if (IsInvalidJsonFormatThenSendError(context, document, out int uid, out string token))
-            {
-                return;
-            }
-
-            //uid를 키로 하는 데이터 없을 때
-            (bool isOk, RdbAuthUserData userInfo) = await _memoryDb.GetUserAsync(uid);
-            if (await IsInvalidUserAuthTokenNotFound(context, isOk))
-            {
-                return;
-            }
-
-            //토큰이 일치하지 않을 때
-            if (await IsInvalidUserAuthTokenThenSendError(context, userInfo, token))
-            {
-                return;
-            }
-            //이번 api 호출 끝날 때까지 redis키 잠금 만약 이미 잠겨있다면 에러
-            userLockKey = Services.MemoryDbKeyMaker.MakeUserLockKey(userInfo.Uid.ToString());
-            if (await SetLockAndIsFailThenSendError(context, userLockKey))
-            {
-                return;
-            }
-
-            context.Items[nameof(RdbAuthUserData)] = userInfo;
+            return;
         }
-        // 읽음 위치 초기화
-        context.Request.Body.Position = 0;
+
+        //uid가 있는지 검사하고 있다면 저장
+        var (isUidNotExist, uid) = await IsUidNotExistOrReturnUid(context);
+        if (isUidNotExist)
+        {
+            return;
+        }
+
+        //uid를 키로 하는 데이터 없을 때
+        (bool isOk, RdbAuthUserData userInfo) = await _memoryDb.GetUserAsync(uid);
+        if (await IsInvalidUserAuthTokenNotFound(context, isOk))
+        {
+            return;
+        }
+
+        //토큰이 일치하지 않을 때
+        if (await IsInvalidUserAuthTokenThenSendError(context, userInfo, token))
+        {
+            return;
+        }
+        //이번 api 호출 끝날 때까지 redis키 잠금 만약 이미 잠겨있다면 에러
+        var userLockKey = Services.MemoryDbKeyMaker.MakeUserLockKey(userInfo.Uid.ToString());
+        if (await SetLockAndIsFailThenSendError(context, userLockKey))
+        {
+            return;
+        }
+
+        context.Items[nameof(RdbAuthUserData)] = userInfo;
 
         // Call the next delegate/middleware in the pipeline
         await _next(context);
 
         // 트랜잭션 해제(Redis 동기화 해제)
         _ = await _memoryDb.DelUserReqLockAsync(userLockKey);
+    }
+
+    async Task<(bool,string)> IsTokenNotExistOrReturnToken(HttpContext context)
+    {
+        if (context.Request.Headers.TryGetValue("token", out var token))
+        {
+            return (false, token);
+        }
+
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
+        {
+            result = ErrorCode.TokenDoesNotExist
+        });
+        await context.Response.WriteAsync(errorJsonResponse);
+
+        return (true, "");
+    }
+
+    async Task<(bool, string)> IsUidNotExistOrReturnUid(HttpContext context)
+    {
+        if (context.Request.Headers.TryGetValue("uid", out var uid))
+        {
+            return (false, uid);
+        }
+
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
+        {
+            result = ErrorCode.UidDoesNotExist
+        });
+        await context.Response.WriteAsync(errorJsonResponse);
+
+        return (true, "");
     }
 
     async Task<bool> SetLockAndIsFailThenSendError(HttpContext context, string AuthToken)
@@ -115,46 +136,6 @@ public class CheckUserAuthAndLoadUserData
         var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
         {
             result = ErrorCode.AuthTokenFailWrongAuthToken
-        });
-        await context.Response.WriteAsync(errorJsonResponse);
-
-        return true;
-    }
-
-    bool IsInvalidJsonFormatThenSendError(HttpContext context, JsonDocument document, out int uid,
-        out string token)
-    {
-        try
-        {
-            uid = document.RootElement.GetProperty("uid").GetInt32();
-            token = document.RootElement.GetProperty("token").GetString();
-            return false;
-        }
-        catch
-        {
-            uid = 0; token = "";
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
-            var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
-            {
-                result = ErrorCode.AuthTokenFailWrongKeyword
-            });
-            context.Response.WriteAsync(errorJsonResponse);
-
-            return true;
-        }
-    }
-
-    async Task<bool> IsNullBodyDataThenSendError(HttpContext context, string bodyStr)
-    {
-        if (string.IsNullOrEmpty(bodyStr) == false)
-        {
-            return false;
-        }
-        context.Response.StatusCode = StatusCodes.Status400BadRequest;
-
-        var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
-        {
-            result = ErrorCode.InValidRequestHttpBody
         });
         await context.Response.WriteAsync(errorJsonResponse);
 

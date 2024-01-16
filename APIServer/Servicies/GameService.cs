@@ -87,7 +87,7 @@ public class GameService :IGameService
             if (gameInfo == null)
             {
                 _logger.ZLogError($"[Game.GameSave] ErrorCode: {ErrorCode.GameSaveFailGameLocked}, Uid: {uid}");
-                return ErrorCode.GameSaveFailException;
+                return ErrorCode.GameSaveFailGameLocked;
             }
 
             var row = await _gameDb.UpdateBestscore(uid, gameKey, score);
@@ -115,17 +115,17 @@ public class GameService :IGameService
         var transaction = _gameDb.GDbConnection().BeginTransaction();
         try
         {
-            var rowCount = await _gameDb.InsertInitGameList(uid, transaction);
-            if (rowCount != 3)
-            {
-                transaction.Rollback();
-                return ErrorCode.InitNewUserGameDataFailGameList;
-            }
-            rowCount = await _gameDb.InsertInitCharacter(uid, transaction);
+            var rowCount = await _gameDb.InsertInitCharacter(uid, transaction);
             if (rowCount != 1)
             {
                 transaction.Rollback();
                 return ErrorCode.InitNewUserGameDataFailCharacter;
+            }
+            rowCount = await _gameDb.InsertInitGameList(uid, transaction);
+            if (rowCount != 3)
+            {
+                transaction.Rollback();
+                return ErrorCode.InitNewUserGameDataFailGameList;
             }
             transaction.Commit();
             return ErrorCode.None;

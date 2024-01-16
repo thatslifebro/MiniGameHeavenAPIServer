@@ -45,28 +45,28 @@ public class GameDb : IGameDb
 
     public async Task<AdbUserInfo> GetUserByPlayerId(Int64 playerId)
     {
-        return await _queryFactory.Query("user_info")
+        return await _queryFactory.Query("user")
                                 .Where("player_id", playerId)
                                 .FirstOrDefaultAsync<AdbUserInfo>();
     }
 
     public async Task<AdbUserInfo> GetUserByUid(int uid)
     {
-        return await _queryFactory.Query("user_info")
+        return await _queryFactory.Query("user")
                                 .Where("uid", uid)
                                 .FirstOrDefaultAsync<AdbUserInfo>();
     }
 
     public async Task<AdbUserInfo> GetUserByNickname(string nickname)
     {
-        return await _queryFactory.Query("user_info")
+        return await _queryFactory.Query("user")
                                 .Where("nickname", nickname)
                                 .FirstOrDefaultAsync<AdbUserInfo>();
     }
 
     public async Task<int> InsertUser(Int64 playerId, string nickname)
     {
-        return await _queryFactory.Query("user_info")
+        return await _queryFactory.Query("user")
                                 .InsertGetIdAsync<int>(new
                                 {
                                     player_id = playerId,
@@ -78,7 +78,7 @@ public class GameDb : IGameDb
 
     public async Task<int> DeleteAccount(int uid)
     {
-        return await _queryFactory.Query("user_info")
+        return await _queryFactory.Query("user")
                                 .Where("uid", uid)
                                 .DeleteAsync();
     }
@@ -90,7 +90,7 @@ public class GameDb : IGameDb
 
     public async Task<int> UpdateRecentLogin(int uid)
     {
-        return await _queryFactory.Query("user_info").Where("uid", uid).UpdateAsync(new
+        return await _queryFactory.Query("user").Where("uid", uid).UpdateAsync(new
         {
             recent_login_dt = DateTime.Now,
         });
@@ -138,10 +138,10 @@ public class GameDb : IGameDb
     public async Task<IEnumerable<AdbFriendUserInfo>> GetFriendUserInfoList(int uid, string orderby)
     {
         return await _queryFactory.Query("friend")
-                                .Join("user_info", "user_info.uid", "friend.friend_uid")
+                                .Join("user", "user.uid", "friend.friend_uid")
                                 .Where("friend.uid", uid)
                                 .Where("accept_yn", true)
-                                .Select("user_info.uid", "nickname", $"{orderby}, recent_login_dt")// AdbFriendUserInfo에 따라 변경 필요
+                                .Select("user.uid", "nickname", $"{orderby}", "recent_login_dt")// AdbFriendUserInfo에 따라 변경 필요
                                 .OrderByDesc(orderby)
                                 .OrderBy("nickname")
                                 .GetAsync<AdbFriendUserInfo>();
@@ -150,20 +150,20 @@ public class GameDb : IGameDb
     public async Task<IEnumerable<AdbFriendReqListInfo>> GetFriendReceivedReqInfoList(int uid)
     {
         return await _queryFactory.Query("friend")
-                                .Join("user_info", "user_info.uid", "friend.uid")
+                                .Join("user", "user.uid", "friend.uid")
                                 .Where("friend.friend_uid", uid)
                                 .Where("accept_yn", false)
-                                .Select("user_info.uid", "user_info.nickname", "friend.create_dt")
+                                .Select("user.uid", "user.nickname", "friend.create_dt")
                                 .GetAsync<AdbFriendReqListInfo>();
     }
 
     public async Task<IEnumerable<AdbFriendReqListInfo>> GetFriendSentReqInfoList(int uid)
     {
         return await _queryFactory.Query("friend")
-                                .Join("user_info", "user_info.uid", "friend.friend_uid")
+                                .Join("user", "user.uid", "friend.friend_uid")
                                 .Where("friend.uid", uid)
                                 .Where("accept_yn", false)
-                                .Select("user_info.uid", "user_info.nickname", "friend.create_dt")
+                                .Select("user.uid", "user.nickname", "friend.create_dt")
                                 .GetAsync<AdbFriendReqListInfo>();
     }
 
@@ -184,8 +184,7 @@ public class GameDb : IGameDb
 
     public async Task<IEnumerable<GdbGameInfo>> GetGameList(int uid)
     {
-        return await _queryFactory.Query("game")
-            .Select("game_key", "bestscore","create_dt")
+        return await _queryFactory.Query("user_game")
             .Where("uid", uid)
             .OrderBy("game_key")
             .GetAsync<GdbGameInfo>();
@@ -194,17 +193,17 @@ public class GameDb : IGameDb
     public async Task<int> InsertInitGameList(int uid, IDbTransaction transaction)
     {
         var now = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
-        return await _queryFactory.Query("game").InsertAsync(new[] { "uid", "game_key", "create_dt" }, new[]
+        return await _queryFactory.Query("user_game").InsertAsync(new[] { "uid", "game_key", "create_dt", "char_key" }, new[]
         {
-            new object[]{uid,1,now},
-            new object[]{uid,2,now},
-            new object[]{uid,3,now},
+            new object[]{uid,1,now, InitCharacterKey},
+            new object[]{uid,2,now, InitCharacterKey},
+            new object[]{uid,3,now, InitCharacterKey},
         },transaction);
     }
 
     public async Task<int> InsertGame(int uid,int gameKey)
     {
-        return await _queryFactory.Query("game").InsertAsync(
+        return await _queryFactory.Query("user_game").InsertAsync(
             new { uid = uid,
                 char_key = InitCharacterKey,
                 game_key = gameKey,
@@ -213,14 +212,14 @@ public class GameDb : IGameDb
 
     public async Task<GdbGameInfo> GetGameInfo(int uid, int gameKey)
     {
-        return await _queryFactory.Query("game").Where("uid", uid)
+        return await _queryFactory.Query("user_game").Where("uid", uid)
                                                 .Where("game_key", gameKey)
                                                 .FirstOrDefaultAsync<GdbGameInfo>();
     }
 
     public async Task<int> UpdateBestscore(int uid, int gameKey, int score)
     {
-        return await _queryFactory.Query("game").Where("uid", uid)
+        return await _queryFactory.Query("user_game").Where("uid", uid)
                                                 .Where("game_key", gameKey)
                                                 .Where("bestscore", "<", score)
                                                 .UpdateAsync(new 
@@ -234,7 +233,7 @@ public class GameDb : IGameDb
 
     public async Task<int> UpdateBestscoreCurSeason(int uid, int gameKey, int score)
     {
-        return await _queryFactory.Query("game").Where("uid", uid)
+        return await _queryFactory.Query("user_game").Where("uid", uid)
                                                 .Where("game_key", gameKey)
                                                 .Where("bestscore_cur_season", "<", score)
                                                 .UpdateAsync(new
@@ -246,7 +245,7 @@ public class GameDb : IGameDb
 
     public async Task<int> UpdateRecentPlayDt(int uid, int gameKey)
     {
-        return await _queryFactory.Query("game").Where("uid", uid)
+        return await _queryFactory.Query("user_game").Where("uid", uid)
                                                 .Where("game_key", gameKey)
                                                 .UpdateAsync(new
                                                 {
@@ -256,11 +255,11 @@ public class GameDb : IGameDb
 
     public async Task<int> InsertInitCharacter(int uid, IDbTransaction transaction)
     {
-        return await _queryFactory.Query("char_info").InsertAsync(
+        return await _queryFactory.Query("user_char").InsertAsync(
             new
             {
                 uid = uid,
-                char_id = InitCharacterKey,
+                char_key = InitCharacterKey,
                 create_dt = DateTime.Now
             }, transaction);
     }
@@ -269,10 +268,6 @@ public class GameDb : IGameDb
     {
         return _queryFactory.Connection;
     }
-
-
-    
-
 
     private void Open()
     {

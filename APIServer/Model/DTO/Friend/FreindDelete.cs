@@ -2,7 +2,7 @@
 
 namespace APIServer.Model.DTO.Friend;
 
-public class FriendDeleteRequest : RequestDTO
+public class FriendDeleteRequest
 {
     [Required]
     public int FriendUid { get; set; }

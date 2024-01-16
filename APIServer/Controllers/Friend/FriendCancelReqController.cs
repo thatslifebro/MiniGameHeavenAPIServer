@@ -1,4 +1,5 @@
-﻿using APIServer.Model.DTO.Friend;
+﻿using APIServer.Model.DTO;
+using APIServer.Model.DTO.Friend;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -25,22 +26,22 @@ public class FriendCancelReq : ControllerBase
     /// 보낸 친구 요청을 취소합니다.
     /// </summary>
     [HttpDelete]
-    public async Task<FriendDeleteResponse> DeleteFriendReq(FriendDeleteRequest request)
+    public async Task<FriendDeleteResponse> DeleteFriendReq([FromHeader] HeaderDTO header, FriendDeleteRequest request)
     {
         FriendDeleteResponse response = new();
-        if (request.Uid == request.FriendUid)
+        if (header.Uid == request.FriendUid)
         {
             response.Result = ErrorCode.FriendDeleteFailSameUid;
             return response;
         }
-        var errorCode = await _friendService.DeleteFriendReq(request.Uid, request.FriendUid);
+        var errorCode = await _friendService.DeleteFriendReq(header.Uid, request.FriendUid);
         if (errorCode != ErrorCode.None)
         {
             response.Result = errorCode;
             return response;
         }
 
-        _logger.ZLogInformation($"[FriendCancelReq] Uid : {request.Uid}");
+        _logger.ZLogInformation($"[FriendCancelReq] Uid : {header.Uid}");
         return response;
     }
 }

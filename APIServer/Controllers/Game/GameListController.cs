@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using ZLogger;
 using APIServer.Model.DTO.Friend;
+using APIServer.Model.DTO;
 
 namespace APIServer.Controllers.Game;
 
@@ -25,12 +26,12 @@ public class GameList : ControllerBase
     /// 보유한 게임의 목록과 정보를 조회합니다.
     /// </summary>
     [HttpPost]
-    public async Task<GameListResponse> GetGameList(GameListRequest request)
+    public async Task<GameListResponse> GetGameList([FromHeader] HeaderDTO header)
     {
         GameListResponse response = new();
-        (response.Result, response.GameList) = await _gameService.GetGameList(request.Uid);
+        (response.Result, response.GameList) = await _gameService.GetGameList(header.Uid);
 
-        _logger.ZLogInformation($"[GameList] Uid : {request.Uid}");
+        _logger.ZLogInformation($"[GameList] Uid : {header.Uid}");
         return response;
     }
 }

@@ -1,4 +1,5 @@
-﻿using APIServer.Model.DTO.Friend;
+﻿using APIServer.Model.DTO;
+using APIServer.Model.DTO.Friend;
 using APIServer.Services;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -24,12 +25,12 @@ public class FriendReceivedReqList : ControllerBase
     /// 내가 받은 친구 요청 목록을 조회합니다.
     /// </summary>
     [HttpPost]
-    public async Task<FriendRequestListResponse> GetFriendRequestList(FriendRequestListRequest request)
+    public async Task<FriendRequestListResponse> GetFriendRequestList([FromHeader] HeaderDTO header)
     {
         FriendRequestListResponse response = new();
-        (response.Result, response.FriendRequestList) = await _friendService.GetFriendReceivedReqList(request.Uid);
+        (response.Result, response.FriendRequestList) = await _friendService.GetFriendReceivedReqList(header.Uid);
 
-        _logger.ZLogInformation($"[FriendReceivedReqList] Uid : {request.Uid}");
+        _logger.ZLogInformation($"[FriendReceivedReqList] Uid : {header.Uid}");
         return response;
     }
 }
