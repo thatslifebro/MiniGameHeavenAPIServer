@@ -23,7 +23,7 @@ public class GameService :IGameService
         _gameDb = gameDb;
     }
 
-    public async Task<(ErrorCode, IEnumerable<GdbGameListInfo>)> GetGameList(int uid)
+    public async Task<(ErrorCode, IEnumerable<GdbGameInfo>)> GetGameList(int uid)
     {
         try
         {
@@ -37,15 +37,21 @@ public class GameService :IGameService
         }
     }
 
-    public async Task<ErrorCode> UnlockGame(int uid, int gameId)
+    public async Task<ErrorCode> UnlockGame(int uid, int gameKey)
     {
         try
         {
-            var rowCount = await _gameDb.InsertGame(uid, gameId);
+            var gameInfo = await _gameDb.GetGameInfo(uid, gameKey);
+            if (gameInfo != null)
+            {
+                _logger.ZLogDebug($"[Game.GameUnlock] ErrorCode: { ErrorCode.GameUnlockFailAlreadyUnlocked}, Uid: { uid}");
+                return ErrorCode.GameUnlockFailAlreadyUnlocked;
+            }
+            var rowCount = await _gameDb.InsertGame(uid, gameKey);
             if(rowCount != 1)
             {
                 _logger.ZLogDebug(
-                $"[Game.SetNewUserGameList] ErrorCode: {ErrorCode.GameUnlockFailInsert}, Uid: {uid}");
+                $"[Game.GameUnlock] ErrorCode: {ErrorCode.GameUnlockFailInsert}, Uid: {uid}");
                 return ErrorCode.GameUnlockFailInsert;
             }
             return ErrorCode.None;
@@ -58,11 +64,11 @@ public class GameService :IGameService
         }
     }
 
-    public async Task<(ErrorCode, GdbGameInfo)> GetGameInfo(int uid, int gameId)
+    public async Task<(ErrorCode, GdbGameInfo)> GetGameInfo(int uid, int gameKey)
     {
         try
         {
-            return (ErrorCode.None, await _gameDb.GetGameInfo(uid,gameId));
+            return (ErrorCode.None, await _gameDb.GetGameInfo(uid,gameKey));
         }
         catch (Exception e)
         {
@@ -72,11 +78,11 @@ public class GameService :IGameService
         }
     }
 
-    public async Task<ErrorCode> SaveGame(int uid, int gameId, int score)
+    public async Task<ErrorCode> SaveGame(int uid, int gameKey, int score)
     {
         try
         {
-            var gameInfo = await _gameDb.GetGameInfo(uid, gameId);
+            var gameInfo = await _gameDb.GetGameInfo(uid, gameKey);
 
             if (gameInfo == null)
             {
@@ -84,13 +90,13 @@ public class GameService :IGameService
                 return ErrorCode.GameSaveFailException;
             }
 
-            var row = await _gameDb.UpdateBestscore(uid, gameId, score);
+            var row = await _gameDb.UpdateBestscore(uid, gameKey, score);
             if(row == 0)
             {
-                row = await _gameDb.UpdateBestscoreCurSeason(uid, gameId, score);
+                row = await _gameDb.UpdateBestscoreCurSeason(uid, gameKey, score);
                 if(row == 0)
                 {
-                    await _gameDb.UpdateRecentPlayDt(uid, gameId);
+                    await _gameDb.UpdateRecentPlayDt(uid, gameKey);
                 }
             }
             

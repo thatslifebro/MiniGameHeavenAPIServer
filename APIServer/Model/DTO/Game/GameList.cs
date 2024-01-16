@@ -12,5 +12,5 @@ public class GameListRequest : RequestDTO
 
 public class GameListResponse : ErrorCodeDTO
 {
-    public IEnumerable<GdbGameListInfo> GameList { get; set; }
+    public IEnumerable<GdbGameInfo> GameList { get; set; }
 }

@@ -26,13 +26,13 @@ public interface IGameDb
     public Task<IEnumerable<AdbFriendReqListInfo>> GetFriendSentReqInfoList(int uid);
     public Task<int> DeleteFriendEachOther(int uid, int friendUid);
     public Task<int> DeleteFriendReq(int uid, int friendUid);
-    public Task<IEnumerable<GdbGameListInfo>> GetGameList(int uid);
+    public Task<IEnumerable<GdbGameInfo>> GetGameList(int uid);
     public Task<int> InsertInitGameList(int uid, IDbTransaction transaction);
-    public Task<int> InsertGame(int uid, int gameId);
-    public Task<GdbGameInfo> GetGameInfo(int uid, int gameId);
-    public Task<int> UpdateBestscore(int uid, int gameId, int score);
-    public Task<int> UpdateBestscoreCurSeason(int uid, int gameId, int score);
-    public Task<int> UpdateRecentPlayDt(int uid, int gameId);
+    public Task<int> InsertGame(int uid, int gameKey);
+    public Task<GdbGameInfo> GetGameInfo(int uid, int gameKey);
+    public Task<int> UpdateBestscore(int uid, int gameKey, int score);
+    public Task<int> UpdateBestscoreCurSeason(int uid, int gameKey, int score);
+    public Task<int> UpdateRecentPlayDt(int uid, int gameKey);
     public Task<int> InsertInitCharacter(int uid, IDbTransaction transaction);
     public IDbConnection GDbConnection();
 }

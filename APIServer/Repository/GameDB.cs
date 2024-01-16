@@ -22,7 +22,7 @@ public class GameDb : IGameDb
     readonly ILogger<GameDb> _logger;
     readonly IOptions<DbConfig> _dbConfig;
 
-    const int InitCharacterId = 1;
+    const int InitCharacterKey = 1;
     IDbConnection _dbConn;
     SqlKata.Compilers.MySqlCompiler _compiler;
     QueryFactory _queryFactory;
@@ -182,19 +182,19 @@ public class GameDb : IGameDb
                                 .DeleteAsync();
     }
 
-    public async Task<IEnumerable<GdbGameListInfo>> GetGameList(int uid)
+    public async Task<IEnumerable<GdbGameInfo>> GetGameList(int uid)
     {
-        return await _queryFactory.Query("game").Join("master_db.game_info", "game.game_id", "game_info.game_id")
-            .Select("game.game_id", "game_name", "bestscore","game.create_dt")
+        return await _queryFactory.Query("game")
+            .Select("game_key", "bestscore","create_dt")
             .Where("uid", uid)
-            .OrderBy("uid")
-            .GetAsync<GdbGameListInfo>();
+            .OrderBy("game_key")
+            .GetAsync<GdbGameInfo>();
     }
 
     public async Task<int> InsertInitGameList(int uid, IDbTransaction transaction)
     {
         var now = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
-        return await _queryFactory.Query("game").InsertAsync(new[] { "uid", "game_id", "create_dt" }, new[]
+        return await _queryFactory.Query("game").InsertAsync(new[] { "uid", "game_key", "create_dt" }, new[]
         {
             new object[]{uid,1,now},
             new object[]{uid,2,now},
@@ -202,27 +202,26 @@ public class GameDb : IGameDb
         },transaction);
     }
 
-    public async Task<int> InsertGame(int uid,int gameId)
+    public async Task<int> InsertGame(int uid,int gameKey)
     {
         return await _queryFactory.Query("game").InsertAsync(
             new { uid = uid,
-                game_id = gameId,
+                char_key = InitCharacterKey,
+                game_key = gameKey,
                 create_dt = DateTime.Now});
     }
 
-    public async Task<GdbGameInfo> GetGameInfo(int uid, int gameId)
-    {
-        return await _queryFactory.Query("game").Join("master_db.game_info", "game.game_id", "game_info.game_id")
-                                            .Select("game.game_id", "game_name", "bestscore","game.create_dt", "new_record_dt", "recent_play_dt", "bestscore_cur_season", "bestscore_prev_season") // GdbGameInfo 추가예정
-                                            .Where("uid", uid)
-                                            .Where("game.game_id", gameId)
-                                            .FirstOrDefaultAsync<GdbGameInfo>();
-    }
-
-    public async Task<int> UpdateBestscore(int uid, int gameId, int score)
+    public async Task<GdbGameInfo> GetGameInfo(int uid, int gameKey)
     {
         return await _queryFactory.Query("game").Where("uid", uid)
-                                                .Where("game_id", gameId)
+                                                .Where("game_key", gameKey)
+                                                .FirstOrDefaultAsync<GdbGameInfo>();
+    }
+
+    public async Task<int> UpdateBestscore(int uid, int gameKey, int score)
+    {
+        return await _queryFactory.Query("game").Where("uid", uid)
+                                                .Where("game_key", gameKey)
                                                 .Where("bestscore", "<", score)
                                                 .UpdateAsync(new 
                                                 { 
@@ -233,10 +232,10 @@ public class GameDb : IGameDb
                                                 });
     }
 
-    public async Task<int> UpdateBestscoreCurSeason(int uid, int gameId, int score)
+    public async Task<int> UpdateBestscoreCurSeason(int uid, int gameKey, int score)
     {
         return await _queryFactory.Query("game").Where("uid", uid)
-                                                .Where("game_id", gameId)
+                                                .Where("game_key", gameKey)
                                                 .Where("bestscore_cur_season", "<", score)
                                                 .UpdateAsync(new
                                                 {
@@ -245,10 +244,10 @@ public class GameDb : IGameDb
                                                 });
     }
 
-    public async Task<int> UpdateRecentPlayDt(int uid, int gameId)
+    public async Task<int> UpdateRecentPlayDt(int uid, int gameKey)
     {
         return await _queryFactory.Query("game").Where("uid", uid)
-                                                .Where("game_id", gameId)
+                                                .Where("game_key", gameKey)
                                                 .UpdateAsync(new
                                                 {
                                                     recent_play_dt = DateTime.Now
@@ -261,7 +260,7 @@ public class GameDb : IGameDb
             new
             {
                 uid = uid,
-                char_id = InitCharacterId,
+                char_id = InitCharacterKey,
                 create_dt = DateTime.Now
             }, transaction);
     }

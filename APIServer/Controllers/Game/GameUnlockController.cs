@@ -28,9 +28,9 @@ public class GameUnlock : ControllerBase
     public async Task<GameUnlockResponse> UnlockGame(GameUnlockRequest request)
     {
     GameUnlockResponse response = new();
-    response.Result = await _gameService.UnlockGame(request.Uid, request.GameId);
+    response.Result = await _gameService.UnlockGame(request.Uid, request.GameKey);
     
-    _logger.ZLogInformation($"[GameUnlock] Uid : {request.Uid}, GameId : {request.GameId}");
+    _logger.ZLogInformation($"[GameUnlock] Uid : {request.Uid}, GameId : {request.GameKey}");
         return response;
     }
 }

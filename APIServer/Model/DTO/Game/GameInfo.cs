@@ -7,7 +7,7 @@ namespace APIServer.Model.DTO.Friend;
 
 public class GameInfoRequest : RequestDTO
 {
-    public int GameId { get; set; }
+    public int GameKey { get; set; }
 }
 
 
