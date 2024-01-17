@@ -19,7 +19,7 @@
 | -------------------------------------------- | --------- |
 | [로그인]						              | ✅        |
 | [로그아웃]								       | ✅        |
-| [게임 데이터 로드]	                		 | ⬜        |
+| [게임 데이터 로드]	                		 | ✅        |
 
 - **친구 기능**
 
@@ -334,6 +334,116 @@ Content-Type: application/json
 ```
 
 ---
+
+## 게임 데이터 로드
+
+**컨텐츠 설명**
+- 유저의 데이터를 모두 가져옵니다.
+
+**로직**
+1. 유저아이디, 토큰, 앱 버전, 마스터 데이터 버전을 게임 서버에 전달.
+1. [미들웨어] 앱 버전과 마스터 데이터 버전 검증
+1. [미들웨어] 토큰 검증
+1. 유저의 정보를 전달
+
+    - 점수 정보
+    - 재화 정보
+    - 친구 정보
+    - 게임 정보
+    - 캐릭터, 스킨, 코스튬, 푸드 정보
+    - 우편 정보
+    - 출석 정보
+
+클라이언트 → 서버 전송 데이터
+- Header 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
+| 유저아이디               | 게임서버의 uid |
+| 토큰                | 레디스에 저장되어 있는 토큰 |
+| 앱 버전 정보        | 헤더에 포함 |
+| 게임 데이터 정보     | 헤최고더에 포함 |
+
+#### 요청 및 응답 예시
+
+- 요청 예시
+
+```
+GET http://localhost:11500/DataLoad
+
+AppVersion : "0.1",
+MasterDataVersion : "0.1"
+Uid : 1
+Token : "c9v3arfa83vaugm0rxb7txm0c!"
+
+Content-Type: application/json
+{
+}
+```
+
+- 응답 예시
+
+```
+{
+    "userData": {
+        "userInfo": {
+            "uid": 6,
+            "player_id": "18",
+            "nickname": "ksy",
+            "create_dt": "2024-01-17T14:02:09",
+            "recent_login_dt": "2024-01-17T16:21:26",
+            "bestscore_ever": 0,
+            "bestscore_cur_season": 0,
+            "bestscore_prev_season": 0,
+            "star_point": 0
+        },
+        "moneyInfo": {
+            "uid": 6,
+            "jewelry": 0,
+            "gold_medal": 0,
+            "sunchip": 0,
+            "cash": 0
+        },
+        "friendList": [],
+        "gameList": [
+            {
+                "game_key": 1,
+                "bestscore": 0,
+                "create_dt": "2024-01-17T14:02:08",
+                "new_record_dt": "0001-01-01T00:00:00",
+                "recent_play_dt": "0001-01-01T00:00:00",
+                "bestscore_cur_season": 0,
+                "bestscore_prev_season": 0
+            }
+        ],
+        "charList": [
+            {
+                "charInfo": {
+                    "uid": 6,
+                    "char_key": 1,
+                    "char_level": 1,
+                    "skin_key": 0,
+                    "costume_json": null
+                },
+                "randomSkills": []
+            }
+        ],
+        "skinList": [],
+        "costumeList": [],
+        "foodList": [],
+        "mailList": [],
+        "attendanceInfo": {
+            "uid": 6,
+            "attendance_count": 0,
+            "recent_attendance_dt": "0001-01-01T00:00:00"
+        }
+    },
+    "result": 0
+}
+```
+
+---
+
 
 ## 친구 목록 조회
 
