@@ -7,7 +7,7 @@ namespace APIServer.Services;
 
 public class Security
 {
-    private const String AllowableCharacters = "abcdefghijklmnopqrstuvwxyz0123456789";
+    const String AllowableCharacters = "abcdefghijklmnopqrstuvwxyz0123456789";
 
     public static String MakeHashingPassWord(String saltValue, String pw)
     {

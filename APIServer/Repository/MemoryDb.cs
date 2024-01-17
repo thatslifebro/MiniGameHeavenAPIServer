@@ -164,7 +164,7 @@ public class MemoryDb : IMemoryDb
         try
         {
             RedisString<RdbAuthUserData> redis = new(_redisConn, key, null);
-            bool redisResult = await redis.DeleteAsync();
+            var redisResult = await redis.DeleteAsync();
             return redisResult;
         }
         catch

@@ -61,9 +61,9 @@ void SettingLogger()
     ILoggingBuilder logging = builder.Logging;
     logging.ClearProviders();
 
-    string fileDir = configuration["logdir"];
+    var fileDir = configuration["logdir"];
 
-    bool exists = Directory.Exists(fileDir);
+    var exists = Directory.Exists(fileDir);
 
     if (!exists)
     {

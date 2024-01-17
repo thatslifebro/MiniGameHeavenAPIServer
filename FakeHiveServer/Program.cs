@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SqlKata;
 using ZLogger;
 
 
@@ -40,9 +41,9 @@ void SettingLogger()
     ILoggingBuilder logging = builder.Logging;
     logging.ClearProviders();
 
-    string fileDir = configuration["logdir"];
+    var fileDir = configuration["logdir"];
 
-    bool exists = Directory.Exists(fileDir);
+    var exists = Directory.Exists(fileDir);
 
     if (!exists)
     {

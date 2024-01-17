@@ -39,7 +39,7 @@ public class VersionCheck
         if (!appVersion.Equals(_masterDb._version!.app_version))
         {
             context.Response.StatusCode = StatusCodes.Status426UpgradeRequired;
-            string errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
+            var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
             {
                 result = ErrorCode.InValidAppVersion
             });
@@ -50,7 +50,7 @@ public class VersionCheck
         if (!masterDataVersion.Equals(_masterDb._version!.master_data_version))
         {
             context.Response.StatusCode = StatusCodes.Status426UpgradeRequired;
-            string errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
+            var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
             {
                 result = ErrorCode.InvalidMasterDataVersion
             });

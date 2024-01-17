@@ -12,7 +12,7 @@ public static class LogManager
         CreateCharacter = 205,
     }
 
-    private static ILoggerFactory s_loggerFactory;
+    static ILoggerFactory s_loggerFactory;
 
     public static Dictionary<EventType, EventId> EventIdDic = new()
     {

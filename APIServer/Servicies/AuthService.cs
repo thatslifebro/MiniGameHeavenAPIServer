@@ -122,7 +122,7 @@ public class AuthService : IAuthService
     {
         try
         {
-            int count = await _gameDb.UpdateRecentLogin(uid);
+            var count = await _gameDb.UpdateRecentLogin(uid);
 
             if (count != 1)
             {

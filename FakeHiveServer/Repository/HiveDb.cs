@@ -42,7 +42,7 @@ namespace APIServer.Repository
                 var saltValue = Security.SaltString();
                 var hashingPassword = Security.MakeHashingPassWord(saltValue, pw);
 
-                int count = await _queryFactory.Query("account_info").InsertAsync(new HdbAccountInfo
+                var count = await _queryFactory.Query("account_info").InsertAsync(new HdbAccountInfo
                 {
                     player_id = 0,
                     email = email,
@@ -77,7 +77,7 @@ namespace APIServer.Repository
                     return (ErrorCode.LoginFailUserNotExist, 0);
                 }              
 
-                string hashingPassword = Security.MakeHashingPassWord(userInfo.salt_value, pw);
+                var hashingPassword = Security.MakeHashingPassWord(userInfo.salt_value, pw);
                 if (userInfo.pw != hashingPassword)
                 {
                     return (ErrorCode.LoginFailPwNotMatch, 0);
