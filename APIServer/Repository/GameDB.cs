@@ -315,7 +315,7 @@ public class GameDb : IGameDb
 
     public async Task<GdbAttendanceInfo> GetAttendanceById(int uid)
     {
-        return await _queryFactory.Query("attendance").Where("uid", uid)
+        return await _queryFactory.Query("user_attendance").Where("uid", uid)
                                                 .FirstOrDefaultAsync<GdbAttendanceInfo>();
     }
 
