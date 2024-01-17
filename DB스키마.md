@@ -35,15 +35,30 @@ CREATE TABLE user
     `bestscore_cur_season`   INT            NOT NULL    DEFAULT 0 COMMENT '최고점수 현재 시즌', 
     `bestscore_prev_season`  INT            NOT NULL    DEFAULT 0 COMMENT '최고점수 이전 시즌', 
     `star_point`             INT            NOT NULL    DEFAULT 0 COMMENT '스타 포인트', 
-    `jewelry`                INT            NOT NULL    DEFAULT 0 COMMENT '보석', 
-    `gold_medal`             INT            NOT NULL    DEFAULT 0 COMMENT '금 메달', 
-    `sunchip`                FLOAT          NOT NULL    DEFAULT 0 COMMENT '썬칩', 
-    `cash`                   INT            NOT NULL    DEFAULT 0 COMMENT '현금', 
      PRIMARY KEY (uid),
      UNIQUE KEY (nickname)
 );
 
-```     
+```
+
+## user_money 테이블
+유저의 재화 정보를 가지고 있는 테이블
+```sql
+-- 테이블 생성 SQL - user_money
+CREATE TABLE user_money
+(
+    `uid`         INT    NOT NULL    COMMENT '유저아이디', 
+    `jewelry`     INT    NOT NULL    DEFAULT 0 COMMENT '보석', 
+    `gold_medal`  INT    NOT NULL    DEFAULT 0 COMMENT '금 메달', 
+    `cash`        INT    NOT NULL    DEFAULT 0 COMMENT '현금', 
+    `sunchip`     INT    NOT NULL    DEFAULT 0 COMMENT '썬칩', 
+     PRIMARY KEY (uid)
+);
+-- Foreign Key 설정 SQL - user_money(uid) -> user(uid)
+ALTER TABLE user_money
+    ADD CONSTRAINT FK_user_money_uid_user_uid FOREIGN KEY (uid)
+        REFERENCES user (uid) ON DELETE RESTRICT ON UPDATE RESTRICT;
+```
 
 ## friend 테이블
 친구 정보를 가지고 있는 테이블  
