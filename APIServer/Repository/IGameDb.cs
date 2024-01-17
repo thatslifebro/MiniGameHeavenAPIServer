@@ -36,5 +36,7 @@ public interface IGameDb
     public Task<int> InsertInitCharacter(int uid, IDbTransaction transaction);
     public Task<IEnumerable<GdbUserCharInfo>> GetCharList(int uid);
     public Task<IEnumerable<GdbUserCharRandomSkillInfo>> GetCharRandomSkillInfo(int uid, int charKey);
+    public Task<IEnumerable<GdbUserSkinInfo>> GetSkinList(int uid);
+    public Task<IEnumerable<GdbUserCostumeInfo>> GetCostumeList(int uid);
     public IDbConnection GDbConnection();
 }

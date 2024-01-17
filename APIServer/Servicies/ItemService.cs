@@ -1,4 +1,5 @@
-﻿using APIServer.Model.DTO.DataLoad;
+﻿using APIServer.Model.DAO.GameDB;
+using APIServer.Model.DTO.DataLoad;
 using APIServer.Services;
 using APIServer.Servicies.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -39,6 +40,34 @@ namespace APIServer.Servicies
                 _logger.ZLogError(e,
                     $"[Item.GetCharList] ErrorCode: {ErrorCode.CharListFailException}, Uid: {uid}");
                 return (ErrorCode.CharListFailException, null);
+            }
+        }
+
+        public async Task<(ErrorCode, IEnumerable<GdbUserSkinInfo>)> GetSkinList(int uid)
+        {
+            try
+            {
+                return (ErrorCode.None, await _gameDb.GetSkinList(uid));
+            }
+            catch(System.Exception e)
+            {
+                _logger.ZLogError(e,
+                                       $"[Item.GetSkinList] ErrorCode: {ErrorCode.SkinListFailException}, Uid: {uid}");
+                return (ErrorCode.SkinListFailException, null);
+            }
+        }
+
+        public async Task<(ErrorCode,IEnumerable<GdbUserCostumeInfo>)> GetCostumeList(int uid)
+        {
+            try
+            {
+                return (ErrorCode.None, await _gameDb.GetCostumeList(uid));
+            }
+            catch (System.Exception e)
+            {
+                _logger.ZLogError(e,
+                                       $"[Item.GetCostumeList] ErrorCode: {ErrorCode.CostumeListFailException}, Uid: {uid}");
+                return (ErrorCode.CostumeListFailException, null);
             }
         }
     }

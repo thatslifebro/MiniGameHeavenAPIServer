@@ -278,6 +278,20 @@ public class GameDb : IGameDb
                                                 .GetAsync<GdbUserCharRandomSkillInfo>();
     }
 
+    public async Task<IEnumerable<GdbUserSkinInfo>> GetSkinList(int uid)
+    {
+        return await _queryFactory.Query("user_skin").Where("uid", uid)
+                                                .OrderBy("skin_key")
+                                                .GetAsync<GdbUserSkinInfo>();
+    }
+
+    public async Task<IEnumerable<GdbUserCostumeInfo>> GetCostumeList(int uid)
+    {
+        return await _queryFactory.Query("user_costume").Where("uid", uid)
+                                                .OrderBy("costume_key")
+                                                .GetAsync<GdbUserCostumeInfo>();
+    }
+
     public IDbConnection GDbConnection()
     {
         return _queryFactory.Connection;

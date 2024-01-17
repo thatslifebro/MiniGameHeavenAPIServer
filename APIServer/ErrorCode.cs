@@ -111,4 +111,12 @@ public enum ErrorCode : UInt16
     // MasterDb 5000 ~
     MasterDB_Fail_LoadData = 5001,
     MasterDB_Fail_InvalidData = 5002,
+
+    // User
+    UserInfoFailException = 6001,
+
+    // Item
+    CharListFailException = 7001,
+    SkinListFailException = 7002,
+    CostumeListFailException = 7003,
 }
