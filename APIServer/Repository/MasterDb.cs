@@ -110,14 +110,14 @@ public class MasterDb : IMasterDb
         return true;
     }
 
-    private void Open()
+    void Open()
     {
         _dbConn = new MySqlConnection(_dbConfig.Value.MasterDb);
 
         _dbConn.Open();
     }
 
-    private void Close()
+    void Close()
     {
         _dbConn.Close();
     }

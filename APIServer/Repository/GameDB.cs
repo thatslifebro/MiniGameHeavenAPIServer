@@ -348,14 +348,14 @@ public class GameDb : IGameDb
         return _queryFactory.Connection;
     }
 
-    private void Open()
+    void Open()
     {
         _dbConn = new MySqlConnection(_dbConfig.Value.GameDb);
 
         _dbConn.Open();
     }
 
-    private void Close()
+    void Close()
     {
         _dbConn.Close();
     }
