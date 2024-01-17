@@ -27,8 +27,22 @@ namespace APIServer.Servicies
             catch (Exception e)
             {
                 _logger.ZLogError(e,
-                                       $"[User.GetUserInfo] ErrorCode: {ErrorCode.UserInfoFailException}, Uid: {uid}");
+                    $"[User.GetUserInfo] ErrorCode: {ErrorCode.UserInfoFailException}, Uid: {uid}");
                 return (ErrorCode.UserInfoFailException, null);
+            }
+        }
+
+        public async Task<(ErrorCode, GdbUserMoneyInfo)> GetUserMoneyInfo(int uid)
+        {
+            try
+            {
+                return (ErrorCode.None, await _gameDb.GetUserMoneyById(uid));
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogError(e,
+                    $"[User.GetUserMoneyInfo] ErrorCode: {ErrorCode.UserMoneyInfoFailException}, Uid: {uid}");
+                return (ErrorCode.UserMoneyInfoFailException, null);
             }
         }
     }

@@ -114,6 +114,7 @@ public enum ErrorCode : UInt16
 
     // User
     UserInfoFailException = 6001,
+    UserMoneyInfoFailException = 6002,
 
     // Item
     CharListFailException = 7001,

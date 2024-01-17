@@ -24,6 +24,11 @@ builder.Services.AddSingleton<IMasterDb, MasterDb>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IFriendService, FriendService>();
 builder.Services.AddTransient<IGameService, GameService>();
+builder.Services.AddTransient<IItemService, ItemService>();
+builder.Services.AddTransient<IMailService, MailService>();
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IAttendanceService, AttendanceService>();
+builder.Services.AddTransient<IDataLoadService, DataLoadService>();
 builder.Services.AddControllers();
 
 SettingLogger();

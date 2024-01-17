@@ -318,6 +318,12 @@ public class GameDb : IGameDb
         return await _queryFactory.Query("user_attendance").Where("uid", uid)
                                                 .FirstOrDefaultAsync<GdbAttendanceInfo>();
     }
+    
+    public async Task<GdbUserMoneyInfo> GetUserMoneyById(int uid)
+    {
+        return await _queryFactory.Query("user_money").Where("uid", uid)
+                                                .FirstOrDefaultAsync<GdbUserMoneyInfo>();
+    }
 
     public IDbConnection GDbConnection()
     {
