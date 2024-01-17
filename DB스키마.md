@@ -431,3 +431,17 @@ ALTER TABLE master_gacha_reward_list
     ADD CONSTRAINT FK_master_gacha_reward_list_gacha_reward_key_master_gacha_reward FOREIGN KEY (gacha_reward_key)
         REFERENCES master_gacha_reward (gacha_reward_key) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ```
+
+## master_attendance_reward 테이블
+출석 보상 정보를 가지고 있는 테이블
+```sql
+-- 테이블 생성 SQL - master_attendance_reward
+CREATE TABLE master_attendance_reward
+(
+    `day_seq`     INT         NOT NULL    COMMENT '날짜 번호', 
+    `reward_key`  INT         NOT NULL    COMMENT '보상 키', 
+    `reward_qty`  INT         NOT NULL    DEFAULT 0 COMMENT '보상 수', 
+    `create_dt`   DATETIME    NOT NULL    COMMENT '생성 일시', 
+     PRIMARY KEY (day_seq)
+);
+```
