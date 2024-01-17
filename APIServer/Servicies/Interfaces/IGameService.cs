@@ -1,5 +1,5 @@
 ﻿using APIServer.Controllers.Game;
-using APIServer.Model.DAO;
+using APIServer.Model.DAO.GameDB;
 using APIServer.Model.DTO.Friend;
 using System.Collections.Generic;
 using System.Threading.Tasks;

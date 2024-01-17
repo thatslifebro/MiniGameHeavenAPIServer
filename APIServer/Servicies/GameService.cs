@@ -1,6 +1,6 @@
 ﻿using APIServer.Controllers.Friend;
 using APIServer.Controllers.Game;
-using APIServer.Model.DAO;
+using APIServer.Model.DAO.GameDB;
 using APIServer.Model.DTO.Friend;
 using APIServer.Services;
 using APIServer.Servicies.Interfaces;

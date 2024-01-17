@@ -2,7 +2,7 @@
 
 namespace APIServer.Model.DAO.GameDB
 {
-    public class GdbAttendance
+    public class GdbAttendanceInfo
     {
         public int uid { get; set; }
         public int attendance_count { get; set; }

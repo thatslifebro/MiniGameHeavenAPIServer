@@ -1,4 +1,4 @@
-﻿using APIServer.Model.DAO;
+﻿using APIServer.Model.DAO.GameDB;
 using APIServer.Repository;
 using APIServer.Services;
 using Microsoft.Extensions.Configuration;
@@ -30,7 +30,7 @@ public class FriendService : IFriendService
     {
         try
         {
-            AdbUserInfo userInfo = await _gameDb.GetUserByUid(friendUid);
+            GdbUserInfo userInfo = await _gameDb.GetUserByUid(friendUid);
             //없는 유저일 때
             if (userInfo is null)
             {
@@ -39,7 +39,7 @@ public class FriendService : IFriendService
                 return ErrorCode.FriendAddFailUserNotExist;
             }
             //이미 친구신청 했을 때
-            AdbFriendReqInfo friendReqInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
+            GdbFriendInfo friendReqInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
             if (friendReqInfo is not null)
             {
                 _logger.ZLogDebug(
@@ -71,7 +71,7 @@ public class FriendService : IFriendService
         }
     }
 
-    public async Task<(ErrorCode, IEnumerable<AdbFriendUserInfo>)> GetFriendList(int uid, string orderby)
+    public async Task<(ErrorCode, IEnumerable<FriendUserInfo>)> GetFriendList(int uid, string orderby)
     {
         try
         {
@@ -91,7 +91,7 @@ public class FriendService : IFriendService
         }
     }
 
-    public async Task<(ErrorCode, IEnumerable<AdbFriendReqListInfo>)> GetFriendReceivedReqList(int uid)
+    public async Task<(ErrorCode, IEnumerable<FriendReqListInfo>)> GetFriendReceivedReqList(int uid)
     {
         try
         {
@@ -105,7 +105,7 @@ public class FriendService : IFriendService
         }
     }
 
-    public async Task<(ErrorCode, IEnumerable<AdbFriendReqListInfo>)> GetFriendSentReqList(int uid)
+    public async Task<(ErrorCode, IEnumerable<FriendReqListInfo>)> GetFriendSentReqList(int uid)
     {
         try
         {
@@ -124,7 +124,7 @@ public class FriendService : IFriendService
         try
         {
             //친구가 아닐 때
-            AdbFriendReqInfo friendInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
+            GdbFriendInfo friendInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
             if (friendInfo is null || friendInfo.accept_yn==false)
             {
                 _logger.ZLogDebug(
@@ -153,7 +153,7 @@ public class FriendService : IFriendService
         try
         {
             //친구 요청을 안했거나 친구 상태 일때
-            AdbFriendReqInfo friendInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
+            GdbFriendInfo friendInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
             if (friendInfo is null || friendInfo.accept_yn == true)
             {
                 _logger.ZLogDebug(

@@ -1,4 +1,4 @@
-﻿using APIServer.Model.DAO;
+﻿using APIServer.Model.DAO.GameDB;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

@@ -1,5 +1,5 @@
 ﻿using APIServer.Controllers.Auth;
-using APIServer.Model.DAO;
+using APIServer.Model.DAO.GameDB;
 using APIServer.Repository;
 using APIServer.Services;
 using APIServer.Servicies.Interfaces;
@@ -101,7 +101,7 @@ public class AuthService : IAuthService
         try
         {
             //playerId로 userInfo 조회
-            AdbUserInfo userInfo = await _gameDb.GetUserByPlayerId(playerId);
+            GdbUserInfo userInfo = await _gameDb.GetUserByPlayerId(playerId);
             //없는 유저라면 생성.
             if (userInfo is null)
             {
