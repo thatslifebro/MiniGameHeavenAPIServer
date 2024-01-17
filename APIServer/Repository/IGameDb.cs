@@ -38,5 +38,9 @@ public interface IGameDb
     public Task<IEnumerable<GdbUserCharRandomSkillInfo>> GetCharRandomSkillInfo(int uid, int charKey);
     public Task<IEnumerable<GdbUserSkinInfo>> GetSkinList(int uid);
     public Task<IEnumerable<GdbUserCostumeInfo>> GetCostumeList(int uid);
+    public Task<IEnumerable<GdbUserFoodInfo>> GetFoodList(int uid);
+    public Task<IEnumerable<GdbMailboxInfo>> GetMailList(int uid);
+    public Task<IEnumerable<GdbMailboxRewardInfo>> GetMailRewardList(int uid, int mailKey);
+    public Task<GdbAttendanceInfo> GetAttendanceById(int uid);
     public IDbConnection GDbConnection();
 }

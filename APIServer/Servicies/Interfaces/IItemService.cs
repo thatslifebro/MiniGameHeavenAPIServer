@@ -10,5 +10,6 @@ namespace APIServer.Servicies.Interfaces
         public Task<(ErrorCode, List<UserCharInfo>)> GetCharList(int uid);
         public Task<(ErrorCode, IEnumerable<GdbUserSkinInfo>)> GetSkinList(int uid);
         public Task<(ErrorCode, IEnumerable<GdbUserCostumeInfo>)> GetCostumeList(int uid);
+        public Task<(ErrorCode, IEnumerable<GdbUserFoodInfo>)> GetFoodList(int uid);
     }
 }

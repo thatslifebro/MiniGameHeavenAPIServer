@@ -119,4 +119,11 @@ public enum ErrorCode : UInt16
     CharListFailException = 7001,
     SkinListFailException = 7002,
     CostumeListFailException = 7003,
+    FoodListFailException = 7004,
+
+    // Mail
+    MailListFailException = 8001,
+
+    // Attendance
+    AttendanceInfoFailException= 9001,
 }

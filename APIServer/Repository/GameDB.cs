@@ -292,6 +292,33 @@ public class GameDb : IGameDb
                                                 .GetAsync<GdbUserCostumeInfo>();
     }
 
+    public async Task<IEnumerable<GdbUserFoodInfo>> GetFoodList(int uid)
+    {
+        return await _queryFactory.Query("user_food").Where("uid", uid)
+                                                .OrderBy("food_key")
+                                                .GetAsync<GdbUserFoodInfo>();
+    }
+
+    public async Task<IEnumerable<GdbMailboxInfo>> GetMailList(int uid)
+    {
+        return await _queryFactory.Query("mailbox").Where("uid", uid)
+                                                .OrderBy("mail_key")
+                                                .GetAsync<GdbMailboxInfo>();
+    }
+
+    public async Task<IEnumerable<GdbMailboxRewardInfo>> GetMailRewardList(int uid, int mailKey)
+    {
+        return await _queryFactory.Query("mailbox_reward").Where("uid", uid)
+                                                .Where("mail_key", mailKey)
+                                                .GetAsync<GdbMailboxRewardInfo>();
+    }
+
+    public async Task<GdbAttendanceInfo> GetAttendanceById(int uid)
+    {
+        return await _queryFactory.Query("attendance").Where("uid", uid)
+                                                .FirstOrDefaultAsync<GdbAttendanceInfo>();
+    }
+
     public IDbConnection GDbConnection()
     {
         return _queryFactory.Connection;

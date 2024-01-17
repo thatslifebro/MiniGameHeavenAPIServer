@@ -70,5 +70,19 @@ namespace APIServer.Servicies
                 return (ErrorCode.CostumeListFailException, null);
             }
         }
+
+        public async Task<(ErrorCode,IEnumerable<GdbUserFoodInfo>)> GetFoodList(int uid)
+        {
+            try
+            {
+                return (ErrorCode.None, await _gameDb.GetFoodList(uid));
+            }
+            catch (System.Exception e)
+            {
+                _logger.ZLogError(e,
+                                                          $"[Item.GetFoodList] ErrorCode: {ErrorCode.FoodListFailException}, Uid: {uid}");
+                return (ErrorCode.FoodListFailException, null);
+            }
+        }
     }
 }
