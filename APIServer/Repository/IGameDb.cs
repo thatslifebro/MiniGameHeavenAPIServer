@@ -1,5 +1,4 @@
 ﻿using APIServer.Model.DAO.GameDB;
-using APIServer.Model.DTO.Friend;
 using System;
 using System.Collections.Generic;
 using System.Data;
