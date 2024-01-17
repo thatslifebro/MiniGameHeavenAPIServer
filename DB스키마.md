@@ -130,7 +130,7 @@ CREATE TABLE user_attendance
 (
     `uid`                   INT         NOT NULL    COMMENT '유저아이디', 
     `attendance_cnt`        INT         NOT NULL    COMMENT '출석 횟수', 
-    `recent_attendance_dt`  DATETIME    NOT NULL    COMMENT '최근 출석 일시', 
+    `recent_attendance_dt`  DATETIME    NULL        COMMENT '최근 출석 일시', 
      PRIMARY KEY (uid)
 );
 -- Foreign Key 설정 SQL - user_attendance(uid) -> user(uid)
