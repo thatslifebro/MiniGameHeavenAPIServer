@@ -71,7 +71,7 @@ public class FriendService : IFriendService
         }
     }
 
-    public async Task<(ErrorCode, IEnumerable<FriendUserInfo>)> GetFriendList(int uid, string orderby)
+    public async Task<(ErrorCode, IEnumerable<FriendUserInfo>)> GetFriendList(int uid, string orderby = "bestscore_ever")
     {
         try
         {

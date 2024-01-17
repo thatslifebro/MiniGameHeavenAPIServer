@@ -8,7 +8,7 @@ namespace APIServer.Model.DTO.DataLoad
         public GdbUserInfo UserInfo { get; set; }
         public IEnumerable<FriendUserInfo> FriendList { get; set; }
         public IEnumerable<GdbGameInfo> GameList { get; set; }
-        public IEnumerable<UserCharInfo> CharList { get; set; }
+        public List<UserCharInfo> CharList { get; set; }
         public IEnumerable<GdbUserSkinInfo> SkinList { get; set; }
         public IEnumerable<GdbUserCostumeInfo> CostumeList { get; set; }
         public IEnumerable<GdbUserFoodInfo> FoodList { get; set; }

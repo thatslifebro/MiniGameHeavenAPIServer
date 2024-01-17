@@ -264,6 +264,20 @@ public class GameDb : IGameDb
             }, transaction);
     }
 
+    public async Task<IEnumerable<GdbUserCharInfo>> GetCharList(int uid)
+    {
+        return await _queryFactory.Query("user_char").Where("uid", uid)
+                                                .OrderBy("char_key")
+                                                .GetAsync<GdbUserCharInfo>();
+    }
+
+    public async Task<IEnumerable<GdbUserCharRandomSkillInfo>> GetCharRandomSkillInfo(int uid, int charKey)
+    {
+        return await _queryFactory.Query("user_char_random_skill").Where("uid", uid)
+                                                .Where("char_key", charKey)
+                                                .GetAsync<GdbUserCharRandomSkillInfo>();
+    }
+
     public IDbConnection GDbConnection()
     {
         return _queryFactory.Connection;
