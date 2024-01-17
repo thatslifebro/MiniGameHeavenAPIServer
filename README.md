@@ -376,7 +376,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-POST http://localhost:11500/friendlist?orderby=bestscore_ever
+GET http://localhost:11500/friendlist?orderby=bestscore_ever
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"
@@ -507,13 +507,12 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-POST http://localhost:11500/friendreceivedreqlist
+GET http://localhost:11500/friendreceivedreqlist
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"
 Uid : 1
 Token : "c9v3arfa83vaugm0rxb7txm0c!"
-
 
 Content-Type: application/json
 
@@ -567,13 +566,12 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-POST http://localhost:11500/friendsentreqlist
+GET http://localhost:11500/friendsentreqlist
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"
 Uid : 1
 Token : "c9v3arfa83vaugm0rxb7txm0c!"
-
 
 Content-Type: application/json
 
@@ -745,7 +743,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-POST http://localhost:11500/GameList
+GET http://localhost:11500/GameList
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"

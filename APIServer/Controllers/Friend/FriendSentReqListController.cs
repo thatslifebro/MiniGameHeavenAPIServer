@@ -24,7 +24,7 @@ public class FriendSentReqList : ControllerBase
     /// 보낸 친구 요청 조회 API
     /// 내가 받은 친구 요청 목록을 조회합니다.
     /// </summary>
-    [HttpPost]
+    [HttpGet]
     public async Task<FriendRequestListResponse> GetFriendSentList([FromHeader] HeaderDTO header)
     {
         FriendRequestListResponse response = new();

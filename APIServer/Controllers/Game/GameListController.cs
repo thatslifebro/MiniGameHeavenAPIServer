@@ -25,7 +25,7 @@ public class GameList : ControllerBase
     /// 보유 게임 정보 조회 API
     /// 보유한 게임의 목록과 정보를 조회합니다.
     /// </summary>
-    [HttpPost]
+    [HttpGet]
     public async Task<GameListResponse> GetGameList([FromHeader] HeaderDTO header)
     {
         GameListResponse response = new();
