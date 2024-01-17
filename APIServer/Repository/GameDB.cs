@@ -3,19 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using System.Transactions;
-using APIServer.Controllers.Game;
 using APIServer.Model.DAO.GameDB;
-using APIServer.Model.DTO.Friend;
-using APIServer.Repository;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySqlConnector;
 using SqlKata.Execution;
-using ZLogger;
 
 namespace APIServer.Services;
-
 
 public class GameDb : IGameDb
 {
@@ -43,6 +37,7 @@ public class GameDb : IGameDb
         Close();
     }
 
+    #region User
     public async Task<GdbUserInfo> GetUserByPlayerId(Int64 playerId)
     {
         return await _queryFactory.Query("user")
@@ -83,11 +78,6 @@ public class GameDb : IGameDb
                                 .DeleteAsync();
     }
 
-    public IDbConnection ADbConnection()
-    {
-        return _queryFactory.Connection;
-    }
-
     public async Task<int> UpdateRecentLogin(int uid)
     {
         return await _queryFactory.Query("user").Where("uid", uid).UpdateAsync(new
@@ -95,7 +85,9 @@ public class GameDb : IGameDb
             recent_login_dt = DateTime.Now,
         });
     }
+    #endregion
 
+    #region Friend
     public async Task<GdbFriendInfo> GetFriendReqInfo(int uid, int friendUid)
     {
         return await _queryFactory.Query("friend")
@@ -115,6 +107,7 @@ public class GameDb : IGameDb
                                     create_dt = DateTime.Now,
                                 });
     }
+
     public async Task<int> InsertFriendReq(int uid, int friendUid, IDbTransaction transaction, bool accept = false)
     {
         return await _queryFactory.Query("friend")
@@ -181,7 +174,9 @@ public class GameDb : IGameDb
                                 .Where("friend_uid", friendUid)
                                 .DeleteAsync();
     }
+    #endregion
 
+    #region Game
     public async Task<IEnumerable<GdbGameInfo>> GetGameList(int uid)
     {
         return await _queryFactory.Query("user_game")
@@ -252,7 +247,9 @@ public class GameDb : IGameDb
                                                     recent_play_dt = DateTime.Now
                                                 });
     }
+    #endregion
 
+    #region Init
     public async Task<int> InsertInitCharacter(int uid, IDbTransaction transaction)
     {
         return await _queryFactory.Query("user_char").InsertAsync(
@@ -281,7 +278,9 @@ public class GameDb : IGameDb
                 uid = uid
              }, transaction);
     }
+    #endregion
 
+    #region ITEM
     public async Task<IEnumerable<GdbUserCharInfo>> GetCharList(int uid)
     {
         return await _queryFactory.Query("user_char").Where("uid", uid)
@@ -316,6 +315,7 @@ public class GameDb : IGameDb
                                                 .OrderBy("food_key")
                                                 .GetAsync<GdbUserFoodInfo>();
     }
+    #endregion
 
     public async Task<IEnumerable<GdbMailboxInfo>> GetMailList(int uid)
     {

@@ -1,11 +1,10 @@
-﻿using APIServer.Controllers.Game;
-using APIServer.Model.DTO;
+﻿using APIServer.Model.DTO;
 using APIServer.Model.DTO.DataLoad;
-using APIServer.Servicies;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using ZLogger;
 
 namespace APIServer.Controllers.DataLoad;
 
@@ -34,6 +33,7 @@ public class DataLoad : ControllerBase
 
         (response.Result, response.UserData) = await _dataLoadService.LoadUserData(header.Uid);
 
+        _logger.ZLogInformation($"[DataLoad] Uid : {header.Uid}");
         return response;
     }
 }

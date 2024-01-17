@@ -34,6 +34,7 @@ public class FriendCancelReq : ControllerBase
             response.Result = ErrorCode.FriendDeleteFailSameUid;
             return response;
         }
+
         var errorCode = await _friendService.DeleteFriendReq(header.Uid, request.FriendUid);
         if (errorCode != ErrorCode.None)
         {

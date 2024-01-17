@@ -29,6 +29,7 @@ public class GameList : ControllerBase
     public async Task<GameListResponse> GetGameList([FromHeader] HeaderDTO header)
     {
         GameListResponse response = new();
+
         (response.Result, response.GameList) = await _gameService.GetGameList(header.Uid);
 
         _logger.ZLogInformation($"[GameList] Uid : {header.Uid}");

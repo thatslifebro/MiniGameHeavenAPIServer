@@ -29,6 +29,7 @@ public class GameSave : ControllerBase
     public async Task<GameSaveResponse> SaveGame([FromHeader] HeaderDTO header, GameSaveRequest request)
     {
      GameSaveResponse response = new();
+
     response.Result = await _gameService.SaveGame(header.Uid, request.GameKey, request.Score);
     
     _logger.ZLogInformation($"[GameSave] Uid : {header.Uid}, GameId : {request.GameKey}, Score : {request.Score}");

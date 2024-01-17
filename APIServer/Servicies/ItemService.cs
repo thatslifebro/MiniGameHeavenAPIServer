@@ -26,6 +26,7 @@ namespace APIServer.Servicies
             {
                 List<UserCharInfo> userCharInfoList = new();
                 UserCharInfo userCharInfo = new();
+
                 var charList =  await _gameDb.GetCharList(uid);
                 foreach (var character in charList)
                 {
@@ -33,6 +34,7 @@ namespace APIServer.Servicies
                     userCharInfo.RandomSkills = await _gameDb.GetCharRandomSkillInfo(uid, character.char_key);
                     userCharInfoList.Add(userCharInfo);
                 }
+
                 return (ErrorCode.None, userCharInfoList);
             }
             catch (System.Exception e)

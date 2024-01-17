@@ -35,6 +35,10 @@ SettingLogger();
 
 WebApplication app = builder.Build();
 
+if(!await app.Services.GetService<IMasterDb>().Load())
+{
+    return;
+}
 
 //log setting
 ILoggerFactory loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();

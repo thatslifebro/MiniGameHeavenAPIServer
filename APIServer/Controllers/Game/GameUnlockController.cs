@@ -29,6 +29,7 @@ public class GameUnlock : ControllerBase
     public async Task<GameUnlockResponse> UnlockGame([FromHeader] HeaderDTO header, GameUnlockRequest request)
     {
     GameUnlockResponse response = new();
+
     response.Result = await _gameService.UnlockGame(header.Uid, request.GameKey);
     
     _logger.ZLogInformation($"[GameUnlock] Uid : {header.Uid}, GameId : {request.GameKey}");

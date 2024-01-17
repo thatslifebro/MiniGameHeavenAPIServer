@@ -1,6 +1,5 @@
 ﻿using APIServer.Model.DTO;
 using APIServer.Model.DTO.Friend;
-using APIServer.Services;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -28,6 +27,7 @@ public class FriendSentReqList : ControllerBase
     public async Task<FriendRequestListResponse> GetFriendSentList([FromHeader] HeaderDTO header)
     {
         FriendRequestListResponse response = new();
+
         (response.Result, response.FriendRequestList) = await _friendService.GetFriendSentReqList(header.Uid);
 
         _logger.ZLogInformation($"[FriendSentReqList] Uid : {header.Uid}");

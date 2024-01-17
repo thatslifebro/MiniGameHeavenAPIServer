@@ -2,7 +2,6 @@
 using APIServer.Model.DTO;
 using APIServer.Model.DTO.Auth;
 using APIServer.Repository;
-using APIServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ZLogger;
@@ -36,8 +35,8 @@ public class Logout : ControllerBase
             response.Result = errorCode;
             return response;
         }
-        _logger.ZLogInformation($"[Logout] Uid : {request.Uid}");
 
+        _logger.ZLogInformation($"[Logout] Uid : {request.Uid}");
         return response;
     }
 }

@@ -47,6 +47,7 @@ public class GameService :IGameService
                 _logger.ZLogDebug($"[Game.GameUnlock] ErrorCode: { ErrorCode.GameUnlockFailAlreadyUnlocked}, Uid: { uid}");
                 return ErrorCode.GameUnlockFailAlreadyUnlocked;
             }
+
             var rowCount = await _gameDb.InsertGame(uid, gameKey);
             if(rowCount != 1)
             {
@@ -54,6 +55,7 @@ public class GameService :IGameService
                 $"[Game.GameUnlock] ErrorCode: {ErrorCode.GameUnlockFailInsert}, Uid: {uid}");
                 return ErrorCode.GameUnlockFailInsert;
             }
+
             return ErrorCode.None;
         }
         catch (Exception e)

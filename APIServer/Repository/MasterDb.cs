@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using APIServer.MasterData;
 using APIServer.Model.DAO;
 using APIServer.Services;
-using Microsoft.AspNetCore.SignalR.Protocol;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySqlConnector;
@@ -66,9 +64,9 @@ public class MasterDb : IMasterDb
             _skillList = (await _queryFactory.Query($"master_skill").GetAsync<SkillData>()).ToList();
 
             var gachaRewards = await _queryFactory.Query($"master_gacha_reward").GetAsync<GachaRewardInfo>();
+            GachaRewardData gachaRewardData = new();
             foreach (var gachaRewardInfo in gachaRewards)
             {
-                GachaRewardData gachaRewardData = new();
                 gachaRewardData.gachaRewardInfo = gachaRewardInfo;
                 gachaRewardData.gachaRewardList = (await _queryFactory.Query("master_gacha_reward_list")
                                                    .Where("gacha_reward_key", gachaRewardInfo.gacha_reward_key)
@@ -76,7 +74,6 @@ public class MasterDb : IMasterDb
                                                    .ToList();
                 _gachaRewardList.Add(gachaRewardData);
             }
-
         }
         catch(Exception e)
         {
@@ -85,6 +82,7 @@ public class MasterDb : IMasterDb
                 $"[MasterDb.Load] ErrorCode: {ErrorCode.MasterDB_Fail_LoadData}");
             return false;
         }
+
         if (!ValidateMasterData())
         {
             _logger.ZLogError($"[MasterDb.Load] ErrorCode: {ErrorCode.MasterDB_Fail_InvalidData}");
@@ -92,7 +90,6 @@ public class MasterDb : IMasterDb
         }
 
         return true;
-
     }
 
     bool ValidateMasterData()
@@ -124,5 +121,4 @@ public class MasterDb : IMasterDb
     {
         _dbConn.Close();
     }
-
 }

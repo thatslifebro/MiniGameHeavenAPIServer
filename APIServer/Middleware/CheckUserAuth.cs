@@ -59,6 +59,7 @@ public class CheckUserAuthAndLoadUserData
         {
             return;
         }
+
         //이번 api 호출 끝날 때까지 redis키 잠금 만약 이미 잠겨있다면 에러
         var userLockKey = Services.MemoryDbKeyMaker.MakeUserLockKey(userInfo.Uid.ToString());
         if (await SetLockAndIsFailThenSendError(context, userLockKey))
@@ -115,8 +116,8 @@ public class CheckUserAuthAndLoadUserData
         {
             return false;
         }
-        context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
 
+        context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
         var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
         {
             result = ErrorCode.AuthTokenFailSetNx
@@ -147,7 +148,6 @@ public class CheckUserAuthAndLoadUserData
         if (!isOk)
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-
             var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
             {
                 result = ErrorCode.AuthTokenKeyNotFound

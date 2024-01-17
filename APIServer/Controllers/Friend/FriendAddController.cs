@@ -1,6 +1,5 @@
 ﻿using APIServer.Model.DTO;
 using APIServer.Model.DTO.Friend;
-using APIServer.Services;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -44,7 +43,6 @@ public class FriendAdd : ControllerBase
         }
 
         _logger.ZLogInformation($"[FriendAdd] Uid : {header.Uid}");
-
         return response;
 
     }

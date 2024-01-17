@@ -29,6 +29,7 @@ public class GameInfo : ControllerBase
     public async Task<GameInfoResponse> GetGameInfo([FromHeader] HeaderDTO header, GameInfoRequest request)
     {
     GameInfoResponse response = new();
+
     (response.Result, response.GameInfo) = await _gameService.GetGameInfo(header.Uid, request.GameKey);
     
     _logger.ZLogInformation($"[GameInfo] Uid : {header.Uid}, GameId : {request.GameKey}");

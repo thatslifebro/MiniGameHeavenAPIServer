@@ -1,6 +1,5 @@
 ﻿using APIServer.Model.DTO;
 using APIServer.Model.DTO.Friend;
-using APIServer.Services;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -31,6 +30,7 @@ public class FriendList : ControllerBase
     public async Task<FriendListResponse> GetFriendList([FromHeader] HeaderDTO header, [FromQuery(Name = "orderby")] string orderby = "bestscore_ever")
     {
         FriendListResponse response = new();
+
         (response.Result, response.FriendList) = await _friendService.GetFriendList(header.Uid, orderby);
 
         _logger.ZLogInformation($"[FriendList] Uid : {header.Uid}");

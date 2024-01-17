@@ -2,7 +2,6 @@
 using APIServer.Model.DTO.Auth;
 using APIServer.Repository;
 using APIServer.Services;
-using APIServer.Servicies;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -25,7 +24,6 @@ public class Login : ControllerBase
         _memoryDb = memoryDb;
         _authService = authService;
         _gameService = gameService;
-
     }
 
     /// <summary>
@@ -56,11 +54,11 @@ public class Login : ControllerBase
                 return response;
             }
 
-            // 게임 데이터 생성
+            // 게임 데이터 생성 및 실패시 롤백
             errorCode = await _gameService.InitNewUserGameData(uid);
+            // 실패시 앞서 만든 계정 다시 삭제.
             if (errorCode != ErrorCode.None)
             {
-                // 실패시 앞서 만든 계정 다시 삭제.
                 await _authService.DeleteAccountAsync(uid);
                 response.Result = errorCode;
                 return response;

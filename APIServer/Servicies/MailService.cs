@@ -24,6 +24,7 @@ namespace APIServer.Servicies
             {
                 List<UserMailInfo> userMailInfoList = new();
                 UserMailInfo userMailInfo = new();
+
                 var mailList = await _gameDb.GetMailList(uid);
                 foreach (var mail in mailList)
                 {
@@ -31,6 +32,7 @@ namespace APIServer.Servicies
                     userMailInfo.MailItems = await _gameDb.GetMailRewardList(uid, mail.mail_seq);
                     userMailInfoList.Add(userMailInfo);
                 }
+
                 return (ErrorCode.None, userMailInfoList);
             }
             catch (System.Exception e)

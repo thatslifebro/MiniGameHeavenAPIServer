@@ -5,12 +5,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 
-
 namespace APIServer.Services;
 
 public interface IGameDb
 {
-    public IDbConnection ADbConnection();
     public Task<GdbUserInfo> GetUserByPlayerId(Int64 playerId);
     public Task<GdbUserInfo> GetUserByUid(int uid);
     public Task<GdbUserInfo> GetUserByNickname(string nickname);

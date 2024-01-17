@@ -81,6 +81,7 @@ public class FriendService : IFriendService
                 $"[Friend.GetFriendList] ErrorCode: {ErrorCode.FriendGetListFailOrderby}, orderby: {orderby}");
                 return (ErrorCode.FriendGetListFailOrderby, null);
             }
+
             return (ErrorCode.None, await _gameDb.GetFriendUserInfoList(uid, orderby));
         }
         catch (Exception e)
@@ -139,6 +140,7 @@ public class FriendService : IFriendService
                                    $"[Friend.DeleteFriend] ErrorCode: {ErrorCode.FriendDeleteFailDelete}, Uid: {uid}, FriendUid : {friendUid}");
                 return ErrorCode.FriendDeleteFailDelete;
             }
+
             return ErrorCode.None;
         }
         catch (Exception e)
@@ -167,6 +169,7 @@ public class FriendService : IFriendService
                 _logger.ZLogDebug(
                 $"[Friend.DeleteFriendReq] ErrorCode: {ErrorCode.FriendDeleteReqFailDelete}, Uid: {uid}, FriendUid : {friendUid}");
             }
+
             return ErrorCode.None;
         }
         catch (Exception e)
@@ -178,7 +181,7 @@ public class FriendService : IFriendService
 
     async Task<ErrorCode> AcceptFriendRequest(int uid, int friendUid)
     {
-        var transaction = _gameDb.ADbConnection().BeginTransaction();
+        var transaction = _gameDb.GDbConnection().BeginTransaction();
         try
         {
             var rowCount = await _gameDb.InsertFriendReq(uid, friendUid, transaction, true);
@@ -189,6 +192,7 @@ public class FriendService : IFriendService
                 transaction.Rollback();
                 return ErrorCode.FriendAddFailInsert;
             }
+
             rowCount = await _gameDb.UpdateFriendReqAccept(uid, friendUid, transaction, true);
             if (rowCount != 1)
             {
@@ -197,6 +201,7 @@ public class FriendService : IFriendService
                 transaction.Rollback();
                 return ErrorCode.FriendAddFailInsert;
             }
+
             transaction.Commit();
             return ErrorCode.None;
         }

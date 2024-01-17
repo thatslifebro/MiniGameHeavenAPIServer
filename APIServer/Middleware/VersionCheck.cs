@@ -25,10 +25,12 @@ public class VersionCheck
     {
         var appVersion = context.Request.Headers["AppVersion"].ToString();
         var masterDataVersion = context.Request.Headers["MasterDataVersion"].ToString();
+
         if (!(await VersionCompare(appVersion, masterDataVersion, context)))
         {
             return;
         }
+
         await _next(context);
     }
 
@@ -58,6 +60,7 @@ public class VersionCheck
 
         return true;
     }
+
     class MiddlewareResponse
     {
         public ErrorCode result { get; set; }

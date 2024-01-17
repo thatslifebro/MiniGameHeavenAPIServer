@@ -1,6 +1,5 @@
 ﻿using APIServer.Model.DTO;
 using APIServer.Model.DTO.Friend;
-using APIServer.Services;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -33,6 +32,7 @@ public class FriendDelete : ControllerBase
             response.Result = ErrorCode.FriendDeleteFailSameUid;
             return response;
         }
+
         var errorCode = await _friendService.DeleteFriend(header.Uid, request.FriendUid);
         if (errorCode != ErrorCode.None)
         {
