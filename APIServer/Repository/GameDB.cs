@@ -264,6 +264,24 @@ public class GameDb : IGameDb
             }, transaction);
     }
 
+    public async Task<int> InsertInitMoneyInfo(int uid, IDbTransaction transaction)
+    {
+        return await _queryFactory.Query("user_money").InsertAsync(
+             new
+             {
+                uid = uid
+             }, transaction);
+    }
+
+    public async Task<int> InsertInitAttendance(int uid, IDbTransaction transaction)
+    {
+        return await _queryFactory.Query("user_attendance").InsertAsync(
+             new
+             {
+                uid = uid
+             }, transaction);
+    }
+
     public async Task<IEnumerable<GdbUserCharInfo>> GetCharList(int uid)
     {
         return await _queryFactory.Query("user_char").Where("uid", uid)

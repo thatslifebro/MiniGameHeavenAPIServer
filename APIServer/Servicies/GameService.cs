@@ -121,12 +121,28 @@ public class GameService :IGameService
                 transaction.Rollback();
                 return ErrorCode.InitNewUserGameDataFailCharacter;
             }
+
             rowCount = await _gameDb.InsertInitGameList(uid, transaction);
             if (rowCount != 3)
             {
                 transaction.Rollback();
                 return ErrorCode.InitNewUserGameDataFailGameList;
             }
+
+            rowCount = await _gameDb.InsertInitMoneyInfo(uid, transaction);
+            if (rowCount != 1)
+            {
+                transaction.Rollback();
+                return ErrorCode.InitNewUserGameDataFailMoney;
+            }
+
+            rowCount = await _gameDb.InsertInitAttendance(uid, transaction);
+            if (rowCount != 1)
+            {
+                transaction.Rollback();
+                return ErrorCode.InitNewUserGameDataFailAttendance;
+            }
+
             transaction.Commit();
             return ErrorCode.None;
         }

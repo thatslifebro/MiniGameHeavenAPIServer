@@ -28,6 +28,8 @@ public interface IGameDb
     public Task<int> DeleteFriendReq(int uid, int friendUid);
     public Task<IEnumerable<GdbGameInfo>> GetGameList(int uid);
     public Task<int> InsertInitGameList(int uid, IDbTransaction transaction);
+    public Task<int> InsertInitMoneyInfo(int uid, IDbTransaction transaction);
+    public Task<int> InsertInitAttendance(int uid, IDbTransaction transaction);
     public Task<int> InsertGame(int uid, int gameKey);
     public Task<GdbGameInfo> GetGameInfo(int uid, int gameKey);
     public Task<int> UpdateBestscore(int uid, int gameKey, int score);

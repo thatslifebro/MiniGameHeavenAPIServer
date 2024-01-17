@@ -44,6 +44,8 @@ public enum ErrorCode : UInt16
     InitNewUserGameDataFailException = 2025,
     InitNewUserGameDataFailCharacter = 2026,
     InitNewUserGameDataFailGameList = 2027,
+    InitNewUserGameDataFailMoney = 2028,
+    InitNewUserGameDataFailAttendance = 2029,
 
     FriendAddFailUserNotExist = 2101,
     FriendAddFailInsert = 2102,
