@@ -30,7 +30,7 @@ public class AttendanceCheck : ControllerBase
     {
         AttendanceCheckResponse response = new();
                               
-        response.Result = await _attendanceService.CheckAttendance(header.Uid);
+        (response.Result, response.Reward) = await _attendanceService.CheckAttendance(header.Uid);
 
         _logger.ZLogInformation($"[AttendanceCheck] Uid : {header.Uid}");
         return response;

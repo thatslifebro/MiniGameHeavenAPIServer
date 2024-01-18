@@ -49,33 +49,33 @@ public class MailService : IMailService
         }
     }
 
-    public async Task<ErrorCode> ReceiveMail(int uid, int mailSeq)
+    public async Task<(ErrorCode,IEnumerable<RewardData>)> ReceiveMail(int uid, int mailSeq)
     {
         try
         {
             var mailInfo = await _gameDb.GetMailInfo(mailSeq);
             if(mailInfo == null)
             {
-                return ErrorCode.MailReceiveFailMailNotExist;
+                return (ErrorCode.MailReceiveFailMailNotExist, null);
             }
             if (mailInfo.receive_dt != null)
             {
-                return ErrorCode.MailReceiveFailAlreadyReceived;
+                return (ErrorCode.MailReceiveFailAlreadyReceived, null);
             }
             if(mailInfo.uid != uid)
             {
-                return ErrorCode.MailReceiveFailNotMailOwner;
+                return ((ErrorCode.MailReceiveFailNotMailOwner, null));
             }
 
             var rewards = await _gameDb.GetMailRewardList(mailSeq);
 
-            return await ReceiveMailRewards(mailInfo.uid, mailSeq, rewards);
+            return (await ReceiveMailRewards(mailInfo.uid, mailSeq, rewards), rewards);
         }
         catch (Exception e)
         {
             _logger.ZLogError(e,
                    $"[Mail.ReceiveMail] ErrorCode: {ErrorCode.MailReceiveFailException}, Uid: {uid}, MailSeq: {mailSeq}");
-            return ErrorCode.MailReceiveFailException;
+            return (ErrorCode.MailReceiveFailException, null);
         }
     }
 

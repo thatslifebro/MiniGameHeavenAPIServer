@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using APIServer.MasterData;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace APIServer.Model.DTO.Mail
 {
@@ -10,5 +12,6 @@ namespace APIServer.Model.DTO.Mail
 
     public class MailReceiveResponse : ErrorCodeDTO
     {
+        public IEnumerable<RewardData> Rewards { get; set; }
     }
 }

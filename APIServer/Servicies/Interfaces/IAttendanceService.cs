@@ -1,4 +1,6 @@
-﻿using APIServer.Model.DAO.GameDB;
+﻿using APIServer.MasterData;
+using APIServer.Model.DAO.GameDB;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace APIServer.Servicies.Interfaces
@@ -6,6 +8,6 @@ namespace APIServer.Servicies.Interfaces
     public interface IAttendanceService
     {
         public Task<(ErrorCode, GdbAttendanceInfo)> GetAttendance(int uid);
-        public Task<ErrorCode> CheckAttendance(int uid);
+        public Task<(ErrorCode,RewardData)> CheckAttendance(int uid);
     }
 }

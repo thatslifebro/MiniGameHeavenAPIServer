@@ -30,7 +30,7 @@ public class MailReceive : ControllerBase
     {
         MailReceiveResponse response = new();
 
-        response.Result = await _mailService.ReceiveMail(header.Uid, request.MailSeq);
+        (response.Result, response.Rewards) = await _mailService.ReceiveMail(header.Uid, request.MailSeq);
 
         _logger.ZLogInformation($"[MailboxInfo] Uid : {header.Uid}");
         return response;
