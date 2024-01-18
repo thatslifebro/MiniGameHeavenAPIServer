@@ -442,7 +442,8 @@ CREATE TABLE master_attendance_reward
 (
     `day_seq`     INT         NOT NULL    COMMENT '날짜 번호', 
     `reward_key`  INT         NOT NULL    COMMENT '보상 키', 
-    `reward_qty`  INT         NOT NULL    DEFAULT 0 COMMENT '보상 수', 
+    `reward_qty`  INT         NOT NULL    DEFAULT 0 COMMENT '보상 수',
+    `reward_type` VARCHAR(20) NOT NULL    COMMENT '보상 종류',
     `create_dt`   DATETIME    NOT NULL    COMMENT '생성 일시', 
      PRIMARY KEY (day_seq)
 );
