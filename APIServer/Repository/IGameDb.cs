@@ -39,7 +39,7 @@ public interface IGameDb
     public Task<IEnumerable<GdbUserCostumeInfo>> GetCostumeList(int uid);
     public Task<IEnumerable<GdbUserFoodInfo>> GetFoodList(int uid);
     public Task<IEnumerable<GdbMailboxInfo>> GetMailList(int uid);
-    public Task<IEnumerable<GdbMailboxRewardInfo>> GetMailRewardList(int uid, int mailKey);
+    public Task<IEnumerable<GdbMailboxRewardInfo>> GetMailRewardList(int uid, int mailSeq);
     public Task<GdbAttendanceInfo> GetAttendanceById(int uid);
     public Task<GdbUserMoneyInfo> GetUserMoneyById(int uid);
     public Task<int> CheckAttendanceById(int uid);

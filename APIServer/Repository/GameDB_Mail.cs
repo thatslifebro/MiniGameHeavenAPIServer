@@ -14,10 +14,9 @@ public partial class GameDb : IGameDb
                                                 .GetAsync<GdbMailboxInfo>();
     }
 
-    public async Task<IEnumerable<GdbMailboxRewardInfo>> GetMailRewardList(int uid, int mailKey)
+    public async Task<IEnumerable<GdbMailboxRewardInfo>> GetMailRewardList(int uid, int mailSeq)
     {
-        return await _queryFactory.Query("mailbox_reward").Where("uid", uid)
-                                                .Where("mail_seq", mailKey)
+        return await _queryFactory.Query("mailbox_reward").Where("mail_seq", mailSeq)
                                                 .GetAsync<GdbMailboxRewardInfo>();
     }
 }

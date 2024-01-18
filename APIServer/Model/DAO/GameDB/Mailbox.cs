@@ -17,6 +17,6 @@ namespace APIServer.Model.DAO.GameDB
         public int mail_seq { get; set; }
         public int reward_key { get; set; }
         public int reward_qty { get; set; }
-        public int reward_type { get; set; }
+        public string reward_type { get; set; }
     }
 }
