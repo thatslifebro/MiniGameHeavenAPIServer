@@ -172,6 +172,7 @@ CREATE TABLE user_char
     `uid`           INT         NOT NULL    COMMENT '유저아이디', 
     `char_key`      INT         NOT NULL    COMMENT '캐릭터 키', 
     `char_level`    INT         NOT NULL    COMMENT '캐릭터 레벨', 
+    `char_cnt`      INT         NOT NULL    DEFAULT 0 COMMENT '캐릭터 개수',
     `skin_key`      INT         NULL        COMMENT '스킨 키', 
     `create_dt`     DATETIME    NOT NULL    COMMENT '생성 일시', 
     `costume_json`  JSON        NULL        COMMENT '코스튬 JSON', 
@@ -210,7 +211,8 @@ CREATE TABLE user_costume
 (
     `uid`            INT         NOT NULL    COMMENT '유저아이디', 
     `costume_key`    INT         NOT NULL    COMMENT '코스튬 키', 
-    `costume_level`  INT         NOT NULL    COMMENT '코스튬 레벨', 
+    `costume_level`  INT         NOT NULL    COMMENT '코스튬 레벨',
+    `costume_cnt`    INT         NOT NULL    DEFAULT 0 COMMENT '코스튬 개수',
     `create_dt`      DATETIME    NOT NULL    COMMENT '생성 일시', 
      PRIMARY KEY (uid, costume_key)
 );
@@ -443,5 +445,17 @@ CREATE TABLE master_attendance_reward
     `reward_qty`  INT         NOT NULL    DEFAULT 0 COMMENT '보상 수', 
     `create_dt`   DATETIME    NOT NULL    COMMENT '생성 일시', 
      PRIMARY KEY (day_seq)
+);
+```
+
+## master_item_level 테이블
+아이템(캐릭터, 코스튬, 푸드) 레벨업을 위한 개수의 정보를 가지고 있는 테이블
+```sql
+-- 테이블 생성 SQL - master_item_level
+CREATE TABLE master_item_level
+(
+    `level`     INT            NOT NULL    COMMENT '레벨', 
+    `item_cnt`  VARCHAR(50)    NOT NULL    DEFAULT 1 COMMENT '아이템 개수', 
+     PRIMARY KEY (level)
 );
 ```
