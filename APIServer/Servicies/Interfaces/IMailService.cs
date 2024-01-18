@@ -7,5 +7,6 @@ namespace APIServer.Servicies.Interfaces
     public interface IMailService
     {
         public Task<(ErrorCode, List<UserMailInfo>)> GetMailList(int uid);
+        public Task<ErrorCode> ReceiveMail(int uid, int mailSeq);
     }
 }

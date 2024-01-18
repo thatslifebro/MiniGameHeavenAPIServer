@@ -150,6 +150,7 @@ public class GameService :IGameService
         }
         catch (Exception e)
         {
+            transaction.Rollback();
             _logger.ZLogError(e,
                 $"[Game.InitNewUserGameData] ErrorCode: {ErrorCode.InitNewUserGameDataFailException}, Uid: {uid}");
             return ErrorCode.GameSetNewUserListFailException;

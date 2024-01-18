@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using APIServer.Model.DAO.GameDB;
 using SqlKata.Execution;
@@ -14,9 +16,21 @@ public partial class GameDb : IGameDb
                                                 .GetAsync<GdbMailboxInfo>();
     }
 
-    public async Task<IEnumerable<GdbMailboxRewardInfo>> GetMailRewardList(int uid, int mailSeq)
+    public async Task<GdbMailboxInfo> GetMailInfo(int mailSeq)
+    {
+        return await _queryFactory.Query("mailbox").Where("mail_seq", mailSeq)
+                                                .FirstOrDefaultAsync<GdbMailboxInfo>();
+    }
+
+    public async Task<IEnumerable<GdbMailboxRewardInfo>> GetMailRewardList(int mailSeq)
     {
         return await _queryFactory.Query("mailbox_reward").Where("mail_seq", mailSeq)
                                                 .GetAsync<GdbMailboxRewardInfo>();
+    }
+
+    public async Task<int> UpdateReceiveDt(int mailSeq)
+    {
+        return await _queryFactory.Query("mailbox").Where("mail_seq", mailSeq)
+                                                .UpdateAsync(new { receive_dt = DateTime.Now });
     }
 }

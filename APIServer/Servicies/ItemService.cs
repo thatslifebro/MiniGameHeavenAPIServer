@@ -1,10 +1,14 @@
-﻿using APIServer.Model.DAO.GameDB;
+﻿using APIServer.MasterData;
+using APIServer.Model.DAO.GameDB;
 using APIServer.Model.DTO.DataLoad;
 using APIServer.Services;
 using APIServer.Servicies.Interfaces;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using ZLogger;
 
@@ -84,6 +88,48 @@ namespace APIServer.Servicies
                 _logger.ZLogError(e,
                                                           $"[Item.GetFoodList] ErrorCode: {ErrorCode.FoodListFailException}, Uid: {uid}");
                 return (ErrorCode.FoodListFailException, null);
+            }
+        }
+
+        public async Task<ErrorCode> GetReward(int uid, RewardData reward)
+        {
+            try
+            {
+                var rowCount = 0;
+                switch (reward.reward_type)
+                {
+                    case "money": //보석
+                        rowCount = await _gameDb.UpdateUserjewelry(uid, reward.reward_qty);
+                        if (rowCount != 1)
+                        {
+                            return ErrorCode.UserUpdateJewelryFailIncremnet;
+                        }
+                        break;
+                    case "char": //캐릭터
+                        //GetChar Service
+                        //캐릭터가 없다면 insert, 있다면 캐릭터 개수 늘려주고 레벨업.
+                        break;
+                    case "skin": //스킨
+                        //GetSkin Service
+                        break;
+                    case "costume": //코스튬
+                        //GetCostume Service
+                        break;
+                    case "food": //푸드
+                        //GetFood Service
+                        break;
+                    case "gacha": // 가챠
+                        //GetGacha Service
+                        break;
+                }
+
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogError(e,
+                    $"[GetReward] ErrorCode: {ErrorCode.GetRewardFailException}, Uid: {uid}");
+                return ErrorCode.GetRewardFailException;
             }
         }
     }

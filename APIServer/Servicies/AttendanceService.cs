@@ -15,11 +15,13 @@ public class AttendanceService : IAttendanceService
     readonly ILogger<AttendanceService> _logger;
     readonly IGameDb _gameDb;
     readonly IMasterDb _masterDb;
-    public AttendanceService(ILogger<AttendanceService> logger, IGameDb gameDb, IMasterDb masterDb)
+    readonly IItemService _itemService;
+    public AttendanceService(ILogger<AttendanceService> logger, IGameDb gameDb, IMasterDb masterDb, IItemService itemService)
     {
         _logger = logger;
         _gameDb = gameDb;
         _masterDb = masterDb;
+        _itemService = itemService;
     }
     public async Task<(ErrorCode, GdbAttendanceInfo)> GetAttendance(int uid)
     {
@@ -51,7 +53,7 @@ public class AttendanceService : IAttendanceService
             //출석 보상 수령 - 한 종류의 보상만 받기 때문에 reward는 1개.
             var a = _masterDb._attendanceRewardList;
             var reward = _masterDb._attendanceRewardList.Find(reward => reward.day_seq == attendanceCnt);
-            await GetReward(uid, reward);
+            await _itemService.GetReward(uid, reward);
 
             return ErrorCode.None;
         }
@@ -62,45 +64,10 @@ public class AttendanceService : IAttendanceService
             return ErrorCode.AttendanceCheckFailException;
         }
 
-        async Task<ErrorCode> GetReward(int uid, AttendanceRewardData reward)
-        {
-            try
-            {
-                var rowCount = 0;
-                switch (reward.reward_key)
-                {
-                    case 1: //보석
-                        rowCount = await _gameDb.UpdateUserjewelry(uid, reward.reward_qty);
-                        break;
-                    case < 1000:
-                        break;
-                    case < 2000: //캐릭터
-                        //GetChar Service
-                        //캐릭터가 없다면 insert, 있다면 캐릭터 개수 늘려주고 레벨업.
-                        break;
-                    case < 3000: //스킨
-                        //GetSkin Service
-                        break;
-                    case < 4000: //코스튬
-                        //GetCostume Service
-                        break;
-                    case < 5000: //푸드
-                        //GetFood Service
-                        break;
-                    case < 6000: // 가챠
-                        //GetGacha Service
-                        break;
-                }
-            } catch (Exception e)
-            {
-                _logger.ZLogError(e,
-                    $"[GetReward] ErrorCode: {ErrorCode.GetRewardFailException}, Uid: {uid}");
-                return ErrorCode.GetRewardFailException;
-            }
-
-            return ErrorCode.None;
-        }
+        
     }
+
+    
 }
 
 

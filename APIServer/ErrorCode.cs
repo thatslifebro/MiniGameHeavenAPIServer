@@ -117,6 +117,7 @@ public enum ErrorCode : UInt16
     // User
     UserInfoFailException = 6001,
     UserMoneyInfoFailException = 6002,
+    UserUpdateJewelryFailIncremnet = 6003,
 
     // Item
     CharListFailException = 7001,
@@ -126,9 +127,14 @@ public enum ErrorCode : UInt16
 
     // Mail
     MailListFailException = 8001,
+    MailReceiveFailException = 8002,
+    MailReceiveFailAlreadyReceived = 8003,
+    MailReceiveFailMailNotExist = 8004,
+    MailReceiveFailUpdateReceiveDt = 8005,
+    MailRewardListFailException = 8006,
 
     // Attendance
-    AttendanceInfoFailException= 9001,
+    AttendanceInfoFailException = 9001,
     AttendanceCheckFailAlreadyChecked = 9002,
     AttendanceCheckFailException = 9003,
 

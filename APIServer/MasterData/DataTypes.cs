@@ -2,11 +2,16 @@
 
 namespace APIServer.MasterData
 {
-    public class AttendanceRewardData
+    public class AttendanceRewardData : RewardData
     {
         public int day_seq { get; set; }
+    }
+
+    public class RewardData
+    {
         public int reward_key { get; set; }
         public int reward_qty { get; set; }
+        public string reward_type { get; set; }
     }
 
     public class CharacterData
