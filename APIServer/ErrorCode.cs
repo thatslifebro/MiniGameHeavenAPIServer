@@ -132,6 +132,10 @@ public enum ErrorCode : UInt16
     MailReceiveFailMailNotExist = 8004,
     MailReceiveFailUpdateReceiveDt = 8005,
     MailRewardListFailException = 8006,
+    MailDeleteFailDeleteMail = 8007,
+    MailDeleteFailDeleteMailReward = 8008,
+    MailDeleteFailException = 8009,
+    MailReceiveFailNotMailOwner = 8010,
 
     // Attendance
     AttendanceInfoFailException = 9001,

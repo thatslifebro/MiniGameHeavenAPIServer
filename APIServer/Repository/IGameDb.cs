@@ -41,6 +41,8 @@ public interface IGameDb
     public Task<IEnumerable<GdbMailboxInfo>> GetMailList(int uid);
     public Task<GdbMailboxInfo> GetMailInfo(int mailSeq);
     public Task<IEnumerable<GdbMailboxRewardInfo>> GetMailRewardList(int mailSeq);
+    public Task<int> DeleteMail(int mailSeq);
+    public Task<int> DeleteMailReward(int mailSeq);
     public Task<int> UpdateReceiveDt(int mailSeq);
     public Task<GdbAttendanceInfo> GetAttendanceById(int uid);
     public Task<GdbUserMoneyInfo> GetUserMoneyById(int uid);

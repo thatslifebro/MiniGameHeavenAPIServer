@@ -33,4 +33,16 @@ public partial class GameDb : IGameDb
         return await _queryFactory.Query("mailbox").Where("mail_seq", mailSeq)
                                                 .UpdateAsync(new { receive_dt = DateTime.Now });
     }
+
+    public async Task<int> DeleteMail(int mailSeq)
+    {
+        return await _queryFactory.Query("mailbox").Where("mail_seq", mailSeq)
+                                                .DeleteAsync();
+    }
+
+    public async Task<int> DeleteMailReward(int mailSeq)
+    {
+        return await _queryFactory.Query("mailbox_reward").Where("mail_seq", mailSeq)
+                                                        .DeleteAsync();
+    }
 }

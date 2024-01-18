@@ -10,27 +10,27 @@ namespace APIServer.Controllers.Mail;
 
 [ApiController]
 [Route("[controller]")]
-public class MailReceive : ControllerBase
+public class MailDelete : ControllerBase
 {
-    readonly ILogger<MailReceive> _logger;
+    readonly ILogger<MailDelete> _logger;
     readonly IMailService _mailService;
 
-    public MailReceive(ILogger<MailReceive> logger, IMailService mailService)
+    public MailDelete(ILogger<MailDelete> logger, IMailService mailService)
     {
         _logger = logger;
         _mailService = mailService;
     }
 
     /// <summary>
-    /// 메일 보상 수령 API
-    /// 메일에 포함된 보상 모두를 수령합니다.
+    /// 메일 삭제 API
+    /// 메일함에서 메일을 삭제합니다.
     /// </summary>
-    [HttpPost]
-    public async Task<MailReceiveResponse> GetMailReceive([FromHeader] HeaderDTO header, MailReceiveRequest request)
+    [HttpDelete]
+    public async Task<MailDeleteResponse> GetMailDelete([FromHeader] HeaderDTO header, MailDeleteRequest request)
     {
-        MailReceiveResponse response = new();
+        MailDeleteResponse response = new();
 
-        response.Result = await _mailService.ReceiveMail(header.Uid, request.MailSeq);
+        response.Result = await _mailService.DeleteMail(header.Uid, request.MailSeq);
 
         _logger.ZLogInformation($"[MailboxInfo] Uid : {header.Uid}");
         return response;
