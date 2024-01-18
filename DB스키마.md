@@ -171,8 +171,8 @@ CREATE TABLE user_char
 (
     `uid`           INT         NOT NULL    COMMENT '유저아이디', 
     `char_key`      INT         NOT NULL    COMMENT '캐릭터 키', 
-    `char_level`    INT         NOT NULL    COMMENT '캐릭터 레벨', 
-    `char_cnt`      INT         NOT NULL    DEFAULT 0 COMMENT '캐릭터 개수',
+    `char_level`    INT         NOT NULL    DEFAULT 1 COMMENT '캐릭터 레벨', 
+    `char_cnt`      INT         NOT NULL    DEFAULT 1 COMMENT '캐릭터 개수',
     `skin_key`      INT         NULL        COMMENT '스킨 키', 
     `create_dt`     DATETIME    NOT NULL    COMMENT '생성 일시', 
     `costume_json`  JSON        NULL        COMMENT '코스튬 JSON', 
@@ -211,8 +211,8 @@ CREATE TABLE user_costume
 (
     `uid`            INT         NOT NULL    COMMENT '유저아이디', 
     `costume_key`    INT         NOT NULL    COMMENT '코스튬 키', 
-    `costume_level`  INT         NOT NULL    COMMENT '코스튬 레벨',
-    `costume_cnt`    INT         NOT NULL    DEFAULT 0 COMMENT '코스튬 개수',
+    `costume_level`  INT         NOT NULL    DEFAULT 1 COMMENT '코스튬 레벨',
+    `costume_cnt`    INT         NOT NULL    DEFAULT 1 COMMENT '코스튬 개수',
     `create_dt`      DATETIME    NOT NULL    COMMENT '생성 일시', 
      PRIMARY KEY (uid, costume_key)
 );
