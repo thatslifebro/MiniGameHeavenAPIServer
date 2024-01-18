@@ -23,16 +23,16 @@ public class MasterDb : IMasterDb
     readonly SqlKata.Compilers.MySqlCompiler _compiler;
     readonly QueryFactory _queryFactory;
     
-    public VersionDAO? _version { get; set; }
+    public VersionDAO _version { get; set; }
 
-    public List<AttendanceRewardData> _attendanceRewardList = new();
-    public List<CharacterData> _characterList = new();
-    public List<SkinData> _skinList = new();
-    public List<CostumeData> _costumeList = new();
-    public List<CostumeSetData> _costumeSetList = new();
-    public List<FoodData> _foodList = new();
-    public List<SkillData> _skillList = new();
-    public List<GachaRewardData> _gachaRewardList = new();
+    public List<AttendanceRewardData> _attendanceRewardList { get; set; }
+    public List<CharacterData> _characterList { get; set; }
+    public List<SkinData> _skinList { get; set; }
+    public List<CostumeData> _costumeList { get; set; }
+    public List<CostumeSetData> _costumeSetList { get; set; }
+    public List<FoodData> _foodList { get; set; }
+    public List<SkillData> _skillList { get; set; }
+    public List<GachaRewardData> _gachaRewardList { get; set; }
 
     public MasterDb(ILogger<MasterDb> logger, IOptions<DbConfig> dbConfig)
     {
@@ -65,6 +65,7 @@ public class MasterDb : IMasterDb
 
             var gachaRewards = await _queryFactory.Query($"master_gacha_reward").GetAsync<GachaRewardInfo>();
             GachaRewardData gachaRewardData = new();
+            _gachaRewardList = new();
             foreach (var gachaRewardInfo in gachaRewards)
             {
                 gachaRewardData.gachaRewardInfo = gachaRewardInfo;
