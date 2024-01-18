@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using APIServer.Model.DAO.GameDB;
 using SqlKata.Execution;
 
@@ -11,4 +12,15 @@ public partial class GameDb : IGameDb
         return await _queryFactory.Query("user_attendance").Where("uid", uid)
                                                 .FirstOrDefaultAsync<GdbAttendanceInfo>();
     }
+
+    public async Task<int> CheckAttendanceById(int uid)
+    {
+        return await _queryFactory.StatementAsync($"UPDATE user_attendance " +
+                                                  $"SET attendance_cnt = attendance_cnt +1, " +
+                                                      $"recent_attendance_dt = '{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}' " +
+                                                  $"WHERE uid = {uid} AND " +
+                                                      $"( DATE(recent_attendance_dt) < '{DateTime.Today.ToString("yyyy-MM-dd")}' " +
+                                                      $"OR recent_attendance_dt IS NULL);");
+    }
+    
 }

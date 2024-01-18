@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using APIServer.Model.DAO.GameDB;
 using Microsoft.Extensions.Logging;
@@ -86,6 +87,12 @@ public partial class GameDb : IGameDb
     {
         return await _queryFactory.Query("user_money").Where("uid", uid)
                                                 .FirstOrDefaultAsync<GdbUserMoneyInfo>();
+    }
+
+    public async Task<int> UpdateUserjewelry(int uid, int rewardQty)
+    {
+        return await _queryFactory.Query("user_money").Where("uid", uid)
+                                                .IncrementAsync("jewelry", rewardQty);
     }
 
     public IDbConnection GDbConnection()

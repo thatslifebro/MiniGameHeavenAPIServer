@@ -129,4 +129,8 @@ public enum ErrorCode : UInt16
 
     // Attendance
     AttendanceInfoFailException= 9001,
+    AttendanceCheckFailAlreadyChecked = 9002,
+    AttendanceCheckFailException = 9003,
+
+    GetRewardFailException = 9004,
 }
