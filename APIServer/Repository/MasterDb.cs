@@ -33,6 +33,7 @@ public class MasterDb : IMasterDb
     public List<FoodData> _foodList { get; set; }
     public List<SkillData> _skillList { get; set; }
     public List<GachaRewardData> _gachaRewardList { get; set; }
+    public List<ItemLevelData> _itemLevelList { get; set; }
 
     public MasterDb(ILogger<MasterDb> logger, IOptions<DbConfig> dbConfig)
     {
@@ -62,6 +63,7 @@ public class MasterDb : IMasterDb
             _costumeSetList = (await _queryFactory.Query($"master_costume_set").GetAsync<CostumeSetData>()).ToList();
             _foodList = (await _queryFactory.Query($"master_food").GetAsync<FoodData>()).ToList();
             _skillList = (await _queryFactory.Query($"master_skill").GetAsync<SkillData>()).ToList();
+            _itemLevelList = (await _queryFactory.Query($"master_item_level").GetAsync<ItemLevelData>()).ToList();
 
             var gachaRewards = await _queryFactory.Query($"master_gacha_reward").GetAsync<GachaRewardInfo>();
             GachaRewardData gachaRewardData = new();

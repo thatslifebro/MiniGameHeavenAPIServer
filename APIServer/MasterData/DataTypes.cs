@@ -82,4 +82,10 @@ namespace APIServer.MasterData
         public int reward_key { get; set; }
         public string reward_type { get; set; }
     }
+
+    public class ItemLevelData
+    {
+        public int level { get; set; }
+        public int item_cnt { get; set; }
+    }
 }
