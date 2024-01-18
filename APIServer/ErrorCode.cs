@@ -87,6 +87,12 @@ public enum ErrorCode : UInt16
     SkinReceiveFailException = 3023,
     SkinListFailException = 3024,
 
+    CostumeReceiveFailInsert = 3031,
+    CostumeReceiveFailLevelUP = 3032,
+    CostumeReceiveFailIncrementCharCnt = 3033,
+    CostumeReceiveFailException = 3034,
+    CostumeListFailException = 3035,
+
 
     //GameDb 4000~ 
     GetGameDbConnectionFail = 4002,
@@ -102,7 +108,7 @@ public enum ErrorCode : UInt16
     UserUpdateJewelryFailIncremnet = 6003,
 
     // Item
-    CostumeListFailException = 7003,
+    
     FoodListFailException = 7004,
 
     // Mail

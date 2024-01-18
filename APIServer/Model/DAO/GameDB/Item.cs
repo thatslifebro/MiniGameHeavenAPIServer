@@ -18,6 +18,7 @@ namespace APIServer.Model.DAO.GameDB
         public int uid { get; set; }
         public int costume_key { get; set; }
         public int costume_level { get; set; }
+        public int costume_cnt { get; set; }
         public DateTime create_dt { get; set; }
     }
 

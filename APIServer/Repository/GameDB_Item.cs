@@ -30,21 +30,23 @@ public partial class GameDb : IGameDb
                                                 .FirstOrDefaultAsync<GdbUserCharInfo>();
     }
 
-    public async Task<int> InsertUserChar(int uid, int charKey)
+    public async Task<int> InsertUserChar(int uid, int charKey, int cnt)
     {
-        return await _queryFactory.Query("user_char").InsertAsync(new { uid, char_key = charKey, create_dt = DateTime.Now});
+        return await _queryFactory.Query("user_char").InsertAsync(new { uid, char_key = charKey,char_cnt = cnt, create_dt = DateTime.Now});
     }
 
-    public async Task<int> LevelUpChar(int uid, int charKey)
-    {
-        return await _queryFactory.StatementAsync($"UPDATE user_char SET level = level + 1, char_cnt = 0 WHERE uid = {uid} AND char_key = {charKey}");
-    }
-
-    public async Task<int> IncrementCharCnt(int uid, int charKey)
+    public async Task<int> LevelUpChar(int uid, int charKey, int level, int cnt)
     {
         return await _queryFactory.Query("user_char").Where("uid", uid)
                                                 .Where("char_key", charKey)
-                                                .IncrementAsync("char_cnt");
+                                                .UpdateAsync(new { char_level = level, char_cnt = cnt });
+    }
+
+    public async Task<int> IncrementCharCnt(int uid, int charKey, int qty)
+    {
+        return await _queryFactory.Query("user_char").Where("uid", uid)
+                                                .Where("char_key", charKey)
+                                                .IncrementAsync("char_cnt", qty);
     }
 
     #endregion
@@ -72,12 +74,42 @@ public partial class GameDb : IGameDb
 
     #endregion
 
+    #region Costume
+
     public async Task<IEnumerable<GdbUserCostumeInfo>> GetCostumeList(int uid)
     {
         return await _queryFactory.Query("user_costume").Where("uid", uid)
                                                 .OrderBy("costume_key")
                                                 .GetAsync<GdbUserCostumeInfo>();
     }
+
+    public async Task<GdbUserCostumeInfo> GetCostumeInfo(int uid, int costumeKey)
+    {
+        return await _queryFactory.Query("user_costume").Where("uid", uid)
+                                                .Where("costume_key", costumeKey)
+                                                .FirstOrDefaultAsync<GdbUserCostumeInfo>();
+    }
+
+    public async Task<int> InsertUserCostume(int uid, int costumeKey, int cnt)
+    {
+        return await _queryFactory.Query("user_costume").InsertAsync(new { uid, costume_key = costumeKey, costume_cnt = cnt, create_dt = DateTime.Now });
+    }
+
+    public async Task<int> LevelUpCostume(int uid, int costumeKey, int level, int cnt)
+    {
+        return await _queryFactory.Query("user_costume").Where("uid", uid)
+                                                .Where("costume_key", costumeKey)
+                                                .UpdateAsync(new { costume_level = level, costume_cnt = cnt });
+    }
+
+    public async Task<int> IncrementCostumeCnt(int uid, int costumeKey, int qty)
+    {
+        return await _queryFactory.Query("user_costume").Where("uid", uid)
+                                                .Where("costume_key", costumeKey)
+                                                .IncrementAsync("costume_cnt", qty);
+    }
+
+    #endregion
 
     public async Task<IEnumerable<GdbUserFoodInfo>> GetFoodList(int uid)
     {

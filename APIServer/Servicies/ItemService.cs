@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using ZLogger;
 
@@ -54,7 +55,7 @@ namespace APIServer.Servicies
             }
         }
 
-        public async Task<ErrorCode> ReceiveChar(int uid, int charKey)
+        public async Task<ErrorCode> ReceiveChar(int uid, int charKey, int qty)
         {
             try
             {
@@ -63,7 +64,7 @@ namespace APIServer.Servicies
                 // 캐릭터가 없다면 추가
                 if (charInfo == null)
                 {
-                    var rowCount = await _gameDb.InsertUserChar(uid, charKey);
+                    var rowCount = await _gameDb.InsertUserChar(uid, charKey, qty);
                     if (rowCount != 1)
                     {
                         return ErrorCode.CharReceiveFailInsert;
@@ -72,11 +73,11 @@ namespace APIServer.Servicies
                 // 있다면 수량증가 or 레벨 업
                 else
                 {
-                    var levelUpCnt = _masterDb._itemLevelList.Find(data => data.level == charInfo.char_level).item_cnt;
+                    var level = _masterDb._itemLevelList.FindLast(data => data.item_cnt <= charInfo.char_cnt + qty).level;
                     // 레벨업
-                    if (levelUpCnt == charInfo.char_cnt+1)
+                    if (level > charInfo.char_level)
                     {
-                        var rowCount = await _gameDb.LevelUpChar(uid, charKey);
+                        var rowCount = await _gameDb.LevelUpChar(uid, charKey, level, charInfo.char_cnt+qty);
                         if (rowCount != 1)
                         {
                             return ErrorCode.CharReceiveFailLevelUP;
@@ -85,7 +86,7 @@ namespace APIServer.Servicies
                     // 수량증가
                     else
                     {
-                        var rowCount = await _gameDb.IncrementCharCnt(uid, charKey);
+                        var rowCount = await _gameDb.IncrementCharCnt(uid, charKey, qty);
                         if (rowCount != 1)
                         {
                             return ErrorCode.CharReceiveFailIncrementCharCnt;
@@ -151,6 +152,8 @@ namespace APIServer.Servicies
 
         #endregion
 
+        #region Costume
+
         public async Task<(ErrorCode,IEnumerable<GdbUserCostumeInfo>)> GetCostumeList(int uid)
         {
             try
@@ -164,6 +167,57 @@ namespace APIServer.Servicies
                 return (ErrorCode.CostumeListFailException, null);
             }
         }
+
+        public async Task<ErrorCode> ReceiveCostume(int uid, int costumeKey, int qty)
+        {
+            try
+            {
+                var costumeInfo = await _gameDb.GetCostumeInfo(uid, costumeKey);
+
+                // 코스튬이 없다면 추가
+                if (costumeInfo == null)
+                {
+                    var rowCount = await _gameDb.InsertUserCostume(uid, costumeKey, qty);
+                    if (rowCount != 1)
+                    {
+                        return ErrorCode.CostumeReceiveFailInsert;
+                    }
+                }
+                // 있다면 수량증가 or 레벨 업
+                else
+                {
+                    var level = _masterDb._itemLevelList.FindLast(data => data.item_cnt <= costumeInfo.costume_cnt + qty).level;
+                    // 레벨업
+                    if (level > costumeInfo.costume_level)
+                    {
+                        var rowCount = await _gameDb.LevelUpCostume(uid, costumeKey, level, costumeInfo.costume_cnt + qty);
+                        if (rowCount != 1)
+                        {
+                            return ErrorCode.CostumeReceiveFailLevelUP;
+                        }
+                    }
+                    // 수량증가
+                    else
+                    {
+                        var rowCount = await _gameDb.IncrementCostumeCnt(uid, costumeKey, qty);
+                        if (rowCount != 1)
+                        {
+                            return ErrorCode.CostumeReceiveFailIncrementCharCnt;
+                        }
+                    }
+                }
+
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogError(e,
+                                  $"[Item.ReceiveCostume] ErrorCode: {ErrorCode.CostumeReceiveFailException}, Uid: {uid}, CostumeKey: {costumeKey}");
+                return ErrorCode.CostumeReceiveFailException;
+            }
+        }
+
+        #endregion
 
         public async Task<(ErrorCode,IEnumerable<GdbUserFoodInfo>)> GetFoodList(int uid)
         {
@@ -195,13 +249,13 @@ namespace APIServer.Servicies
                         }
                         break;
                     case "char": //캐릭터
-                        errorCode = await ReceiveChar(uid, reward.reward_key);
+                        errorCode = await ReceiveChar(uid, reward.reward_key, reward.reward_qty);
                         break;
                     case "skin": //스킨
                         errorCode = await ReceiveSkin(uid, reward.reward_key);
                         break;
                     case "costume": //코스튬
-                        //GetCostume Service
+                        errorCode = await ReceiveCostume(uid, reward.reward_key, reward.reward_qty);
                         break;
                     case "food": //푸드
                         //GetFood Service
