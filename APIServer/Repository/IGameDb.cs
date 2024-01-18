@@ -35,7 +35,13 @@ public interface IGameDb
     public Task<int> InsertInitCharacter(int uid, IDbTransaction transaction);
     public Task<IEnumerable<GdbUserCharInfo>> GetCharList(int uid);
     public Task<IEnumerable<GdbUserCharRandomSkillInfo>> GetCharRandomSkillInfo(int uid, int charKey);
+    public Task<GdbUserCharInfo> GetCharInfo(int uid, int charKey);
+    public Task<int> InsertUserChar(int uid, int charKey);
+    public Task<int> LevelUpChar(int uid, int charKey);
+    public Task<int> IncrementCharCnt(int uid, int charKey);
     public Task<IEnumerable<GdbUserSkinInfo>> GetSkinList(int uid);
+    public Task<GdbUserSkinInfo> GetSkinInfo(int uid, int skinKey);
+    public Task<int> InsertUserSkin(int uid, int skinKey);
     public Task<IEnumerable<GdbUserCostumeInfo>> GetCostumeList(int uid);
     public Task<IEnumerable<GdbUserFoodInfo>> GetFoodList(int uid);
     public Task<IEnumerable<GdbMailboxInfo>> GetMailList(int uid);

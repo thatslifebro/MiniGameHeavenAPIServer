@@ -8,6 +8,7 @@ namespace APIServer.Model.DAO.GameDB
         public int uid { get; set; }
         public int char_key { get; set; }
         public int char_level { get; set; }
+        public int char_cnt { get; set; }
         public int skin_key { get; set; }
         public string costume_json { get; set; }
     }

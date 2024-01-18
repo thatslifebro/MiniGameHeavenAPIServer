@@ -11,9 +11,11 @@ namespace APIServer.Servicies.Interfaces
     public interface IItemService
     {
         public Task<(ErrorCode, List<UserCharInfo>)> GetCharList(int uid);
+        public Task<ErrorCode> ReceiveChar(int uid, int charKey);
         public Task<(ErrorCode, IEnumerable<GdbUserSkinInfo>)> GetSkinList(int uid);
         public Task<(ErrorCode, IEnumerable<GdbUserCostumeInfo>)> GetCostumeList(int uid);
         public Task<(ErrorCode, IEnumerable<GdbUserFoodInfo>)> GetFoodList(int uid);
         public Task<ErrorCode> GetReward(int uid, RewardData reward);
+
     }
 }

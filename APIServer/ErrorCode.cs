@@ -75,36 +75,18 @@ public enum ErrorCode : UInt16
     GameUnlockFailAlreadyUnlocked = 2209,
 
 
-    // Character 3000 ~
-    CreateCharacterRollbackFail = 3001,
-    CreateCharacterFailNoSlot = 3002,
-    CreateCharacterFailException = 3003,
-    CharacterNotExist = 3004,
-    CountCharactersFail = 3005,
-    DeleteCharacterFail = 3006,
-    GetCharacterInfoFail = 3007,
-    InvalidCharacterInfo = 3008,
-    GetCharacterItemsFail = 3009,
-    CharacterCountOver = 3010,
-    CharacterArmorTypeMisMatch = 3011,
-    CharacterHelmetTypeMisMatch = 3012,
-    CharacterCloakTypeMisMatch = 3012,
-    CharacterDressTypeMisMatch = 3013,
-    CharacterPantsTypeMisMatch = 3012,
-    CharacterMustacheTypeMisMatch = 3012,
-    CharacterArmorCodeMisMatch = 3013,
-    CharacterHelmetCodeMisMatch = 3014,
-    CharacterCloakCodeMisMatch = 3015,
-    CharacterDressCodeMisMatch = 3016,
-    CharacterPantsCodeMisMatch = 3017,
-    CharacterMustacheCodeMisMatch = 3018,
-    CharacterHairCodeMisMatch = 3019,
-    CharacterCheckCodeError = 3010,
-    CharacterLookTypeError = 3011,
+    // Item 3000 ~
+    CharReceiveFailInsert = 3011,
+    CharReceiveFailLevelUP = 3012,
+    CharReceiveFailIncrementCharCnt = 3013,
+    CharReceiveFailException= 3014,
+    CharListFailException = 3015,
 
-    CharacterStatusChangeFail = 3012,
-    CharacterIsExistGame = 3013,
-    GetCharacterListFail = 3014,
+    SkinReceiveFailAlreadyOwn = 3021,
+    SkinReceiveFailInsert = 3022,
+    SkinReceiveFailException = 3023,
+    SkinListFailException = 3024,
+
 
     //GameDb 4000~ 
     GetGameDbConnectionFail = 4002,
@@ -120,8 +102,6 @@ public enum ErrorCode : UInt16
     UserUpdateJewelryFailIncremnet = 6003,
 
     // Item
-    CharListFailException = 7001,
-    SkinListFailException = 7002,
     CostumeListFailException = 7003,
     FoodListFailException = 7004,
 
