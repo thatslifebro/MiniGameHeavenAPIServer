@@ -32,6 +32,7 @@ public interface IGameDb
     public Task<int> UpdateBestscore(int uid, int gameKey, int score);
     public Task<int> UpdateBestscoreCurSeason(int uid, int gameKey, int score);
     public Task<int> UpdateRecentPlayDt(int uid, int gameKey);
+    public Task<int> UpdateGamePlayChar(int uid, int gameKey, int charKey);
     public Task<int> InsertInitCharacter(int uid, IDbTransaction transaction);
     public Task<IEnumerable<GdbUserCharInfo>> GetCharList(int uid);
     public Task<IEnumerable<GdbUserCharRandomSkillInfo>> GetCharRandomSkillInfo(int uid, int charKey);

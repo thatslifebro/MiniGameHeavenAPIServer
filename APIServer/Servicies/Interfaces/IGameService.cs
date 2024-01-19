@@ -11,5 +11,6 @@ public interface IGameService
     public Task<(ErrorCode, GdbGameInfo)> GetGameInfo(int uid, int gameId);
     public Task<ErrorCode> SaveGame(int uid, int gameId, int score);
     public Task<ErrorCode> InitNewUserGameData(int uid);
+    public Task<ErrorCode> SetGamePlayChar(int uid, int gameKey, int charKey);
 }
  

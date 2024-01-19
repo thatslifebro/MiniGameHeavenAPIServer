@@ -34,11 +34,11 @@ namespace APIServer.Servicies
             try
             {
                 List<UserCharInfo> userCharInfoList = new();
-                UserCharInfo userCharInfo = new();
-
+                
                 var charList =  await _gameDb.GetCharList(uid);
                 foreach (var character in charList)
                 {
+                    UserCharInfo userCharInfo = new();
                     userCharInfo.CharInfo = character;
                     userCharInfo.RandomSkills = await _gameDb.GetCharRandomSkillInfo(uid, character.char_key);
                     userCharInfoList.Add(userCharInfo);

@@ -156,4 +156,31 @@ public class GameService :IGameService
             transaction.Dispose();
         }
     }
+
+    public async Task<ErrorCode> SetGamePlayChar(int uid, int gameKey, int charKey)
+    {
+        try
+        {
+            var charInfo = await _gameDb.GetCharInfo(uid, charKey);
+            if(charInfo == null)
+            {
+                return ErrorCode.CharNotExist;
+            }
+
+            var rowCount = await _gameDb.UpdateGamePlayChar(uid, gameKey, charKey);
+            if (rowCount != 1)
+            {
+                _logger.ZLogError($"[Game.SetPlayChar] ErrorCode: {ErrorCode.GameSetPlayCharFailUpdate}, Uid: {uid}");
+                return ErrorCode.GameSetPlayCharFailUpdate;
+            }
+
+            return ErrorCode.None;
+        }
+        catch (Exception e)
+        {
+            _logger.ZLogError(e,
+                               $"[Game.SetPlayChar] ErrorCode: {ErrorCode.GameSetPlayCharFailException}, Uid: {uid}");
+            return ErrorCode.GameSetPlayCharFailException;
+        }
+    }
 }

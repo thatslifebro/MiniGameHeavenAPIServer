@@ -15,7 +15,7 @@ public partial class GameDb : IGameDb
     readonly ILogger<GameDb> _logger;
     readonly IOptions<DbConfig> _dbConfig;
 
-    const int InitCharacterKey = 1;
+    const int InitCharacterKey = 1001;
     IDbConnection _dbConn;
     SqlKata.Compilers.MySqlCompiler _compiler;
     QueryFactory _queryFactory;

@@ -112,4 +112,14 @@ public partial class GameDb : IGameDb
                  uid = uid
              }, transaction);
     }
+
+    public async Task<int> UpdateGamePlayChar(int uid, int gameKey, int charKey)
+    {
+        return await _queryFactory.Query("user_game").Where("uid", uid)
+                                                .Where("game_key", gameKey)
+                                                .UpdateAsync(new
+                                                {
+                                                    char_key = charKey
+                                                });
+    }
 }

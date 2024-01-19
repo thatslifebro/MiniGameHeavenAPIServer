@@ -16,7 +16,7 @@ public enum ErrorCode : UInt16
     InValidAppVersion = 1011,
     InvalidMasterDataVersion = 1012,
 
-    // Account 2000 ~
+    // Auth 2000 ~
     CreateAccountFailException = 2001,
     CreateAccountNicknameFail = 2002,
     CreateAccountDuplicateFail = 2003,
@@ -47,6 +47,7 @@ public enum ErrorCode : UInt16
     InitNewUserGameDataFailMoney = 2028,
     InitNewUserGameDataFailAttendance = 2029,
 
+    // Friend 2100
     FriendAddFailUserNotExist = 2101,
     FriendAddFailInsert = 2102,
     FriendAddFailException = 2103,
@@ -64,6 +65,7 @@ public enum ErrorCode : UInt16
     FriendDeleteReqFailException = 2115,
     FriendAcceptFailException = 2116,
 
+    // Game 2200
     GameListFailException = 2201,
     GameSetNewUserListFailException = 2202,
     GameSetNewUserListFailInsert = 2203,
@@ -73,6 +75,8 @@ public enum ErrorCode : UInt16
     GameSaveFailException = 2207,
     GameSaveFailGameLocked = 2208,
     GameUnlockFailAlreadyUnlocked = 2209,
+    GameSetPlayCharFailUpdate = 2210,
+    GameSetPlayCharFailException = 2211,
 
 
     // Item 3000 ~
@@ -81,6 +85,7 @@ public enum ErrorCode : UInt16
     CharReceiveFailIncrementCharCnt = 3013,
     CharReceiveFailException= 3014,
     CharListFailException = 3015,
+    CharNotExist = 3016,
 
     SkinReceiveFailAlreadyOwn = 3021,
     SkinReceiveFailInsert = 3022,
