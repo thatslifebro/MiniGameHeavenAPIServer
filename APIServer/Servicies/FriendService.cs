@@ -1,18 +1,12 @@
-﻿using APIServer.Model.DAO.GameDB;
-using APIServer.Repository;
-using APIServer.Services;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System;
 using ZLogger;
-using System.Data;
-using APIServer.Controllers.Friend;
-using System.Security.Cryptography;
-using APIServer.Model.DTO.Friend;
 using System.Collections.Generic;
 using APIServer.Servicies.Interfaces;
 using System.Linq;
+using APIServer.Repository.Interfaces;
+using APIServer.Models.GameDB;
 
 namespace APIServer.Servicies;
 

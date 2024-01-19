@@ -1,5 +1,5 @@
-﻿using APIServer.MasterData;
-using APIServer.Model.DAO.GameDB;
+﻿using APIServer.Models;
+using APIServer.Models.GameDB;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

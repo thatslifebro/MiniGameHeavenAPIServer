@@ -1,6 +1,6 @@
-﻿using APIServer.MasterData;
-using APIServer.Model.DAO.GameDB;
-using APIServer.Model.DTO.DataLoad;
+﻿using APIServer.DTO.DataLoad;
+using APIServer.Models;
+using APIServer.Models.GameDB;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;

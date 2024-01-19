@@ -1,5 +1,5 @@
-﻿using APIServer.MasterData;
-using APIServer.Model.DTO.DataLoad;
+﻿using APIServer.DTO.DataLoad;
+using APIServer.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

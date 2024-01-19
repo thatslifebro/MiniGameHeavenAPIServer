@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 using APIServer.Repository;
+using APIServer.Repository.Interfaces;
 using APIServer.Services;
 using APIServer.Servicies;
 using APIServer.Servicies.Interfaces;

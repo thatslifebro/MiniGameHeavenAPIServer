@@ -1,5 +1,5 @@
-﻿using APIServer.Model.DTO;
-using APIServer.Model.DTO.Mail;
+﻿using APIServer.DTO;
+using APIServer.DTO.Mail;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

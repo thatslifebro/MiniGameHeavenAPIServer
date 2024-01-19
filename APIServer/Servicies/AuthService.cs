@@ -1,7 +1,6 @@
 ﻿using APIServer.Controllers.Auth;
-using APIServer.Model.DAO.GameDB;
-using APIServer.Repository;
-using APIServer.Services;
+using APIServer.Models.GameDB;
+using APIServer.Repository.Interfaces;
 using APIServer.Servicies.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;

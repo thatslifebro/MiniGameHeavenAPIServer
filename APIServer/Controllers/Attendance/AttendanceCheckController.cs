@@ -1,5 +1,5 @@
-﻿using APIServer.Model.DTO;
-using APIServer.Model.DTO.Attendance;
+﻿using APIServer.DTO;
+using APIServer.DTO.Attendance;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

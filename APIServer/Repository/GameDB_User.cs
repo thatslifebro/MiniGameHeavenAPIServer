@@ -2,7 +2,8 @@
 using System.Data;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using APIServer.Model.DAO.GameDB;
+using APIServer.Models.GameDB;
+using APIServer.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySqlConnector;

@@ -1,5 +1,5 @@
-﻿using APIServer.Model.DTO;
-using APIServer.Model.DTO.Friend;
+﻿using APIServer.DTO;
+using APIServer.DTO.Friend;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

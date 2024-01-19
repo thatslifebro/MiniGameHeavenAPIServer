@@ -1,6 +1,4 @@
-﻿using APIServer.Controllers.Game;
-using APIServer.Model.DAO.GameDB;
-using APIServer.Model.DTO.Friend;
+﻿using APIServer.Models.GameDB;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,3 +12,4 @@ public interface IGameService
     public Task<ErrorCode> SaveGame(int uid, int gameId, int score);
     public Task<ErrorCode> InitNewUserGameData(int uid);
 }
+ 

@@ -1,5 +1,5 @@
-﻿using APIServer.Model.DTO;
-using APIServer.Model.DTO.DataLoad;
+﻿using APIServer.DTO;
+using APIServer.DTO.DataLoad;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

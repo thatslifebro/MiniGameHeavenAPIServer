@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using APIServer.Model.DAO.GameDB;
+using APIServer.Models.GameDB;
+using APIServer.Repository.Interfaces;
 using SqlKata.Execution;
 
 namespace APIServer.Services;

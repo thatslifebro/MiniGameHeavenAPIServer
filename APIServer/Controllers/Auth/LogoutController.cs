@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using APIServer.Model.DTO;
-using APIServer.Model.DTO.Auth;
-using APIServer.Repository;
+using APIServer.DTO;
+using APIServer.DTO.Auth;
+using APIServer.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ZLogger;

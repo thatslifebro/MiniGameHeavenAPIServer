@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using ZLogger;
-using APIServer.Model.DTO.Friend;
-using APIServer.Model.DTO;
+using APIServer.DTO;
+using APIServer.DTO.Game;
 
 namespace APIServer.Controllers.Game;
 

@@ -1,12 +1,8 @@
-﻿using APIServer.Controllers.Friend;
-using APIServer.Controllers.Game;
-using APIServer.Model.DAO.GameDB;
-using APIServer.Model.DTO.Friend;
-using APIServer.Services;
+﻿using APIServer.Models.GameDB;
+using APIServer.Repository.Interfaces;
 using APIServer.Servicies.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ZLogger;

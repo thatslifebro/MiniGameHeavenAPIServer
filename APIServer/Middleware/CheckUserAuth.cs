@@ -1,5 +1,5 @@
-﻿using APIServer.Model.DAO;
-using APIServer.Repository;
+﻿using APIServer.Models;
+using APIServer.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;

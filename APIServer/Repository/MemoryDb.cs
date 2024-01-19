@@ -1,4 +1,5 @@
-﻿using APIServer.Model.DAO;
+﻿using APIServer.Models;
+using APIServer.Repository.Interfaces;
 using APIServer.Services;
 using CloudStructures;
 using CloudStructures.Structures;

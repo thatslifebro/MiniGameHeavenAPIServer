@@ -1,6 +1,6 @@
-﻿using APIServer.MasterData;
-using APIServer.Model.DTO.DataLoad;
-using APIServer.Services;
+﻿using APIServer.DTO.DataLoad;
+using APIServer.Models;
+using APIServer.Repository.Interfaces;
 using APIServer.Servicies.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;

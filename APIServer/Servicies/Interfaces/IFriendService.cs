@@ -1,8 +1,6 @@
 ﻿using System.Threading.Tasks;
-using System;
-using APIServer.Model.DTO.Friend;
 using System.Collections.Generic;
-using APIServer.Model.DAO.GameDB;
+using APIServer.Models.GameDB;
 
 namespace APIServer.Servicies.Interfaces;
 

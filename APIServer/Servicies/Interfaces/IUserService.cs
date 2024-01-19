@@ -1,4 +1,4 @@
-﻿using APIServer.Model.DAO.GameDB;
+﻿using APIServer.Models.GameDB;
 using System.Threading.Tasks;
 
 namespace APIServer.Servicies.Interfaces

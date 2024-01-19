@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using APIServer.Model.DTO.Auth;
-using APIServer.Repository;
+using APIServer.DTO.Auth;
+using APIServer.Repository.Interfaces;
 using APIServer.Services;
 using APIServer.Servicies;
 using APIServer.Servicies.Interfaces;

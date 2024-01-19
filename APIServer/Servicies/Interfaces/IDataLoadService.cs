@@ -1,4 +1,4 @@
-﻿using APIServer.Model.DTO.DataLoad;
+﻿using APIServer.DTO.DataLoad;
 using System.Threading.Tasks;
 
 namespace APIServer.Servicies.Interfaces

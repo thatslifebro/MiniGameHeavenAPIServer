@@ -1,8 +1,7 @@
-﻿using APIServer.MasterData;
-using APIServer.Model.DAO.GameDB;
-using APIServer.Model.DTO.DataLoad;
-using APIServer.Repository;
-using APIServer.Services;
+﻿using APIServer.DTO.DataLoad;
+using APIServer.Models;
+using APIServer.Models.GameDB;
+using APIServer.Repository.Interfaces;
 using APIServer.Servicies.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
