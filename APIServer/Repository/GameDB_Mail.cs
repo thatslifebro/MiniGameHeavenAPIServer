@@ -13,6 +13,7 @@ public partial class GameDb : IGameDb
     public async Task<IEnumerable<GdbMailboxInfo>> GetMailList(int uid)
     {
         return await _queryFactory.Query("mailbox").Where("uid", uid)
+                                                .Where("expire_dt", ">", DateTime.Now)
                                                 .OrderBy("mail_seq")
                                                 .GetAsync<GdbMailboxInfo>();
     }
