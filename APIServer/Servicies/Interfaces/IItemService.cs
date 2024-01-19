@@ -19,6 +19,7 @@ namespace APIServer.Servicies.Interfaces
         public Task<(ErrorCode, IEnumerable<GdbUserFoodInfo>)> GetFoodList(int uid);
         public Task<ErrorCode> ReceiveFood(int uid, int foodKey, int qty);
         public Task<ErrorCode> ReceiveFoodGear(int uid, int foodKey, int gearQty);
+        public Task<(ErrorCode, List<RewardData>)> ReceiveOneGacha(int uid, int gachaKey);
         public Task<ErrorCode> ReceiveReward(int uid, RewardData reward);
 
     }

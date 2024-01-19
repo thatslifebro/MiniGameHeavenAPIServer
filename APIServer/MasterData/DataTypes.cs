@@ -67,7 +67,7 @@ namespace APIServer.MasterData
     public class GachaRewardData
     {
         public GachaRewardInfo gachaRewardInfo { get; set; }
-        public List<GachaReward> gachaRewardList { get; set; }
+        public List<RewardData> gachaRewardList { get; set; }
     }
 
     public class GachaRewardInfo
@@ -82,15 +82,21 @@ namespace APIServer.MasterData
         public string gacha_reward_name { get; set; }
     }
 
-    public class GachaReward
-    {
-        public int reward_key { get; set; }
-        public string reward_type { get; set; }
-    }
-
     public class ItemLevelData
     {
         public int level { get; set; }
         public int item_cnt { get; set; }
+    }
+
+    public class  ReceivedReward
+    {
+        public ReceivedReward(int key, List<RewardData> datas)
+        {
+            rewardKey = key;
+            rewardDatas = datas;
+        }
+
+        public int rewardKey { get; set; }
+        public List<RewardData> rewardDatas { get; set; }
     }
 }

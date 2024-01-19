@@ -99,7 +99,7 @@ namespace APIServer.Servicies
             catch (Exception e)
             {
                 _logger.ZLogError(e,
-                                  $"[Item.ReceiveChar] ErrorCode: {ErrorCode.CharReceiveFailException}, Uid: {uid}, CharKey: {charKey}");
+                    $"[Item.ReceiveChar] ErrorCode: {ErrorCode.CharReceiveFailException}, Uid: {uid}, CharKey: {charKey}");
                 return ErrorCode.CharReceiveFailException;
             }
         }
@@ -163,7 +163,7 @@ namespace APIServer.Servicies
             catch (System.Exception e)
             {
                 _logger.ZLogError(e,
-                                       $"[Item.GetCostumeList] ErrorCode: {ErrorCode.CostumeListFailException}, Uid: {uid}");
+                    $"[Item.GetCostumeList] ErrorCode: {ErrorCode.CostumeListFailException}, Uid: {uid}");
                 return (ErrorCode.CostumeListFailException, null);
             }
         }
@@ -212,7 +212,7 @@ namespace APIServer.Servicies
             catch (Exception e)
             {
                 _logger.ZLogError(e,
-                                  $"[Item.ReceiveCostume] ErrorCode: {ErrorCode.CostumeReceiveFailException}, Uid: {uid}, CostumeKey: {costumeKey}");
+                    $"[Item.ReceiveCostume] ErrorCode: {ErrorCode.CostumeReceiveFailException}, Uid: {uid}, CostumeKey: {costumeKey}");
                 return ErrorCode.CostumeReceiveFailException;
             }
         }
@@ -230,7 +230,7 @@ namespace APIServer.Servicies
             catch (System.Exception e)
             {
                 _logger.ZLogError(e,
-                                                          $"[Item.GetFoodList] ErrorCode: {ErrorCode.FoodListFailException}, Uid: {uid}");
+                    $"[Item.GetFoodList] ErrorCode: {ErrorCode.FoodListFailException}, Uid: {uid}");
                 return (ErrorCode.FoodListFailException, null);
             }
         }
@@ -270,16 +270,17 @@ namespace APIServer.Servicies
             }
         }
 
-        public async Task<ErrorCode> ReceiveFoodGear(int uid, int foodKey, int gearQty)
+        public async Task<ErrorCode> ReceiveFoodGear(int uid, int foodGearKey, int gearQty)
         {
             try
             {
+                var foodKey = foodGearKey - 100;
                 var foodInfo = await _gameDb.GetFoodInfo(uid, foodKey);
 
                 // 음식이 없다면 추가
                 if (foodInfo == null)
                 {
-                    var rowCount = await _gameDb.InsertUserFood(uid, foodKey, gearQty);
+                    var rowCount = await _gameDb.InsertUserFood(uid, foodKey, 0, gearQty);
                     if (rowCount != 1)
                     {
                         return ErrorCode.FoodGearReceiveFailInsert;
@@ -300,13 +301,75 @@ namespace APIServer.Servicies
             catch (Exception e)
             {
                 _logger.ZLogError(e,
-                    $"[Item.ReceiveFoodGear] ErrorCode: {ErrorCode.FoodGearReceiveFailException}, Uid: {uid}, FoodKey: {foodKey}");
+                    $"[Item.ReceiveFoodGear] ErrorCode: {ErrorCode.FoodGearReceiveFailException}, Uid: {uid}, FoodGearKey: {foodGearKey}");
                 return ErrorCode.FoodGearReceiveFailException;
             }
         }
 
         #endregion
-        public async Task<ErrorCode> GetReward(int uid, RewardData reward)
+
+        public async Task<(ErrorCode,List<RewardData>)> ReceiveOneGacha(int uid, int gachaKey)
+        {
+            try
+            {
+                List<RewardData> rewardDatas = [];
+
+                // 가챠 정보 가져오기
+                var gacha = _masterDb._gachaRewardList.Find(item => item.gachaRewardInfo.gacha_reward_key == gachaKey);
+                var gachaInfo = gacha.gachaRewardInfo;
+
+                // 가챠 확률을 위한 총합
+                var totalPercent = gachaInfo.char_prob_percent
+                                 + gachaInfo.skin_prob_percent 
+                                 + gachaInfo.costume_prob_percent 
+                                 + gachaInfo.food_prob_percent 
+                                 + gachaInfo.food_gear_prob_percent;
+
+                // 가챠 확률
+                int[] probs = { gachaInfo.char_prob_percent,
+                                gachaInfo.skin_prob_percent,
+                                gachaInfo.costume_prob_percent,
+                                gachaInfo.food_prob_percent,
+                                gachaInfo.food_gear_prob_percent };
+
+                // 가챠 타입
+                string[] types = { "char", "skin", "costume", "food", "food_gear" };
+
+                // 가챠의 횟수만큼 반복
+                for (int i = 0; i < gachaInfo.gacha_count; i++)
+                {
+                    //숫자를 뽑고 확률 배열에 따라 타입 고르기
+                    var randomPoint = new Random().Next(1, totalPercent + 1);
+                    for (int j = 0; j < probs.Length; j++)
+                    {
+                        if (randomPoint <= probs[j])
+                        {
+                            // 정해진 타입의 보상들 중 다시 랜덤 뽑기
+                            var rewards = gacha.gachaRewardList.FindAll(item => item.reward_type == types[j]);
+                            var randomIndex = new Random().Next(0, rewards.Count);
+                            var reward = rewards[randomIndex];
+                            // 보상 지급
+                            var errorCode = await ReceiveReward(uid, reward);
+                            if (errorCode != ErrorCode.None)
+                            {
+                                return (errorCode, null);
+                            }
+                            rewardDatas.Add(reward);
+                            break;
+                        }
+                        randomPoint -= probs[j];
+                    }
+                }
+                
+                return (ErrorCode.None, rewardDatas);
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogError(e,
+                    $"[Item.ReceiveOneGacha] ErrorCode: {ErrorCode.GachaReceiveFailException}, Uid: {uid}, GachaKey: {gachaKey}");
+                return (ErrorCode.GachaReceiveFailException, null);
+            }
+        }
 
         public async Task<ErrorCode> ReceiveReward(int uid, RewardData reward)
         {
@@ -337,9 +400,6 @@ namespace APIServer.Servicies
                         break;
                     case "food_gear": // 푸드기어
                         errorCode = await ReceiveFoodGear(uid, reward.reward_key, reward.reward_qty);
-                        break;
-                    case "gacha": // 가챠
-                        //GetGacha Service
                         break;
                 }
 

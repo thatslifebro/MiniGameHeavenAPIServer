@@ -101,6 +101,8 @@ public enum ErrorCode : UInt16
     FoodGearReceiveFailIncrementFoodGear = 3046,
     FoodGearReceiveFailException = 3047,
 
+    GachaReceiveFailException= 3051,
+
 
     //GameDb 4000~ 
     GetGameDbConnectionFail = 4002,

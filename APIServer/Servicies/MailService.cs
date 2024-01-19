@@ -49,10 +49,11 @@ public class MailService : IMailService
         }
     }
 
-    public async Task<(ErrorCode,IEnumerable<RewardData>)> ReceiveMail(int uid, int mailSeq)
+    public async Task<(ErrorCode,List<ReceivedReward>)> ReceiveMail(int uid, int mailSeq)
     {
         try
         {
+            //메일의 존재, 수령여부, 소유권 확인
             var mailInfo = await _gameDb.GetMailInfo(mailSeq);
             if(mailInfo == null)
             {
@@ -67,9 +68,11 @@ public class MailService : IMailService
                 return ((ErrorCode.MailReceiveFailNotMailOwner, null));
             }
 
-            var rewards = await _gameDb.GetMailRewardList(mailSeq);
+            //메일 보상 확인
+            var mailRewards = await _gameDb.GetMailRewardList(mailSeq);
 
-            return (await ReceiveMailRewards(mailInfo.uid, mailSeq, rewards), rewards);
+            //메일 보상 수령
+            return await ReceiveMailRewards(mailInfo.uid, mailSeq, mailRewards);
         }
         catch (Exception e)
         {
@@ -79,32 +82,54 @@ public class MailService : IMailService
         }
     }
 
-    async Task<ErrorCode> ReceiveMailRewards(int uid, int mailSeq, IEnumerable<RewardData> rewards)
+    async Task<(ErrorCode,List<ReceivedReward>)> ReceiveMailRewards(int uid, int mailSeq, IEnumerable<RewardData> mailRewards)
     {
         try
         {
-            foreach (var reward in rewards)
+            List<ReceivedReward> totalRewards = new();
+
+            //메일 보상 마다 반복 수령
+            foreach (var reward in mailRewards)
             {
-                var errorCode = await _itemService.ReceiveReward(uid, reward);
-                if(errorCode != ErrorCode.None)
+                // 가챠 보상일 경우
+                if (reward.reward_type == "gacha")
                 {
-                    return errorCode;
+                    for (int i = 0; i < reward.reward_qty; i++)
+                    {
+                        var (errorCode, rewards) = await _itemService.ReceiveOneGacha(uid, reward.reward_key);
+                        if (errorCode != ErrorCode.None)
+                        {
+                            return (errorCode, null);
+                        }
+                        totalRewards.Add(new ReceivedReward(reward.reward_key,rewards));
+                    }
+                }
+                // 일반 보상일 경우
+                else
+                {
+                    var errorCode = await _itemService.ReceiveReward(uid, reward);
+                    if (errorCode != ErrorCode.None)
+                    {
+                        return (errorCode, null);
+                    }
+                    totalRewards.Add(new ReceivedReward(reward.reward_key,[reward]));
                 }
             }
 
+            //수령일자 업데이트
             var rowCount = await _gameDb.UpdateReceiveDt(mailSeq);
             if (rowCount != 1)
             {
-                return ErrorCode.MailReceiveFailUpdateReceiveDt;
+                return (ErrorCode.MailReceiveFailUpdateReceiveDt, null);
             }
 
-            return ErrorCode.None;
+            return (ErrorCode.None, totalRewards);
         }
         catch (Exception e)
         {
             _logger.ZLogError(e,
                 $"[Mail.ReceiveMail] ErrorCode: {ErrorCode.MailReceiveFailException}, MailSeq: {mailSeq}");
-            return ErrorCode.MailReceiveFailException;
+            return (ErrorCode.MailReceiveFailException, null);
         }
     }
 
@@ -112,6 +137,7 @@ public class MailService : IMailService
     {
         try
         {
+            //메일의 존재, 소유권 확인
             var mailInfo = await _gameDb.GetMailInfo(mailSeq);
             if (mailInfo == null)
             {
@@ -122,12 +148,14 @@ public class MailService : IMailService
                 return ErrorCode.MailReceiveFailNotMailOwner;
             }
 
+            //메일 삭제
             var rowCount = await _gameDb.DeleteMail(mailSeq);
             if (rowCount != 1)
             {
                 return ErrorCode.MailDeleteFailDeleteMail;
             }
 
+            //메일 보상 삭제
             rowCount = await _gameDb.DeleteMailReward(mailSeq);
             if (rowCount < 1)
             {

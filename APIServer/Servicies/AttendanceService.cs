@@ -38,10 +38,13 @@ public class AttendanceService : IAttendanceService
         }
     }
 
-    public async Task<(ErrorCode, RewardData)> CheckAttendance(int uid)
+    public async Task<(ErrorCode, List<ReceivedReward>)> CheckAttendance(int uid)
     {
         try
         {
+            List<ReceivedReward> totalRewards = [];
+
+            //출석 체크
             var rowCount = await _gameDb.CheckAttendanceById(uid);
             if (rowCount != 1)
             {
@@ -51,12 +54,32 @@ public class AttendanceService : IAttendanceService
             var attendanceInfo = await _gameDb.GetAttendanceById(uid);
             var attendanceCnt = attendanceInfo.attendance_cnt;
 
-            //출석 보상 수령 - 한 종류의 보상만 받기 때문에 reward는 1개.
+            //출석 보상 수령
             var a = _masterDb._attendanceRewardList;
             var reward = _masterDb._attendanceRewardList.Find(reward => reward.day_seq == attendanceCnt);
-            await _itemService.ReceiveReward(uid, reward);
-
-            return (ErrorCode.None, reward);
+            
+            // 가챠 보상일 경우
+            if(reward.reward_type == "gacha")
+            {
+                for (int i = 0; i < reward.reward_qty; i++)
+                {
+                    var (errorCode, rewards) = await _itemService.ReceiveOneGacha(uid, reward.reward_key);
+                    if (errorCode != ErrorCode.None)
+                    {
+                        return (errorCode, null);
+                    }
+                    totalRewards.Add(new ReceivedReward(reward.reward_key, rewards));
+                }
+               
+                return (ErrorCode.None, totalRewards);
+            }
+            // 일반 보상일 경우
+            else
+            {
+                await _itemService.ReceiveReward(uid, reward);
+                totalRewards.Add(new ReceivedReward(reward.reward_key, [reward]));
+                return (ErrorCode.None, totalRewards);
+            }
         }
         catch (Exception e)
         {

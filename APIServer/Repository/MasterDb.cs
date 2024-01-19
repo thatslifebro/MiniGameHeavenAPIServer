@@ -66,14 +66,15 @@ public class MasterDb : IMasterDb
             _itemLevelList = (await _queryFactory.Query($"master_item_level").GetAsync<ItemLevelData>()).ToList();
 
             var gachaRewards = await _queryFactory.Query($"master_gacha_reward").GetAsync<GachaRewardInfo>();
-            GachaRewardData gachaRewardData = new();
+            
             _gachaRewardList = new();
             foreach (var gachaRewardInfo in gachaRewards)
             {
+                GachaRewardData gachaRewardData = new();
                 gachaRewardData.gachaRewardInfo = gachaRewardInfo;
                 gachaRewardData.gachaRewardList = (await _queryFactory.Query("master_gacha_reward_list")
                                                    .Where("gacha_reward_key", gachaRewardInfo.gacha_reward_key)
-                                                   .GetAsync<GachaReward>())
+                                                   .GetAsync<RewardData>())
                                                    .ToList();
                 _gachaRewardList.Add(gachaRewardData);
             }

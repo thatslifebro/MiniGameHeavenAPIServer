@@ -424,7 +424,8 @@ CREATE TABLE master_gacha_reward_list
 (
     `gacha_reward_key`  INT            NOT NULL    COMMENT '가챠 보상 키', 
     `reward_key`        INT            NOT NULL    COMMENT '보상 키', 
-    `reward_type`       VARCHAR(20)    NOT NULL    COMMENT '보상 종류', 
+    `reward_type`       VARCHAR(20)    NOT NULL    COMMENT '보상 종류',
+    `reward_qty`        INT             NOT NULL   DEFAULT 1 COMMENT '보상 수',
     `create_dt`         DATETIME       NOT NULL    COMMENT '생성 일시', 
      PRIMARY KEY (gacha_reward_key, reward_key)
 );

@@ -12,6 +12,7 @@ namespace APIServer.Model.DTO.Mail
 
     public class MailReceiveResponse : ErrorCodeDTO
     {
-        public IEnumerable<RewardData> Rewards { get; set; }
+        public List<ReceivedReward> Rewards { get; set; }
     }
+
 }

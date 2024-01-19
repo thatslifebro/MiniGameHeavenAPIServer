@@ -5,6 +5,6 @@ namespace APIServer.Model.DTO.Attendance
 {
     public class AttendanceCheckResponse : ErrorCodeDTO
     {
-        public RewardData Reward { get; set; }
+        public List<ReceivedReward> Rewards { get; set; }
     }
 }
