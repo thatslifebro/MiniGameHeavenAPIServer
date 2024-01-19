@@ -54,7 +54,7 @@ public class AttendanceService : IAttendanceService
             //출석 보상 수령 - 한 종류의 보상만 받기 때문에 reward는 1개.
             var a = _masterDb._attendanceRewardList;
             var reward = _masterDb._attendanceRewardList.Find(reward => reward.day_seq == attendanceCnt);
-            await _itemService.GetReward(uid, reward);
+            await _itemService.ReceiveReward(uid, reward);
 
             return (ErrorCode.None, reward);
         }

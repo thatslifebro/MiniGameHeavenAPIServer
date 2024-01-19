@@ -93,6 +93,14 @@ public enum ErrorCode : UInt16
     CostumeReceiveFailException = 3034,
     CostumeListFailException = 3035,
 
+    FoodReceiveFailInsert = 3041,
+    FoodReceiveFailIncrementFoodQty = 3042,
+    FoodReceiveFailException = 3043,
+    FoodListFailException = 3044,
+    FoodGearReceiveFailInsert = 3045,
+    FoodGearReceiveFailIncrementFoodGear = 3046,
+    FoodGearReceiveFailException = 3047,
+
 
     //GameDb 4000~ 
     GetGameDbConnectionFail = 4002,
@@ -107,9 +115,6 @@ public enum ErrorCode : UInt16
     UserMoneyInfoFailException = 6002,
     UserUpdateJewelryFailIncremnet = 6003,
 
-    // Item
-    
-    FoodListFailException = 7004,
 
     // Mail
     MailListFailException = 8001,

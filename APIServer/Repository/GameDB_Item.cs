@@ -111,10 +111,45 @@ public partial class GameDb : IGameDb
 
     #endregion
 
+    #region Food
+
     public async Task<IEnumerable<GdbUserFoodInfo>> GetFoodList(int uid)
     {
         return await _queryFactory.Query("user_food").Where("uid", uid)
                                                 .OrderBy("food_key")
                                                 .GetAsync<GdbUserFoodInfo>();
     }
+
+    public async Task<GdbUserFoodInfo> GetFoodInfo(int uid, int foodKey)
+    {
+        return await _queryFactory.Query("user_food").Where("uid", uid)
+                                                .Where("food_key", foodKey)
+                                                .FirstOrDefaultAsync<GdbUserFoodInfo>();
+    }
+
+
+    public async Task<int> InsertUserFood(int uid, int foodKey, int qty=0, int gearQty=0)
+    {
+        return await _queryFactory.Query("user_food").InsertAsync(new { uid, 
+                                                                        food_key = foodKey, 
+                                                                        food_qty = qty, 
+                                                                        food_gear_qty = gearQty, 
+                                                                        create_dt = DateTime.Now });
+    }
+
+    public async Task<int> IncrementFoodQty(int uid, int foodKey, int qty)
+    {
+        return await _queryFactory.Query("user_food").Where("uid", uid)
+                                                .Where("food_key", foodKey)
+                                                .IncrementAsync("food_qty", qty);
+    }
+
+    public async Task<int> IncrementFoodGearQty(int uid, int foodKey, int gearQty)
+    {
+        return await _queryFactory.Query("user_food").Where("uid", uid)
+                                                .Where("food_key", foodKey)
+                                                .IncrementAsync("food_gear_qty", gearQty);
+    }
+
+    #endregion
 }

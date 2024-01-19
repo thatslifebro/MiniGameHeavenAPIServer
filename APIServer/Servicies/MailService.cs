@@ -85,7 +85,7 @@ public class MailService : IMailService
         {
             foreach (var reward in rewards)
             {
-                var errorCode = await _itemService.GetReward(uid, reward);
+                var errorCode = await _itemService.ReceiveReward(uid, reward);
                 if(errorCode != ErrorCode.None)
                 {
                     return errorCode;

@@ -219,6 +219,8 @@ namespace APIServer.Servicies
 
         #endregion
 
+        #region Food
+
         public async Task<(ErrorCode,IEnumerable<GdbUserFoodInfo>)> GetFoodList(int uid)
         {
             try
@@ -233,7 +235,80 @@ namespace APIServer.Servicies
             }
         }
 
+        public async Task<ErrorCode> ReceiveFood(int uid, int foodKey, int qty)
+        {
+            try
+            {
+                var foodInfo = await _gameDb.GetFoodInfo(uid, foodKey);
+
+                // 음식이 없다면 추가
+                if (foodInfo == null)
+                {
+                    var rowCount = await _gameDb.InsertUserFood(uid, foodKey, qty);
+                    if (rowCount != 1)
+                    {
+                        return ErrorCode.FoodReceiveFailInsert;
+                    }
+                }
+                // 있다면 수량증가
+                else
+                {
+                    var rowCount = await _gameDb.IncrementFoodQty(uid, foodKey, qty);
+                    if (rowCount != 1)
+                    {
+                        return ErrorCode.FoodReceiveFailIncrementFoodQty;
+                    }
+                }
+
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogError(e,
+                    $"[Item.ReceiveFood] ErrorCode: {ErrorCode.FoodReceiveFailException}, Uid: {uid}, FoodKey: {foodKey}");
+                return ErrorCode.FoodReceiveFailException;
+            }
+        }
+
+        public async Task<ErrorCode> ReceiveFoodGear(int uid, int foodKey, int gearQty)
+        {
+            try
+            {
+                var foodInfo = await _gameDb.GetFoodInfo(uid, foodKey);
+
+                // 음식이 없다면 추가
+                if (foodInfo == null)
+                {
+                    var rowCount = await _gameDb.InsertUserFood(uid, foodKey, gearQty);
+                    if (rowCount != 1)
+                    {
+                        return ErrorCode.FoodGearReceiveFailInsert;
+                    }
+                }
+                // 있다면 수량증가
+                else
+                {
+                    var rowCount = await _gameDb.IncrementFoodGearQty(uid, foodKey, gearQty);
+                    if (rowCount != 1)
+                    {
+                        return ErrorCode.FoodGearReceiveFailIncrementFoodGear;
+                    }
+                }
+
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogError(e,
+                    $"[Item.ReceiveFoodGear] ErrorCode: {ErrorCode.FoodGearReceiveFailException}, Uid: {uid}, FoodKey: {foodKey}");
+                return ErrorCode.FoodGearReceiveFailException;
+            }
+        }
+
+        #endregion
         public async Task<ErrorCode> GetReward(int uid, RewardData reward)
+
+        public async Task<ErrorCode> ReceiveReward(int uid, RewardData reward)
         {
             int rowCount;
             ErrorCode errorCode;
@@ -258,7 +333,10 @@ namespace APIServer.Servicies
                         errorCode = await ReceiveCostume(uid, reward.reward_key, reward.reward_qty);
                         break;
                     case "food": //푸드
-                        //GetFood Service
+                        errorCode = await ReceiveFood(uid, reward.reward_key, reward.reward_qty);
+                        break;
+                    case "food_gear": // 푸드기어
+                        errorCode = await ReceiveFoodGear(uid, reward.reward_key, reward.reward_qty);
                         break;
                     case "gacha": // 가챠
                         //GetGacha Service
