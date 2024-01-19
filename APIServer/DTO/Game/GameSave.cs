@@ -1,11 +1,20 @@
 ﻿
+using APIServer.Models;
+using System.Collections.Generic;
+
 namespace APIServer.DTO.Game;
 
 public class GameSaveRequest
 {
     public int GameKey { get; set; }
     public int Score { get; set; }
-    //아이템 사용 여부, 스타포인트, 금메달 
+    public List<UsedFoodData> Foods { get; set; }
+}
+
+public class UsedFoodData
+{
+    public int FoodKey { get; set; }
+    public int FoodQty { get; set; }
 }
 
 

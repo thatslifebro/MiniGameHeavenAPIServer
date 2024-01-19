@@ -53,6 +53,7 @@ public interface IGameDb
     public Task<int> InsertUserFood(int uid, int foodKey, int qty = 0, int gearQty = 0);
     public Task<int> IncrementFoodQty(int uid, int foodKey, int qty);
     public Task<int> IncrementFoodGearQty(int uid, int foodKey, int qty);
+    public Task<int> FoodDecrement(int uid, int foodKey, int foodQty);
     public Task<IEnumerable<GdbMailboxInfo>> GetMailList(int uid);
     public Task<GdbMailboxInfo> GetMailInfo(int mailSeq);
     public Task<IEnumerable<GdbMailboxRewardInfo>> GetMailRewardList(int mailSeq);

@@ -1,4 +1,6 @@
-﻿using APIServer.Models.GameDB;
+﻿using APIServer.DTO.Game;
+using APIServer.Models;
+using APIServer.Models.GameDB;
 using APIServer.Repository.Interfaces;
 using APIServer.Servicies.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -76,7 +78,7 @@ public class GameService :IGameService
         }
     }
 
-    public async Task<ErrorCode> SaveGame(int uid, int gameKey, int score)
+    public async Task<ErrorCode> SaveGame(int uid, int gameKey, int score, List<UsedFoodData> foods)
     {
         try
         {
@@ -88,16 +90,28 @@ public class GameService :IGameService
                 return ErrorCode.GameSaveFailGameLocked;
             }
 
-            var row = await _gameDb.UpdateBestscore(uid, gameKey, score);
-            if(row == 0)
+            //최고점수 갱신
+            var rowCount = await _gameDb.UpdateBestscore(uid, gameKey, score);
+            if(rowCount == 0)
             {
-                row = await _gameDb.UpdateBestscoreCurSeason(uid, gameKey, score);
-                if(row == 0)
+                rowCount = await _gameDb.UpdateBestscoreCurSeason(uid, gameKey, score);
+                if(rowCount == 0)
                 {
                     await _gameDb.UpdateRecentPlayDt(uid, gameKey);
                 }
             }
-            
+
+            //사용된 푸드 감소
+            foreach(var food in foods)
+            {
+                rowCount = await _gameDb.FoodDecrement(uid, food.FoodKey, food.FoodQty);
+                if(rowCount != 1)
+                {
+                    _logger.ZLogError($"[Game.GameSave] ErrorCode: {ErrorCode.GameSaveFailFoodDecrement}, Uid: {uid}");
+                    return ErrorCode.GameSaveFailFoodDecrement;
+                }
+            }
+
             return ErrorCode.None;
         }
         catch (Exception e)

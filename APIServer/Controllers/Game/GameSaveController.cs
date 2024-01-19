@@ -30,7 +30,7 @@ public class GameSave : ControllerBase
     {
      GameSaveResponse response = new();
 
-    response.Result = await _gameService.SaveGame(header.Uid, request.GameKey, request.Score);
+    response.Result = await _gameService.SaveGame(header.Uid, request.GameKey, request.Score, request.Foods);
     
     _logger.ZLogInformation($"[GameSave] Uid : {header.Uid}, GameId : {request.GameKey}, Score : {request.Score}");
         return response;

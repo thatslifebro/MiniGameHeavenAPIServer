@@ -122,4 +122,12 @@ public partial class GameDb : IGameDb
                                                     char_key = charKey
                                                 });
     }
+
+    public async Task<int> FoodDecrement(int uid, int foodKey, int foodQty)
+    {
+        return await _queryFactory.Query("user_food").Where("uid", uid)
+                                                .Where("food_key", foodKey)
+                                                .Where("food_qty", ">=", foodQty)
+                                                .DecrementAsync("food_qty", foodQty);
+    }
 }

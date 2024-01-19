@@ -77,6 +77,7 @@ public enum ErrorCode : UInt16
     GameUnlockFailAlreadyUnlocked = 2209,
     GameSetPlayCharFailUpdate = 2210,
     GameSetPlayCharFailException = 2211,
+    GameSaveFailFoodDecrement = 2212,
 
 
     // Item 3000 ~
