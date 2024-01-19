@@ -2,6 +2,7 @@
 using APIServer.Model.DTO.Auth;
 using APIServer.Repository;
 using APIServer.Services;
+using APIServer.Servicies;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,13 +18,15 @@ public class Login : ControllerBase
     readonly ILogger<Login> _logger;
     readonly IAuthService _authService;
     readonly IGameService _gameService;
+    readonly IDataLoadService _dataLoadService;
 
-    public Login(ILogger<Login> logger, IMemoryDb memoryDb, IAuthService authService, IGameService gameService)
+    public Login(ILogger<Login> logger, IMemoryDb memoryDb, IAuthService authService, IGameService gameService, IDataLoadService dataLoadService)
     {
         _logger = logger;
         _memoryDb = memoryDb;
         _authService = authService;
         _gameService = gameService;
+        _dataLoadService = dataLoadService;
     }
 
     /// <summary>
@@ -87,6 +90,9 @@ public class Login : ControllerBase
             response.Result = errorCode;
             return response;
         }
+
+        //유저 데이터 로드
+        (errorCode, response.userData) = await _dataLoadService.LoadUserData(uid);
 
         _logger.ZLogInformation($"[Login] Uid : {uid}, Token : {token}, PlayerId : {request.PlayerId}");
 

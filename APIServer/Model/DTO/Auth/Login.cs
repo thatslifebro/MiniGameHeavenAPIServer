@@ -1,4 +1,5 @@
-﻿using System;
+﻿using APIServer.Model.DTO.DataLoad;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 
@@ -19,4 +20,6 @@ public class LoginResponse
     [Required] public ErrorCode Result { get; set; } = ErrorCode.None;
     [Required] public string Token { get; set; } = "";
     [Required] public int Uid { get; set; } = 0;
+
+    public UserDataLoadInfo userData { get; set; }
 }
