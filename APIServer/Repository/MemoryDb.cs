@@ -1,4 +1,5 @@
-﻿using APIServer.Models;
+﻿using APIServer.DTO.Ranking;
+using APIServer.Models;
 using APIServer.Repository.Interfaces;
 using APIServer.Services;
 using CloudStructures;
@@ -239,20 +240,66 @@ public class MemoryDb : IMemoryDb
         return ErrorCode.None;
     }
 
-    public async Task<(ErrorCode, List<RedisSortedSetEntry<int>>)> GetUserRanking()
+    public async Task<(ErrorCode, List<RankData>)> GetUserRanking()
     {
         try
         {
-            var set = new RedisSortedSet<int>(_redisConn, "user-ranking", null);
-            var ranking =  await set.RangeByRankWithScoresAsync(order:StackExchange.Redis.Order.Descending);
+            // 등수, uid, score 클래스 하나 만들고
+            // 돌면서 확인 같은 점수면 그등수 그대로 카운트 늘리고
+            // 다르면 등수 바꾸고 또 계속
+            // 리턴.
+            List<RankData> ranking = new();
 
-            return (ErrorCode.None, ranking.ToList());
+            var set = new RedisSortedSet<int>(_redisConn, "user-ranking", null);
+            var rankDatas =  await set.RangeByRankWithScoresAsync(0,100,order:StackExchange.Redis.Order.Descending);
+
+            var rank = 0;
+            var score = -1;
+            var count = 1;
+            foreach (var rankData in rankDatas)
+            {
+                if(rankData.Score == score)
+                {
+                    count++;
+                }
+                else
+                {
+                    rank += count;
+                    count = 1;
+                    score = (int)rankData.Score;
+                }
+                ranking.Add(new RankData
+                {
+                    rank = rank,
+                    uid = rankData.Value,
+                    score = score
+                });
+            }
+
+            return (ErrorCode.None, ranking);
         }
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                   $"[GetUserRanking] ErrorCode : {ErrorCode.GetUserRankingFailException}");
-            return (ErrorCode.GetUserRankingFailException, null);
+                   $"[GetUserRanking] ErrorCode : {ErrorCode.GetRankingFailException}");
+            return (ErrorCode.GetRankingFailException, null);
         }
     }
+
+    public async Task<(ErrorCode, long)> GetUserRankAsync(int uid)
+    {
+        try
+        {
+            var set = new RedisSortedSet<int>(_redisConn, "user-ranking", null);
+            var rank = await set.RankAsync(uid, order: StackExchange.Redis.Order.Descending);
+            return (ErrorCode.None, rank.Value + 1);
+        }
+        catch (Exception e)
+        {
+            _logger.ZLogError(e,
+                                  $"[GetUserRankAsync] UID = {uid}, ErrorCode : {ErrorCode.GetUserRankFailException}");
+            return (ErrorCode.GetUserRankFailException, 0);
+        }
+    }
+
 }
