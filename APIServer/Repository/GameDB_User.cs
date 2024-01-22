@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using APIServer.DTO.User;
 using APIServer.Models;
 using APIServer.Models.GameDB;
 using APIServer.Repository.Interfaces;
@@ -103,6 +104,14 @@ public partial class GameDb : IGameDb
     public async Task<IEnumerable<RdbUserScoreData>> SelectAllUserScore()
     {
         return await _queryFactory.Query("user").Select("uid", "bestscore_ever").GetAsync<RdbUserScoreData>();
+    }
+
+    public async Task<int> UpdateMainChar(int uid, int charKey)
+    {
+        return await _queryFactory.Query("user").Where("uid", uid).UpdateAsync(new
+        {
+            main_char_key = charKey,
+        });
     }
 
     public IDbConnection GDbConnection()

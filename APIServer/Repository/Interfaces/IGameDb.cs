@@ -65,6 +65,7 @@ public interface IGameDb
     public Task<int> UpdateReceiveDt(int mailSeq);
     public Task<GdbAttendanceInfo> GetAttendanceById(int uid);
     public Task<GdbUserMoneyInfo> GetUserMoneyById(int uid);
+    public Task<int> UpdateMainChar(int uid, int charKey);
     public Task<IEnumerable<RdbUserScoreData>> SelectAllUserScore();
     public Task<int> CheckAttendanceById(int uid);
     public Task<int> UpdateUserjewelry(int uid, int rewardQty);

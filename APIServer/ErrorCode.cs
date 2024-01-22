@@ -130,7 +130,9 @@ public enum ErrorCode : UInt16
     UserInfoFailException = 6001,
     UserMoneyInfoFailException = 6002,
     UserUpdateJewelryFailIncremnet = 6003,
-
+    SetMainCharFailException = 6004,
+    GetOtherUserInfoFailException = 6005,
+    UserNotExist = 6006,
 
     // Mail
     MailListFailException = 8001,

@@ -1,4 +1,5 @@
-﻿using APIServer.Models.GameDB;
+﻿using APIServer.DTO.User;
+using APIServer.Models.GameDB;
 using APIServer.Repository.Interfaces;
 using APIServer.Servicies.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -12,10 +13,12 @@ namespace APIServer.Servicies
     {
         readonly ILogger<UserService> _logger;
         readonly IGameDb _gameDb;
-        public UserService(ILogger<UserService> logger, IGameDb gameDb)
+        readonly IMemoryDb _memoryDb;
+        public UserService(ILogger<UserService> logger, IGameDb gameDb, IMemoryDb memoryDb)
         {
             _logger = logger;
             _gameDb = gameDb;
+            _memoryDb = memoryDb;
         }
 
         public async Task<(ErrorCode, GdbUserInfo)> GetUserInfo(int uid)
@@ -43,6 +46,72 @@ namespace APIServer.Servicies
                 _logger.ZLogError(e,
                     $"[User.GetUserMoneyInfo] ErrorCode: {ErrorCode.UserMoneyInfoFailException}, Uid: {uid}");
                 return (ErrorCode.UserMoneyInfoFailException, null);
+            }
+        }
+
+        public async Task<ErrorCode> SetMainChar(int uid, int charKey)
+        {
+            try
+            {
+                var charInfo = await _gameDb.GetCharInfo(uid, charKey);
+                if (charInfo == null)
+                {
+                    _logger.ZLogError($"[User.SetMainChar] ErrorCode: {ErrorCode.CharNotExist}, CharKey: {charKey}");
+                    return ErrorCode.CharNotExist;
+                }
+
+                await _gameDb.UpdateMainChar(uid, charKey);
+
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogError(e,
+                                       $"[User.SetMainChar] ErrorCode: {ErrorCode.SetMainCharFailException}, Uid: {uid}, CharKey: {charKey}");
+                return ErrorCode.SetMainCharFailException;
+            }
+        }
+
+        public async Task<(ErrorCode, OtherUserInfo)> GetOtherUserInfo(int uid)
+        {
+            try
+            {
+                var userInfo = await _gameDb.GetUserByUid(uid);
+                if (userInfo == null)
+                {
+                    _logger.ZLogError($"[User.GetOtherUserInfo] ErrorCode: {ErrorCode.UserNotExist}, Uid: {uid}");
+                    return (ErrorCode.UserNotExist, null);
+                }
+
+                var charInfo = await _gameDb.GetCharInfo(uid, userInfo.main_char_key);
+
+                var (errorCode, rank) = await _memoryDb.GetUserRankAsync(uid);
+
+                if(errorCode != ErrorCode.None)
+                {
+                    _logger.ZLogError($"[User.GetOtherUserInfo] ErrorCode: {errorCode}, Uid: {uid}");
+                    return (errorCode, null);
+                }
+
+                return (ErrorCode.None, new OtherUserInfo
+                {
+                    uid = uid,
+                    nickname = userInfo.nickname,
+                    bestscore_ever = userInfo.bestscore_ever,
+                    bestscore_cur_season = userInfo.bestscore_cur_season,
+                    bestscore_prev_season = userInfo.bestscore_prev_season,
+                    main_char_key = userInfo.main_char_key,
+                    main_char_skin_key = charInfo.skin_key,
+                    main_char_costume_json = charInfo.costume_json,
+                    rank = rank,
+                });
+
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogError(e,
+                                       $"[User.GetOtherUserInfo] ErrorCode: {ErrorCode.GetOtherUserInfoFailException}, Uid: {uid}");
+                return (ErrorCode.GetOtherUserInfoFailException, null);
             }
         }
     }

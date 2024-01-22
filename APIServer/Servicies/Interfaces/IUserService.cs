@@ -1,4 +1,5 @@
-﻿using APIServer.Models.GameDB;
+﻿using APIServer.DTO.User;
+using APIServer.Models.GameDB;
 using System.Threading.Tasks;
 
 namespace APIServer.Servicies.Interfaces
@@ -7,5 +8,7 @@ namespace APIServer.Servicies.Interfaces
     {
         public Task<(ErrorCode, GdbUserInfo)> GetUserInfo(int uid);
         public Task<(ErrorCode, GdbUserMoneyInfo)> GetUserMoneyInfo(int uid);
+        public Task<ErrorCode> SetMainChar(int uid, int charKey);
+        public Task<(ErrorCode, OtherUserInfo)> GetOtherUserInfo(int uid);
     }
 }
