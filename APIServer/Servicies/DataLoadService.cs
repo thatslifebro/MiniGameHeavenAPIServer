@@ -23,6 +23,8 @@ public class DataLoadService : IDataLoadService
         _friendService = friendService;
     }
 
+    //TODO 최흥배: 한번에 너무 많은 데이터를 로딩합니다. DB를 오래독점하고, 클라이언트에 보내는 데이터 량이 한번에 너무 많습니다
+    // 나누어서 로딩하는 것이 좋을 것 같습니다.
     public async Task<(ErrorCode, UserDataLoadInfo)> LoadUserData(int uid)
     {
         UserDataLoadInfo loadData = new();

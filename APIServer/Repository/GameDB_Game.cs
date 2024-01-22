@@ -8,6 +8,12 @@ using SqlKata.Execution;
 
 namespace APIServer.Services;
 
+//TODO 최흥배: 테이블의 모든 필드는 NULL을 가지지 않습니다. NULL을 의미하는 값을 대신 넣어주세요
+
+//TODO 최흥배: user_game 에서 char_key는 어떤 의미일까요?
+
+//TODO 최흥배: user 와 user_game 테이블이 나누어질 이유는 없을 것 같습니다
+
 public partial class GameDb : IGameDb
 {
     public async Task<IEnumerable<GdbGameInfo>> GetGameList(int uid)

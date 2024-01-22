@@ -21,6 +21,8 @@ public class FriendCancelReq : ControllerBase
         _friendService = friendService;
     }
 
+    //TODO 최흥배: 이미 Delete가 있는데 이것은 무엇인가요? 그리고 파일과 API 이름이 서로 다릅니다. 일치시켜주세요
+
     /// <summary>
     /// 보낸 친구요청을 취소하는 API
     /// 보낸 친구 요청을 취소합니다.

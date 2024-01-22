@@ -21,6 +21,8 @@ public class FriendAdd : ControllerBase
         _friendService = friendService;
     }
 
+    //TODO 최흥배: 기능은 단순하게 하는 것이 좋습니다. 친구 요청과 요청 수락은 나누도록 하시죠 
+
     /// <summary>
     /// 친구 요청을 보내거나 친구 요청을 수락하는 API </br>
     /// 상대 방의 친구 요청 유무에 따라 친구 수락 혹은 친구 요청 보내기를 수행합니다.
