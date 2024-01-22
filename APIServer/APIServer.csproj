@@ -29,11 +29,5 @@
         <Compile Remove="MasterData.cs" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Controllers\Character\" />
-      <Folder Include="Model\DTO\Character\" />
-      <Folder Include="Model\DTO\Item\" />
-    </ItemGroup>
-
 
 </Project>
