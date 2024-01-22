@@ -50,6 +50,13 @@ public partial class GameDb : IGameDb
                                                 .IncrementAsync("char_cnt", qty);
     }
 
+    public async Task<int> SetCharCostume(int uid, int charKey, string costumeJsonString)
+    {
+        return await _queryFactory.Query("user_char").Where("uid", uid)
+                                                .Where("char_key", charKey)
+                                                .UpdateAsync(new { costume_json = costumeJsonString });
+    }
+
     #endregion
 
     #region Skin

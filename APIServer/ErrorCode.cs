@@ -89,6 +89,8 @@ public enum ErrorCode : UInt16
     CharReceiveFailException= 3014,
     CharListFailException = 3015,
     CharNotExist = 3016,
+    CharSetCostumeFailUpdate = 3017,
+    CharSetCostumeFailException = 3018,
 
     SkinReceiveFailAlreadyOwn = 3021,
     SkinReceiveFailInsert = 3022,
@@ -100,6 +102,9 @@ public enum ErrorCode : UInt16
     CostumeReceiveFailIncrementCharCnt = 3033,
     CostumeReceiveFailException = 3034,
     CostumeListFailException = 3035,
+    SetCharCostumeFailHeadNotExist= 3036,
+    SetCharCostumeFailFaceNotExist = 3037,
+    SetCharCostumeFailHandNotExist = 3038,
 
     FoodReceiveFailInsert = 3041,
     FoodReceiveFailIncrementFoodQty = 3042,

@@ -21,6 +21,7 @@ namespace APIServer.Servicies.Interfaces
         public Task<ErrorCode> ReceiveFoodGear(int uid, int foodKey, int gearQty);
         public Task<(ErrorCode, List<RewardData>)> ReceiveOneGacha(int uid, int gachaKey);
         public Task<ErrorCode> ReceiveReward(int uid, RewardData reward);
+        public Task<ErrorCode> SetCharCostume(int uid, int charKey, CharCostumeInfo costumeInfo);
 
     }
 }

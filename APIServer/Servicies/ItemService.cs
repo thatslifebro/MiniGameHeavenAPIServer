@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ZLogger;
 
@@ -100,6 +102,57 @@ namespace APIServer.Servicies
                 _logger.ZLogError(e,
                     $"[Item.ReceiveChar] ErrorCode: {ErrorCode.CharReceiveFailException}, Uid: {uid}, CharKey: {charKey}");
                 return ErrorCode.CharReceiveFailException;
+            }
+        }
+
+        public async Task<ErrorCode> SetCharCostume(int uid, int charKey, CharCostumeInfo costumeInfo)
+        {
+            try
+            {
+                if (costumeInfo.Head != 0)
+                {
+                    if (await _gameDb.GetCostumeInfo(uid, costumeInfo.Head) == null)
+                    {
+                        return ErrorCode.SetCharCostumeFailHeadNotExist;
+                    }
+                }
+
+                if (costumeInfo.Face != 0)
+                {
+                    if (await _gameDb.GetCostumeInfo(uid, costumeInfo.Face) == null)
+                    {
+                        return ErrorCode.SetCharCostumeFailFaceNotExist;
+                    }
+                }
+
+                if (costumeInfo.Hand != 0)
+                {
+                    if (await _gameDb.GetCostumeInfo(uid, costumeInfo.Hand) == null)
+                    {
+                        return ErrorCode.SetCharCostumeFailHandNotExist;
+                    }
+                }
+
+                JsonObject json = new()
+                {
+                    { "head", costumeInfo.Head },
+                    { "face", costumeInfo.Face },
+                    { "hand", costumeInfo.Hand }
+                };
+
+                var rowCount = await _gameDb.SetCharCostume(uid, charKey, json.ToJsonString());
+                if (rowCount != 1)
+                {
+                    return ErrorCode.CharSetCostumeFailUpdate;
+                }
+
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogError(e,
+                    $"[Item.SetCharCostume] ErrorCode: {ErrorCode.CharSetCostumeFailException}, Uid: {uid}, CharKey: {charKey}");
+                return ErrorCode.CharSetCostumeFailException;
             }
         }
 
