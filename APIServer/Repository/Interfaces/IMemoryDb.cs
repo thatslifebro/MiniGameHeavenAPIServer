@@ -1,4 +1,6 @@
 ﻿using APIServer.Models;
+using CloudStructures.Structures;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace APIServer.Repository.Interfaces;
@@ -12,4 +14,7 @@ public interface IMemoryDb
     public Task<bool> SetUserReqLockAsync(string key);
     public Task<bool> DelUserReqLockAsync(string key);
     public Task<ErrorCode> DelUserAuthAsync(int uid);
+    public  Task<ErrorCode> SetUserScore(int uid, int score);
+    public  Task<ErrorCode> LoadUserScore();
+    public  Task<(ErrorCode, List<RedisSortedSetEntry<int>>)> GetUserRanking();
 }

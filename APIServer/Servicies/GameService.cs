@@ -101,17 +101,23 @@ public class GameService :IGameService
                 }
             }
 
+            //유저 최고점수 갱신
+            await _gameDb.UpdateUserBestScoreEver(uid);
+
             //사용된 푸드 감소
-            foreach(var food in foods)
+            if(foods != null)
             {
-                rowCount = await _gameDb.FoodDecrement(uid, food.FoodKey, food.FoodQty);
-                if(rowCount != 1)
+                foreach (var food in foods)
                 {
-                    _logger.ZLogError($"[Game.GameSave] ErrorCode: {ErrorCode.GameSaveFailFoodDecrement}, Uid: {uid}");
-                    return ErrorCode.GameSaveFailFoodDecrement;
+                    rowCount = await _gameDb.FoodDecrement(uid, food.FoodKey, food.FoodQty);
+                    if (rowCount != 1)
+                    {
+                        _logger.ZLogError($"[Game.GameSave] ErrorCode: {ErrorCode.GameSaveFailFoodDecrement}, Uid: {uid}");
+                        return ErrorCode.GameSaveFailFoodDecrement;
+                    }
                 }
             }
-
+            
             return ErrorCode.None;
         }
         catch (Exception e)

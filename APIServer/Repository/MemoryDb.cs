@@ -3,10 +3,14 @@ using APIServer.Repository.Interfaces;
 using APIServer.Services;
 using CloudStructures;
 using CloudStructures.Structures;
+using Dapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using ZLogger;
 
@@ -17,13 +21,15 @@ public class MemoryDb : IMemoryDb
     readonly RedisConnection _redisConn;
     readonly ILogger<MemoryDb> _logger;
     readonly IOptions<DbConfig> _dbConfig;
+    readonly IGameDb _gameDb;
 
-    public MemoryDb(ILogger<MemoryDb> logger, IOptions<DbConfig> dbConfig)
+    public MemoryDb(ILogger<MemoryDb> logger, IOptions<DbConfig> dbConfig, IGameDb gameDb)
     {
         _logger = logger;
         _dbConfig = dbConfig;
         RedisConfig config = new ("default", _dbConfig.Value.Redis);
         _redisConn = new RedisConnection(config);
+        _gameDb = gameDb;
     }
 
     public async Task<ErrorCode> RegistUserAsync(string token, int uid)
@@ -203,5 +209,50 @@ public class MemoryDb : IMemoryDb
     public TimeSpan NxKeyTimeSpan()
     {
         return TimeSpan.FromSeconds(RediskeyExpireTime.NxKeyExpireSecond);
+    }
+
+    public async Task<ErrorCode> SetUserScore(int uid, int score)
+    {
+        try
+        {
+            var set = new RedisSortedSet<int>(_redisConn, "user-ranking", null);
+            await set.AddAsync(uid, score);
+
+            return ErrorCode.None;
+        }
+        catch (Exception e)
+        {
+            _logger.ZLogError(e,
+                   $"[SetUserScore] UID = {uid}, ErrorCode : {ErrorCode.SetUserScoreFailException}");
+            return ErrorCode.SetUserScoreFailException;
+        }
+    }
+
+    public async Task<ErrorCode> LoadUserScore()
+    {
+        var usersScore = await _gameDb.SelectAllUserScore();
+        foreach (var userScore in usersScore)
+        {
+            await SetUserScore(userScore.uid, userScore.bestscore_ever);
+        }
+
+        return ErrorCode.None;
+    }
+
+    public async Task<(ErrorCode, List<RedisSortedSetEntry<int>>)> GetUserRanking()
+    {
+        try
+        {
+            var set = new RedisSortedSet<int>(_redisConn, "user-ranking", null);
+            var ranking =  await set.RangeByRankWithScoresAsync(order:StackExchange.Redis.Order.Descending);
+
+            return (ErrorCode.None, ranking.ToList());
+        }
+        catch (Exception e)
+        {
+            _logger.ZLogError(e,
+                   $"[GetUserRanking] ErrorCode : {ErrorCode.GetUserRankingFailException}");
+            return (ErrorCode.GetUserRankingFailException, null);
+        }
     }
 }

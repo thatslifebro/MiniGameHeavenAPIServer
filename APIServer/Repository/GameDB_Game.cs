@@ -74,6 +74,15 @@ public partial class GameDb : IGameDb
                                                 });
     }
 
+    public async Task<int> UpdateUserBestScoreEver(int uid)
+    {
+        return await _queryFactory.Query("user").Where("uid",uid).UpdateAsync(new
+        {
+            bestscore_ever = _queryFactory.Query("user_game").Where("uid", uid)
+                                                             .Sum<int>("bestscore")
+        });
+    }
+
     public async Task<int> UpdateRecentPlayDt(int uid, int gameKey)
     {
         return await _queryFactory.Query("user_game").Where("uid", uid)

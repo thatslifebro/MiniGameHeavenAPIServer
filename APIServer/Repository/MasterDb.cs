@@ -22,6 +22,7 @@ public class MasterDb : IMasterDb
     IDbConnection _dbConn;
     readonly SqlKata.Compilers.MySqlCompiler _compiler;
     readonly QueryFactory _queryFactory;
+    readonly IMemoryDb _memoryDb;
     
     public VersionDAO _version { get; set; }
 
@@ -35,7 +36,7 @@ public class MasterDb : IMasterDb
     public List<GachaRewardData> _gachaRewardList { get; set; }
     public List<ItemLevelData> _itemLevelList { get; set; }
 
-    public MasterDb(ILogger<MasterDb> logger, IOptions<DbConfig> dbConfig)
+    public MasterDb(ILogger<MasterDb> logger, IOptions<DbConfig> dbConfig, IMemoryDb memoryDb)
     {
         _logger = logger;
         _dbConfig = dbConfig;
@@ -44,6 +45,7 @@ public class MasterDb : IMasterDb
 
         _compiler = new SqlKata.Compilers.MySqlCompiler();
         _queryFactory = new QueryFactory(_dbConn, _compiler);
+        _memoryDb = memoryDb;
     }
 
     public void Dispose()
@@ -78,6 +80,8 @@ public class MasterDb : IMasterDb
                                                    .ToList();
                 _gachaRewardList.Add(gachaRewardData);
             }
+
+            await _memoryDb.LoadUserScore();
         }
         catch(Exception e)
         {

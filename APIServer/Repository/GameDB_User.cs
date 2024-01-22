@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using APIServer.Models;
 using APIServer.Models.GameDB;
 using APIServer.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -94,6 +96,11 @@ public partial class GameDb : IGameDb
     {
         return await _queryFactory.Query("user_money").Where("uid", uid)
                                                 .IncrementAsync("jewelry", rewardQty);
+    }
+
+    public async Task<IEnumerable<RdbUserScoreData>> SelectAllUserScore()
+    {
+        return await _queryFactory.Query("user").Select("uid", "bestscore_ever").GetAsync<RdbUserScoreData>();
     }
 
     public IDbConnection GDbConnection()

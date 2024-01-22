@@ -10,3 +10,9 @@ public class RdbAuthUserData
     public string Token { get; set; } = "";
     public string State { get; set; } = ""; // enum UserState    
 }
+
+public class RdbUserScoreData
+{
+    public int uid { get; set; } = 0;
+    public int bestscore_ever { get; set; } = 0;
+}

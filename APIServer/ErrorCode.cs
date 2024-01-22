@@ -79,6 +79,8 @@ public enum ErrorCode : UInt16
     GameSetPlayCharFailException = 2211,
     GameSaveFailFoodDecrement = 2212,
 
+    SetUserScoreFailException = 2301,
+    GetUserRankingFailException = 2302,
 
     // Item 3000 ~
     CharReceiveFailInsert = 3011,
