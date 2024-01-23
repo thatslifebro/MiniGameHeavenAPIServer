@@ -21,7 +21,7 @@ public partial class GameDb : IGameDb
     public async Task<int> InsertInitGameList(int uid, int initCharKey, IDbTransaction transaction)
     {
         var now = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
-        return await _queryFactory.Query("user_minigame").InsertAsync(new[] { "uid", "game_key", "create_dt", "char_key" }, new[]
+        return await _queryFactory.Query("user_minigame").InsertAsync(new[] { "uid", "game_key", "create_dt", "play_char_key" }, new[]
         {
             new object[]{uid,1,now, initCharKey},
             new object[]{uid,2,now, initCharKey},
@@ -113,7 +113,7 @@ public partial class GameDb : IGameDb
             new
             {
                 uid = uid,
-                play_char_key = initCharKey,
+                char_key = initCharKey,
                 create_dt = DateTime.Now,
                 costume_json = "{\"face\" : 0, \"hand\" : 0, \"head\" : 0}"
             }, transaction);
