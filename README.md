@@ -275,9 +275,9 @@ Content-Type: application/json
             "main_char_key": 1001,
             "create_dt": "2024-01-23T12:15:13",
             "recent_login_dt": "2024-01-23T15:56:39",
-            "bestscore_ever": 0,
-            "bestscore_cur_season": 0,
-            "bestscore_prev_season": 0,
+            "total_bestscore": 0,
+            "total_bestscore_cur_season": 0,
+            "total_bestscore_prev_season": 0,
             "star_point": 0
         },
         "moneyInfo": {
@@ -404,9 +404,9 @@ Content-Type: application/json
             "nickname": "ksy",
             "create_dt": "2024-01-17T14:02:09",
             "recent_login_dt": "2024-01-17T16:21:26",
-            "bestscore_ever": 0,
-            "bestscore_cur_season": 0,
-            "bestscore_prev_season": 0,
+            "total_bestscore": 0,
+            "total_bestscore_cur_season": 0,
+            "total_bestscore_prev_season": 0,
             "star_point": 0
         },
         "moneyInfo": {
@@ -478,6 +478,7 @@ Content-Type: application/json
         "gameList": [
             {
                 "game_key": 1,
+                "play_char_key": 1001,
                 "bestscore": 0,
                 "create_dt": "2024-01-17T14:02:08",
                 "new_record_dt": "0001-01-01T00:00:00",
@@ -861,7 +862,7 @@ Content-Type: application/json
 1. 유저아이디, 토큰, 앱 버전, 마스터 데이터 버전을 게임 서버에 전달.
 1. [미들웨어] 앱 버전과 마스터 데이터 버전 검증
 1. [미들웨어] 토큰 검증
-1. game 테이블에 내 uid를 가진 로우를 조회하여 전달합니다.
+1. minigame 테이블에 내 uid를 가진 로우를 조회하여 전달합니다.
 
 
 클라이언트 → 서버 전송 데이터
@@ -880,7 +881,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-POST http://localhost:11500/GameList
+POST http://localhost:11500/MiniGameList
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"
@@ -898,18 +899,16 @@ Content-Type: application/json
 
 ```
 {
-    "gameList": [
+    "miniGameList": [
         {
             "game_key": 1,
-            "game_name": "뚫어뚫어",
+            "play_char_key": 1001,
             "bestscore": 0,
-            "create_dt": "01/12/2024 15:17:00"
-        },
-        {
-            "game_key": 12,
-            "game_name": "놓아놓아",
-            "bestscore": 1000,
-            "create_dt": "01/12/2024 15:50:35"
+            "create_dt": "2024-01-23T12:15:13",
+            "new_record_dt": "2024-01-23T12:15:13",
+            "recent_play_dt": "2024-01-23T12:15:13",
+            "bestscore_cur_season": 0,
+            "bestscore_prev_season": 0
         }
     ],
     "result": 0
@@ -926,7 +925,7 @@ Content-Type: application/json
 1. 유저아이디, 토큰, 앱 버전, 마스터 데이터 버전, 게임아이디를 게임 서버에 전달.
 1. [미들웨어] 앱 버전과 마스터 데이터 버전 검증
 1. [미들웨어] 토큰 검증
-1. game 테이블에 해당 uid 와 game_id로 로우를 생성합니다.
+1. minigame 테이블에 해당 uid 와 game_key로 로우를 생성합니다.
 
 
 클라이언트 → 서버 전송 데이터
@@ -950,7 +949,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-POST http://localhost:11500/GameUnlock
+POST http://localhost:11500/MiniGameUnlock
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"
@@ -1006,7 +1005,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-POST http://localhost:11500/GameUnlock
+POST http://localhost:11500/MiniGameInfo
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"
@@ -1025,14 +1024,14 @@ Content-Type: application/json
 
 ```
 {
-    "gameInfo": {
-        "game_key": 12,
-        "game_name": "놓아놓아",
-        "bestscore": 1000,
-        "create_dt": "01/12/2024 15:50:35",
-        "new_record_dt": "01/12/2024 17:00:17",
-        "recent_play_dt": "01/12/2024 17:00:17",
-        "bestscore_cur_season": 1000,
+    "miniGameInfo": {
+        "game_key": 3,
+        "play_char_key": 1001,
+        "bestscore": 0,
+        "create_dt": "2024-01-23T12:15:13",
+        "new_record_dt": "2024-01-23T12:15:13",
+        "recent_play_dt": "2024-01-23T12:15:13",
+        "bestscore_cur_season": 0,
         "bestscore_prev_season": 0
     },
     "result": 0
@@ -1043,7 +1042,6 @@ Content-Type: application/json
 
 ## 게임 결과 저장
 **컨텐츠 설명**
-- 미완성
 - 게임 결과를 저장합니다.
 
 **로직**
@@ -1075,7 +1073,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-POST http://localhost:11500/GameSave
+POST http://localhost:11500/MiniGameSave
 Content-Type: application/json
 
 AppVersion : "0.1",
@@ -1134,7 +1132,7 @@ Token : "c9v3arfa83vaugm0rxb7txm0c!"
 - 요청 예시
 
 ```
-POST http://localhost:11500/GameSetPlayChar
+POST http://localhost:11500/MiniGameSetPlayChar
 Content-Type: application/json
 
 AppVersion : "0.1",
@@ -1874,9 +1872,9 @@ Content-Type: application/json
     "userInfo": {
         "uid": 14,
         "nickname": "syaa1",
-        "bestscore_ever": 0,
-        "bestscore_cur_season": 0,
-        "bestscore_prev_season": 0,
+        "total_bestscore": 0,
+        "total_bestscore_cur_season": 0,
+        "total_bestscore_prev_season": 0,
         "main_char_key": 1001,
         "main_char_skin_key": 0,
         "main_char_costume_json": "{\"face\": 0, \"hand\": 0, \"head\": 0}"
