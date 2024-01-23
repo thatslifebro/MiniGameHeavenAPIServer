@@ -17,20 +17,22 @@ public class AuthService : IAuthService
     readonly ILogger<AuthService> _logger;
     readonly IGameDb _gameDb;
     readonly IMemoryDb _memoryDb;
-    string _hiveServerAddress;
+    string _hiveServerAPIAddress;
+
     public AuthService(ILogger<AuthService> logger, IConfiguration configuration, IGameDb gameDb, IMemoryDb memoryDb)
     {
         _memoryDb = memoryDb;
         _gameDb = gameDb;
         _logger = logger;
-        _hiveServerAddress = configuration.GetSection("HiveServerAddress").Value + "/verifytoken";
+        _hiveServerAPIAddress = configuration.GetSection("HiveServerAddress").Value + "/verifytoken";
     }
+
     public async Task<ErrorCode> VerifyTokenToHive(Int64 playerId, string token)
     {
         try
         {
             HttpClient client = new();
-            var hiveResponse = await client.PostAsJsonAsync(_hiveServerAddress, new { PlayerId = playerId, HiveToken = token });
+            var hiveResponse = await client.PostAsJsonAsync(_hiveServerAPIAddress, new { PlayerId = playerId, HiveToken = token });
 
             if (hiveResponse == null || !ValidateHiveResponse(hiveResponse))
             {
@@ -53,34 +55,13 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<ErrorCode> DeleteAccountAsync(int uid)
-    {
-        try
-        {
-            // 게임 데이터도 다 지워야함.
-            var rowCount = await _gameDb.DeleteAccount(uid);
-            if(rowCount != 1)
-            {
-                _logger.ZLogDebug($"[DeleteAccountAsync] ErrorCode: {ErrorCode.DeleteAccountFail}, uid : {uid}");
-                return ErrorCode.DeleteAccountFail;
-            }
-            return ErrorCode.None;
-        }
-        catch (Exception e)
-        {
-            _logger.ZLogError(e,
-                $"[DeleteAccountAsync] ErrorCode: {ErrorCode.DeleteAccountFailException}, uid: {uid}");
-            return ErrorCode.DeleteAccountFailException;
-        }
-    }
-
     public async Task<(ErrorCode, int)> VerifyUser(Int64 playerId)
     {
         try
         {
             //playerId로 userInfo 조회
             GdbUserInfo userInfo = await _gameDb.GetUserByPlayerId(playerId);
-            //없는 유저라면 생성.
+            
             if (userInfo is null)
             {
                 return (ErrorCode.LoginFailUserNotExist, 0);

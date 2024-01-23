@@ -22,6 +22,7 @@ namespace APIServer.Servicies
         readonly ILogger<ItemService> _logger;
         readonly IGameDb _gameDb;
         readonly IMasterDb _masterDb;
+
         public ItemService(ILogger<ItemService> logger, IGameDb gameDb, IMasterDb masterDb)
         {
             _logger = logger;
@@ -74,6 +75,7 @@ namespace APIServer.Servicies
                 // 있다면 수량증가 or 레벨 업
                 else
                 {
+                    // 레벨업 가능 레벨
                     var level = _masterDb._itemLevelList.FindLast(data => data.item_cnt <= charInfo.char_cnt + qty).level;
                     // 레벨업
                     if (level > charInfo.char_level)
@@ -169,7 +171,7 @@ namespace APIServer.Servicies
             catch(System.Exception e)
             {
                 _logger.ZLogError(e,
-                                  $"[Item.GetSkinList] ErrorCode: {ErrorCode.SkinListFailException}, Uid: {uid}");
+                    $"[Item.GetSkinList] ErrorCode: {ErrorCode.SkinListFailException}, Uid: {uid}");
                 return (ErrorCode.SkinListFailException, null);
             }
         }
@@ -180,12 +182,12 @@ namespace APIServer.Servicies
             {
                 var skinInfo = await _gameDb.GetSkinInfo(uid, skinKey);
 
-                // 스킨이 없다면 추가
+                // 스킨이 있다면 에러
                 if (skinInfo != null)
                 {
                     return ErrorCode.SkinReceiveFailAlreadyOwn;
                 }
-
+                // 스킨 추가
                 var rowCount = await _gameDb.InsertUserSkin(uid, skinKey);
                 if (rowCount != 1)
                 {
@@ -197,7 +199,7 @@ namespace APIServer.Servicies
             catch (Exception e)
             {
                 _logger.ZLogError(e,
-                                  $"[Item.ReceiveSkin] ErrorCode: {ErrorCode.SkinReceiveFailException}, Uid: {uid}, SkinKey: {skinKey}");
+                    $"[Item.ReceiveSkin] ErrorCode: {ErrorCode.SkinReceiveFailException}, Uid: {uid}, SkinKey: {skinKey}");
                 return ErrorCode.SkinReceiveFailException;
             }
         }
@@ -238,6 +240,7 @@ namespace APIServer.Servicies
                 // 있다면 수량증가 or 레벨 업
                 else
                 {
+                    // 레벨업 가능한 레벨
                     var level = _masterDb._itemLevelList.FindLast(data => data.item_cnt <= costumeInfo.costume_cnt + qty).level;
                     // 레벨업
                     if (level > costumeInfo.costume_level)
@@ -387,7 +390,7 @@ namespace APIServer.Servicies
                 // 가챠 타입
                 string[] types = { "char", "skin", "costume", "food", "food_gear" };
 
-                // 가챠의 횟수만큼 반복
+                // 가챠의 뽑기횟수만큼 반복
                 for (int i = 0; i < gachaInfo.gacha_count; i++)
                 {
                     //숫자를 뽑고 확률 배열에 따라 타입 고르기
@@ -426,7 +429,7 @@ namespace APIServer.Servicies
         public async Task<ErrorCode> ReceiveReward(int uid, RewardData reward)
         {
             int rowCount;
-            ErrorCode errorCode;
+            var errorCode = ErrorCode.None;
             try
             {
                 switch (reward.reward_type)
@@ -454,8 +457,12 @@ namespace APIServer.Servicies
                         errorCode = await ReceiveFoodGear(uid, reward.reward_key, reward.reward_qty);
                         break;
                 }
+                if(errorCode != ErrorCode.None)
+                {
+                    return errorCode;
+                }
 
-                return ErrorCode.None;
+                return errorCode;
             }
             catch (Exception e)
             {

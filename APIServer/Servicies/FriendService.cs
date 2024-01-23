@@ -70,7 +70,7 @@ public class FriendService : IFriendService
                 $"[Friend.AcceptFriendRequest] ErrorCode: {ErrorCode.FriendAddFailUserNotExist}, Uid: {uid}, FriendUid : {friendUid}");
                 return ErrorCode.AcceptFriendRequestFailUserNotExist;
             }
-            //이미 친구신청 했을 때
+            //이미 친구요청 수락 했을 때
             GdbFriendInfo friendReqInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
             if (friendReqInfo is not null)
             {
@@ -78,7 +78,7 @@ public class FriendService : IFriendService
                 $"[Friend.AcceptFriendRequest] ErrorCode: {ErrorCode.FriendAddFailAlreadyFriend}, Uid: {uid}, FriendUid : {friendUid}");
                 return ErrorCode.AcceptFriendRequestFailAlreadyFriend;
             }
-            //친구 요청 승낙
+            //친구 요청 수락
             return await AcceptRequest(uid, friendUid);
         }
         catch (Exception e)

@@ -8,7 +8,7 @@ namespace APIServer.Servicies.Interfaces
     {
         public Task<(ErrorCode, GdbUserInfo)> GetUserInfo(int uid);
         public Task<(ErrorCode, GdbUserMoneyInfo)> GetUserMoneyInfo(int uid);
-        public Task<ErrorCode> SetMainChar(int uid, int charKey);
+        public Task<ErrorCode> SetUserMainChar(int uid, int charKey);
         public Task<(ErrorCode, OtherUserInfo)> GetOtherUserInfo(int uid);
     }
 }

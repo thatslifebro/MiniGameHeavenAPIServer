@@ -42,7 +42,7 @@ public class DataLoadService : IDataLoadService
             return (errorCode, null);
         }
 
-        (errorCode, loadData.AttendanceInfo) = await _attendanceService.GetAttendance(uid);
+        (errorCode, loadData.AttendanceInfo) = await _attendanceService.GetAttendanceInfo(uid);
         if (errorCode != ErrorCode.None)
         {
             return (errorCode, null);

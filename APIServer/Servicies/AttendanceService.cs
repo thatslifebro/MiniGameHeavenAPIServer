@@ -16,6 +16,7 @@ public class AttendanceService : IAttendanceService
     readonly IGameDb _gameDb;
     readonly IMasterDb _masterDb;
     readonly IItemService _itemService;
+
     public AttendanceService(ILogger<AttendanceService> logger, IGameDb gameDb, IMasterDb masterDb, IItemService itemService)
     {
         _logger = logger;
@@ -23,7 +24,8 @@ public class AttendanceService : IAttendanceService
         _masterDb = masterDb;
         _itemService = itemService;
     }
-    public async Task<(ErrorCode, GdbAttendanceInfo)> GetAttendance(int uid)
+
+    public async Task<(ErrorCode, GdbAttendanceInfo)> GetAttendanceInfo(int uid)
     {
         try
         {
@@ -54,7 +56,6 @@ public class AttendanceService : IAttendanceService
             var attendanceCnt = attendanceInfo.attendance_cnt;
 
             //출석 보상 수령
-            var a = _masterDb._attendanceRewardList;
             var reward = _masterDb._attendanceRewardList.Find(reward => reward.day_seq == attendanceCnt);
             
             // 가챠 보상일 경우
@@ -86,11 +87,7 @@ public class AttendanceService : IAttendanceService
                 $"[Attendance.CheckAttendance] ErrorCode: {ErrorCode.AttendanceCheckFailException}, Uid: {uid}");
             return (ErrorCode.AttendanceCheckFailException, null);
         }
-
-        
     }
-
-    
 }
 
 

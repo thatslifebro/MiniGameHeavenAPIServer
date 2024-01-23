@@ -18,6 +18,7 @@ public class GameService :IGameService
     readonly IGameDb _gameDb;
     readonly IMasterDb _masterDb;
     int initCharKey;
+
     public GameService(ILogger<GameService> logger, IGameDb gameDb, IMasterDb masterDb)
     {
         _logger = logger;
@@ -95,13 +96,16 @@ public class GameService :IGameService
                 return ErrorCode.GameSaveFailGameLocked;
             }
 
+            //점수 업데이트
             //게임 최고점수 갱신
             var rowCount = await _gameDb.UpdateBestscore(uid, gameKey, score);
             if(rowCount == 0)
             {
+                //게임 시즌 최고 점수 갱신
                 rowCount = await _gameDb.UpdateBestscoreCurSeason(uid, gameKey, score);
                 if(rowCount == 0)
                 {
+                    // 최고 점수 갱신이 없을 때
                     await _gameDb.UpdateRecentPlayDt(uid, gameKey);
                 }
             }

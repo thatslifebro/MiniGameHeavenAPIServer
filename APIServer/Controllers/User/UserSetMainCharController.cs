@@ -26,11 +26,11 @@ public class UserSetMainChar : ControllerBase
     /// 유저의 메인 캐릭터를 설정합니다.
     /// </summary>
     [HttpPost]
-    public async Task<UserSetMainCharResponse> PostUserSetMainChar([FromHeader] HeaderDTO header, [FromBody] UserSetMainCharRequest request)
+    public async Task<UserSetMainCharResponse> SetUserMainChar([FromHeader] HeaderDTO header, [FromBody] UserSetMainCharRequest request)
     {
         UserSetMainCharResponse response = new();
 
-        response.Result = await _userService.SetMainChar(header.Uid, request.CharKey);
+        response.Result = await _userService.SetUserMainChar(header.Uid, request.CharKey);
 
         _logger.ZLogInformation($"[UserSetMainChar] Uid : {header.Uid}, CharKey : {request.CharKey}");
         return response;

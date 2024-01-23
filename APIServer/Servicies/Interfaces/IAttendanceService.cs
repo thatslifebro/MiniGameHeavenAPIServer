@@ -7,7 +7,7 @@ namespace APIServer.Servicies.Interfaces
 {
     public interface IAttendanceService
     {
-        public Task<(ErrorCode, GdbAttendanceInfo)> GetAttendance(int uid);
+        public Task<(ErrorCode, GdbAttendanceInfo)> GetAttendanceInfo(int uid);
         public Task<(ErrorCode, List<ReceivedReward>)> CheckAttendance(int uid);
     }
 }

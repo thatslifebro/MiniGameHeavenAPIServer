@@ -14,6 +14,7 @@ namespace APIServer.Servicies
         readonly ILogger<UserService> _logger;
         readonly IGameDb _gameDb;
         readonly IMemoryDb _memoryDb;
+
         public UserService(ILogger<UserService> logger, IGameDb gameDb, IMemoryDb memoryDb)
         {
             _logger = logger;
@@ -49,7 +50,7 @@ namespace APIServer.Servicies
             }
         }
 
-        public async Task<ErrorCode> SetMainChar(int uid, int charKey)
+        public async Task<ErrorCode> SetUserMainChar(int uid, int charKey)
         {
             try
             {
