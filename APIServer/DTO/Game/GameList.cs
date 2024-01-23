@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace APIServer.DTO.Game;
 
-public class GameListResponse : ErrorCodeDTO
+public class MiniGameListResponse : ErrorCodeDTO
 {
-    public IEnumerable<GdbGameInfo> GameList { get; set; }
+    public IEnumerable<GdbMiniGameInfo> MiniGameList { get; set; }
 }

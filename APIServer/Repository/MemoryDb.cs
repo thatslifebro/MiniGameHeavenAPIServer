@@ -216,7 +216,7 @@ public class MemoryDb : IMemoryDb
         var usersScore = await _gameDb.SelectAllUserScore();
         foreach (var userScore in usersScore)
         {
-            await SetUserScore(userScore.uid, userScore.bestscore_ever);
+            await SetUserScore(userScore.uid, userScore.total_bestscore);
         }
 
         return ErrorCode.None;

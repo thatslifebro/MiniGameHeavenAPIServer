@@ -10,7 +10,7 @@ namespace APIServer.DTO.DataLoad
 
     public class DataLoadGameInfo
     {
-        public IEnumerable<GdbGameInfo> GameList { get; set; }
+        public IEnumerable<GdbMiniGameInfo> GameList { get; set; }
         public List<UserCharInfo> CharList { get; set; }
         public IEnumerable<GdbUserSkinInfo> SkinList { get; set; }
         public IEnumerable<GdbUserCostumeInfo> CostumeList { get; set; }

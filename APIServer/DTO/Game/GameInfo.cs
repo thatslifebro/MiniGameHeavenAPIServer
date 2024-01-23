@@ -5,14 +5,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace APIServer.DTO.Game;
 
-public class GameInfoRequest
+public class MiniGameInfoRequest
 {
     [Required]
     public int GameKey { get; set; }
 }
 
 
-public class GameInfoResponse : ErrorCodeDTO
+public class MiniGameInfoResponse : ErrorCodeDTO
 {
-    public GdbGameInfo GameInfo { get; set; }
+    public GdbMiniGameInfo MiniGameInfo { get; set; }
 }

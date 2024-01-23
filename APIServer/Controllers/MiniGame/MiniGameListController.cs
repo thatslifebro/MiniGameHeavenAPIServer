@@ -10,12 +10,12 @@ namespace APIServer.Controllers.Game;
 
 [ApiController]
 [Route("[controller]")]
-public class GameList : ControllerBase
+public class MiniGameList : ControllerBase
 {
-    readonly ILogger<GameList> _logger;
+    readonly ILogger<MiniGameList> _logger;
     readonly IGameService _gameService;
 
-    public GameList(ILogger<GameList> logger, IGameService gameService)
+    public MiniGameList(ILogger<MiniGameList> logger, IGameService gameService)
     {
         _logger = logger;
         _gameService = gameService;
@@ -25,12 +25,12 @@ public class GameList : ControllerBase
     /// 보유 게임 정보 조회 API
     /// 보유한 게임의 목록과 정보를 조회합니다.
     /// </summary>
-    [HttpGet]
-    public async Task<GameListResponse> GetGameList([FromHeader] HeaderDTO header)
+    [HttpPost]
+    public async Task<MiniGameListResponse> GetMiniGameList([FromHeader] HeaderDTO header)
     {
-        GameListResponse response = new();
+        MiniGameListResponse response = new();
 
-        (response.Result, response.GameList) = await _gameService.GetGameList(header.Uid);
+        (response.Result, response.MiniGameList) = await _gameService.GetMiniGameList(header.Uid);
 
         _logger.ZLogInformation($"[GameList] Uid : {header.Uid}");
         return response;

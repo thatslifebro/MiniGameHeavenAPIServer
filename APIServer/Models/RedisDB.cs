@@ -13,5 +13,5 @@ public class RdbAuthUserData
 public class RdbUserScoreData
 {
     public int uid { get; set; } = 0;
-    public int bestscore_ever { get; set; } = 0;
+    public int total_bestscore { get; set; } = 0;
 }

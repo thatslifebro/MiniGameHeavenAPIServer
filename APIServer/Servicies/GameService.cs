@@ -17,47 +17,49 @@ public class GameService :IGameService
     readonly ILogger<GameService> _logger;
     readonly IGameDb _gameDb;
     readonly IMasterDb _masterDb;
+    readonly IMemoryDb _memoryDb;
     int initCharKey;
 
-    public GameService(ILogger<GameService> logger, IGameDb gameDb, IMasterDb masterDb)
+    public GameService(ILogger<GameService> logger, IGameDb gameDb, IMasterDb masterDb, IMemoryDb memoryDb)
     {
         _logger = logger;
         _gameDb = gameDb;
         _masterDb = masterDb;
         initCharKey = _masterDb._characterList[0].char_key;
+        _memoryDb = memoryDb;
     }
 
-    public async Task<(ErrorCode, IEnumerable<GdbGameInfo>)> GetGameList(int uid)
+    public async Task<(ErrorCode, IEnumerable<GdbMiniGameInfo>)> GetMiniGameList(int uid)
     {
         try
         {
-            return (ErrorCode.None, await _gameDb.GetGameList(uid));
+            return (ErrorCode.None, await _gameDb.GetMiniGameList(uid));
         }
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                $"[Game.GetGameList] ErrorCode: {ErrorCode.GameListFailException}, Uid: {uid}");
-            return (ErrorCode.GameListFailException, null);
+                $"[Game.GetGameList] ErrorCode: {ErrorCode.MiniGameListFailException}, Uid: {uid}");
+            return (ErrorCode.MiniGameListFailException, null);
         }
     }
 
-    public async Task<ErrorCode> UnlockGame(int uid, int gameKey)
+    public async Task<ErrorCode> UnlockMiniGame(int uid, int gameKey)
     {
         try
         {
-            var gameInfo = await _gameDb.GetGameInfo(uid, gameKey);
+            var gameInfo = await _gameDb.GetMiniGameInfo(uid, gameKey);
             if (gameInfo != null)
             {
-                _logger.ZLogDebug($"[Game.GameUnlock] ErrorCode: { ErrorCode.GameUnlockFailAlreadyUnlocked}, Uid: { uid}");
-                return ErrorCode.GameUnlockFailAlreadyUnlocked;
+                _logger.ZLogDebug($"[Game.GameUnlock] ErrorCode: { ErrorCode.MiniGameUnlockFailAlreadyUnlocked}, Uid: { uid}");
+                return ErrorCode.MiniGameUnlockFailAlreadyUnlocked;
             }
 
-            var rowCount = await _gameDb.InsertGame(uid, initCharKey, gameKey);
+            var rowCount = await _gameDb.InsertMiniGame(uid, initCharKey, gameKey);
             if(rowCount != 1)
             {
                 _logger.ZLogDebug(
-                $"[Game.GameUnlock] ErrorCode: {ErrorCode.GameUnlockFailInsert}, Uid: {uid}");
-                return ErrorCode.GameUnlockFailInsert;
+                $"[Game.GameUnlock] ErrorCode: {ErrorCode.MiniGameUnlockFailInsert}, Uid: {uid}");
+                return ErrorCode.MiniGameUnlockFailInsert;
             }
 
             return ErrorCode.None;
@@ -65,35 +67,35 @@ public class GameService :IGameService
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                $"[Game.GameUnlock] ErrorCode: {ErrorCode.GameUnlockFailException}, Uid: {uid}");
-            return ErrorCode.GameUnlockFailException;
+                $"[Game.GameUnlock] ErrorCode: {ErrorCode.MiniGameUnlockFailException}, Uid: {uid}");
+            return ErrorCode.MiniGameUnlockFailException;
         }
     }
 
-    public async Task<(ErrorCode, GdbGameInfo)> GetGameInfo(int uid, int gameKey)
+    public async Task<(ErrorCode, GdbMiniGameInfo)> GetMiniGameInfo(int uid, int gameKey)
     {
         try
         {
-            return (ErrorCode.None, await _gameDb.GetGameInfo(uid, gameKey));
+            return (ErrorCode.None, await _gameDb.GetMiniGameInfo(uid, gameKey));
         }
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                $"[Game.GetGameList] ErrorCode: {ErrorCode.GameInfoFailException}, Uid: {uid}");
-            return (ErrorCode.GameInfoFailException, null);
+                $"[Game.GetGameList] ErrorCode: {ErrorCode.MiniGameInfoFailException}, Uid: {uid}");
+            return (ErrorCode.MiniGameInfoFailException, null);
         }
     }
 
-    public async Task<ErrorCode> SaveGame(int uid, int gameKey, int score, List<UsedFoodData> foods)
+    public async Task<ErrorCode> SaveMiniGame(int uid, int gameKey, int score, List<UsedFoodData> foods)
     {
         try
         {
-            var gameInfo = await _gameDb.GetGameInfo(uid, gameKey);
+            var gameInfo = await _gameDb.GetMiniGameInfo(uid, gameKey);
 
             if (gameInfo == null)
             {
-                _logger.ZLogError($"[Game.GameSave] ErrorCode: {ErrorCode.GameSaveFailGameLocked}, Uid: {uid}");
-                return ErrorCode.GameSaveFailGameLocked;
+                _logger.ZLogError($"[Game.GameSave] ErrorCode: {ErrorCode.MiniGameSaveFailGameLocked}, Uid: {uid}");
+                return ErrorCode.MiniGameSaveFailGameLocked;
             }
 
             //점수 업데이트
@@ -108,10 +110,18 @@ public class GameService :IGameService
                     // 최고 점수 갱신이 없을 때
                     await _gameDb.UpdateRecentPlayDt(uid, gameKey);
                 }
+                else
+                {
+                    await _gameDb.UpdateUserTotalBestScoreCurSeason(uid);
+                }
             }
-
-            //유저 최고점수 갱신
-            await _gameDb.UpdateUserBestScoreEver(uid);
+            else
+            {
+                await _gameDb.UpdateUserTotalBestScore(uid);
+                var totalBestscore = await _gameDb.GetTotalBestscore(uid);
+                //랭크 갱신
+                await _memoryDb.SetUserScore(uid, totalBestscore);
+            }
 
             //사용된 푸드 감소
             if(foods != null)
@@ -121,8 +131,8 @@ public class GameService :IGameService
                     rowCount = await _gameDb.FoodDecrement(uid, food.FoodKey, food.FoodQty);
                     if (rowCount != 1)
                     {
-                        _logger.ZLogError($"[Game.GameSave] ErrorCode: {ErrorCode.GameSaveFailFoodDecrement}, Uid: {uid}");
-                        return ErrorCode.GameSaveFailFoodDecrement;
+                        _logger.ZLogError($"[Game.GameSave] ErrorCode: {ErrorCode.MiniGameSaveFailFoodDecrement}, Uid: {uid}");
+                        return ErrorCode.MiniGameSaveFailFoodDecrement;
                     }
                 }
             }
@@ -132,8 +142,8 @@ public class GameService :IGameService
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                               $"[Game.GameSave] ErrorCode: {ErrorCode.GameSaveFailException}, Uid: {uid}");
-            return ErrorCode.GameSaveFailException;
+                               $"[Game.GameSave] ErrorCode: {ErrorCode.MiniGameSaveFailException}, Uid: {uid}");
+            return ErrorCode.MiniGameSaveFailException;
         }
     }
 
@@ -221,7 +231,7 @@ public class GameService :IGameService
         }
     }
 
-    public async Task<ErrorCode> SetGamePlayChar(int uid, int gameKey, int charKey)
+    public async Task<ErrorCode> SetMiniGamePlayChar(int uid, int gameKey, int charKey)
     {
         try
         {
@@ -231,11 +241,11 @@ public class GameService :IGameService
                 return ErrorCode.CharNotExist;
             }
 
-            var rowCount = await _gameDb.UpdateGamePlayChar(uid, gameKey, charKey);
+            var rowCount = await _gameDb.UpdateMiniGamePlayChar(uid, gameKey, charKey);
             if (rowCount != 1)
             {
-                _logger.ZLogError($"[Game.SetPlayChar] ErrorCode: {ErrorCode.GameSetPlayCharFailUpdate}, Uid: {uid}");
-                return ErrorCode.GameSetPlayCharFailUpdate;
+                _logger.ZLogError($"[Game.SetPlayChar] ErrorCode: {ErrorCode.MiniGameSetPlayCharFailUpdate}, Uid: {uid}");
+                return ErrorCode.MiniGameSetPlayCharFailUpdate;
             }
 
             return ErrorCode.None;
@@ -243,8 +253,8 @@ public class GameService :IGameService
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                               $"[Game.SetPlayChar] ErrorCode: {ErrorCode.GameSetPlayCharFailException}, Uid: {uid}");
-            return ErrorCode.GameSetPlayCharFailException;
+                               $"[Game.SetPlayChar] ErrorCode: {ErrorCode.MiniGameSetPlayCharFailException}, Uid: {uid}");
+            return ErrorCode.MiniGameSetPlayCharFailException;
         }
     }
 }

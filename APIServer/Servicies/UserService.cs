@@ -98,9 +98,9 @@ namespace APIServer.Servicies
                 {
                     uid = uid,
                     nickname = userInfo.nickname,
-                    bestscore_ever = userInfo.bestscore_ever,
-                    bestscore_cur_season = userInfo.bestscore_cur_season,
-                    bestscore_prev_season = userInfo.bestscore_prev_season,
+                    total_bestscore = userInfo.total_bestscore,
+                    total_bestscore_cur_season = userInfo.total_bestscore_cur_season,
+                    total_bestscore_prev_season = userInfo.total_bestscore_prev_season,
                     main_char_key = userInfo.main_char_key,
                     main_char_skin_key = charInfo.skin_key,
                     main_char_costume_json = charInfo.costume_json,

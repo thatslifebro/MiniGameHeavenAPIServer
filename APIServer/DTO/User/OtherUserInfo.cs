@@ -18,9 +18,9 @@ namespace APIServer.DTO.User
     {
         public int uid { get; set; }
         public string nickname { get; set; }
-        public int bestscore_ever { get; set; }
-        public int bestscore_cur_season { get; set; }
-        public int bestscore_prev_season { get; set; }
+        public int total_bestscore { get; set; }
+        public int total_bestscore_cur_season { get; set; }
+        public int total_bestscore_prev_season { get; set; }
         public int main_char_key { get; set; }
         public int main_char_skin_key { get; set; }
         public string main_char_costume_json { get; set; }

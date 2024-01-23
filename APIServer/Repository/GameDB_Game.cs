@@ -10,18 +10,18 @@ namespace APIServer.Services;
 
 public partial class GameDb : IGameDb
 {
-    public async Task<IEnumerable<GdbGameInfo>> GetGameList(int uid)
+    public async Task<IEnumerable<GdbMiniGameInfo>> GetMiniGameList(int uid)
     {
-        return await _queryFactory.Query("user_game")
+        return await _queryFactory.Query("user_minigame")
             .Where("uid", uid)
             .OrderBy("game_key")
-            .GetAsync<GdbGameInfo>();
+            .GetAsync<GdbMiniGameInfo>();
     }
 
     public async Task<int> InsertInitGameList(int uid, int initCharKey, IDbTransaction transaction)
     {
         var now = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
-        return await _queryFactory.Query("user_game").InsertAsync(new[] { "uid", "game_key", "create_dt", "char_key" }, new[]
+        return await _queryFactory.Query("user_minigame").InsertAsync(new[] { "uid", "game_key", "create_dt", "char_key" }, new[]
         {
             new object[]{uid,1,now, initCharKey},
             new object[]{uid,2,now, initCharKey},
@@ -29,28 +29,28 @@ public partial class GameDb : IGameDb
         }, transaction);
     }
 
-    public async Task<int> InsertGame(int uid, int initCharKey, int gameKey)
+    public async Task<int> InsertMiniGame(int uid, int initCharKey, int gameKey)
     {
-        return await _queryFactory.Query("user_game").InsertAsync(
+        return await _queryFactory.Query("user_minigame").InsertAsync(
             new
             {
                 uid = uid,
-                char_key = initCharKey,
+                play_char_key = initCharKey,
                 game_key = gameKey,
                 create_dt = DateTime.Now
             });
     }
 
-    public async Task<GdbGameInfo> GetGameInfo(int uid, int gameKey)
+    public async Task<GdbMiniGameInfo> GetMiniGameInfo(int uid, int gameKey)
     {
-        return await _queryFactory.Query("user_game").Where("uid", uid)
+        return await _queryFactory.Query("user_minigame").Where("uid", uid)
                                                 .Where("game_key", gameKey)
-                                                .FirstOrDefaultAsync<GdbGameInfo>();
+                                                .FirstOrDefaultAsync<GdbMiniGameInfo>();
     }
 
     public async Task<int> UpdateBestscore(int uid, int gameKey, int score)
     {
-        return await _queryFactory.Query("user_game").Where("uid", uid)
+        return await _queryFactory.Query("user_minigame").Where("uid", uid)
                                                 .Where("game_key", gameKey)
                                                 .Where("bestscore", "<", score)
                                                 .UpdateAsync(new
@@ -64,7 +64,7 @@ public partial class GameDb : IGameDb
 
     public async Task<int> UpdateBestscoreCurSeason(int uid, int gameKey, int score)
     {
-        return await _queryFactory.Query("user_game").Where("uid", uid)
+        return await _queryFactory.Query("user_minigame").Where("uid", uid)
                                                 .Where("game_key", gameKey)
                                                 .Where("bestscore_cur_season", "<", score)
                                                 .UpdateAsync(new
@@ -74,18 +74,32 @@ public partial class GameDb : IGameDb
                                                 });
     }
 
-    public async Task<int> UpdateUserBestScoreEver(int uid)
+    public async Task<int> UpdateUserTotalBestScore(int uid)
     {
         return await _queryFactory.Query("user").Where("uid",uid).UpdateAsync(new
         {
-            bestscore_ever = _queryFactory.Query("user_game").Where("uid", uid)
+            total_bestscore = _queryFactory.Query("user_minigame").Where("uid", uid)
                                                              .Sum<int>("bestscore")
         });
     }
 
+    public async Task<int> UpdateUserTotalBestScoreCurSeason(int uid)
+    {
+        return await _queryFactory.Query("user").Where("uid", uid).UpdateAsync(new
+        {
+            total_bestscore_cur_season = _queryFactory.Query("user_minigame").Where("uid", uid)
+                                                             .SumAsync<int>("bestscore_cur_season")
+        });
+    }
+
+    public async Task<int> GetTotalBestscore(int uid)
+    {
+        return await _queryFactory.Query("user").Where("uid", uid).Select("total_bestscore").FirstOrDefaultAsync<int>();
+    }
+
     public async Task<int> UpdateRecentPlayDt(int uid, int gameKey)
     {
-        return await _queryFactory.Query("user_game").Where("uid", uid)
+        return await _queryFactory.Query("user_minigame").Where("uid", uid)
                                                 .Where("game_key", gameKey)
                                                 .UpdateAsync(new
                                                 {
@@ -99,7 +113,7 @@ public partial class GameDb : IGameDb
             new
             {
                 uid = uid,
-                char_key = initCharKey,
+                play_char_key = initCharKey,
                 create_dt = DateTime.Now,
                 costume_json = "{\"face\" : 0, \"hand\" : 0, \"head\" : 0}"
             }, transaction);
@@ -124,13 +138,13 @@ public partial class GameDb : IGameDb
              }, transaction);
     }
 
-    public async Task<int> UpdateGamePlayChar(int uid, int gameKey, int charKey)
+    public async Task<int> UpdateMiniGamePlayChar(int uid, int gameKey, int charKey)
     {
-        return await _queryFactory.Query("user_game").Where("uid", uid)
+        return await _queryFactory.Query("user_minigame").Where("uid", uid)
                                                 .Where("game_key", gameKey)
                                                 .UpdateAsync(new
                                                 {
-                                                    char_key = charKey
+                                                    play_char_key = charKey
                                                 });
     }
 

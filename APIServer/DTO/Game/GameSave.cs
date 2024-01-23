@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace APIServer.DTO.Game;
 
-public class GameSaveRequest
+public class MiniGameSaveRequest
 {
     [Required]
     public int GameKey { get; set; }
@@ -22,6 +22,6 @@ public class UsedFoodData
 }
 
 
-public class GameSaveResponse : ErrorCodeDTO
+public class MiniGameSaveResponse : ErrorCodeDTO
 {
 }

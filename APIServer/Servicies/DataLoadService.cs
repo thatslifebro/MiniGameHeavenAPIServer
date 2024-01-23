@@ -52,7 +52,7 @@ public class DataLoadService : IDataLoadService
     {
         DataLoadGameInfo loadData = new();
 
-        (var errorCode, loadData.GameList) = await _gameService.GetGameList(uid);
+        (var errorCode, loadData.GameList) = await _gameService.GetMiniGameList(uid);
         if (errorCode != ErrorCode.None)
         {
             return (errorCode, null);

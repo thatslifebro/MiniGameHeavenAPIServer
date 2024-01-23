@@ -101,7 +101,7 @@ public partial class GameDb : IGameDb
 
     public async Task<IEnumerable<RdbUserScoreData>> SelectAllUserScore()
     {
-        return await _queryFactory.Query("user").Select("uid", "bestscore_ever").GetAsync<RdbUserScoreData>();
+        return await _queryFactory.Query("user").Select("uid", "total_bestscore").GetAsync<RdbUserScoreData>();
     }
 
     public async Task<int> UpdateMainChar(int uid, int charKey)

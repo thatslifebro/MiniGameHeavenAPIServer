@@ -24,7 +24,7 @@ public class CharacterList : ControllerBase
     /// <summary>
     /// 캐릭터 목록 조회 API
     /// 유저의 캐릭터 목록을 조회합니다.
-    [HttpGet]
+    [HttpPost]
     public async Task<CharacterListResponse> GetCharacterList([FromHeader] HeaderDTO header)
     {
         CharacterListResponse response = new();

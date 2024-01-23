@@ -2,7 +2,7 @@
 
 namespace APIServer.DTO.Game
 {
-    public class GameSetPlayCharRequest
+    public class MiniGameSetPlayCharRequest
     {
         [Required]
         public int GameKey { get; set; }
@@ -10,7 +10,7 @@ namespace APIServer.DTO.Game
         public int CharKey { get; set; }
     }
 
-    public class GameSetPlayCharResponse : ErrorCodeDTO
+    public class MiniGameSetPlayCharResponse : ErrorCodeDTO
     {
     }
 }

@@ -24,7 +24,7 @@ public class TopRanking : ControllerBase
     /// 랭킹 조회 API
     /// 상위 랭킹을 조회합니다.
     /// </summary>
-    [HttpGet]
+    [HttpPost]
     public async Task<RankingResponse> GetTopRanking()
     {
         RankingResponse response = new();

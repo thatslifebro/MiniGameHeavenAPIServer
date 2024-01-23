@@ -10,12 +10,12 @@ namespace APIServer.Controllers.Game;
 
 [ApiController]
 [Route("[controller]")]
-public class GameSetPlayChar : ControllerBase
+public class MiniGameSetPlayChar : ControllerBase
 {
-    readonly ILogger<GameSetPlayChar> _logger;
+    readonly ILogger<MiniGameSetPlayChar> _logger;
     readonly IGameService _gameService;
 
-    public GameSetPlayChar(ILogger<GameSetPlayChar> logger, IGameService gameService)
+    public MiniGameSetPlayChar(ILogger<MiniGameSetPlayChar> logger, IGameService gameService)
     {
         _logger = logger;
         _gameService = gameService;
@@ -26,11 +26,11 @@ public class GameSetPlayChar : ControllerBase
     /// 게임 플레이에 사용할 캐릭터를 설정합니다.
     /// </summary>
     [HttpPost]
-    public async Task<GameSetPlayCharResponse> SetGamePlayChar([FromHeader] HeaderDTO header, GameSetPlayCharRequest request)
+    public async Task<MiniGameSetPlayCharResponse> SetMiniGamePlayChar([FromHeader] HeaderDTO header, MiniGameSetPlayCharRequest request)
     {
-        GameSetPlayCharResponse response = new();
+        MiniGameSetPlayCharResponse response = new();
 
-        response.Result = await _gameService.SetGamePlayChar(header.Uid, request.GameKey, request.CharKey);
+        response.Result = await _gameService.SetMiniGamePlayChar(header.Uid, request.GameKey, request.CharKey);
 
         _logger.ZLogInformation($"[GameSetPlayChar] Uid : {header.Uid}, CharKey : {request.CharKey}");
         return response;

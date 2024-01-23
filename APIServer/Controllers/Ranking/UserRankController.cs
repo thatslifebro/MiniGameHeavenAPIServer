@@ -25,7 +25,7 @@ public class UserRank : ControllerBase
     /// 유저 랭킹 API
     /// 자신의 등수를 가져옵니다.
     /// </summary>
-    [HttpGet]
+    [HttpPost]
     public async Task<UserRankResponse> GetUserRank([FromHeader] HeaderDTO request)
     {
         var response = new UserRankResponse();
