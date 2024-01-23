@@ -73,7 +73,7 @@ public class GameService :IGameService
     {
         try
         {
-            return (ErrorCode.None, await _gameDb.GetGameInfo(uid,gameKey));
+            return (ErrorCode.None, await _gameDb.GetGameInfo(uid, gameKey));
         }
         catch (Exception e)
         {
@@ -95,7 +95,7 @@ public class GameService :IGameService
                 return ErrorCode.GameSaveFailGameLocked;
             }
 
-            //최고점수 갱신
+            //게임 최고점수 갱신
             var rowCount = await _gameDb.UpdateBestscore(uid, gameKey, score);
             if(rowCount == 0)
             {

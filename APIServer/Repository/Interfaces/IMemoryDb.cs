@@ -18,6 +18,6 @@ public interface IMemoryDb
     public Task<ErrorCode> DelUserAuthAsync(int uid);
     public  Task<ErrorCode> SetUserScore(int uid, int score);
     public  Task<ErrorCode> LoadUserScore();
-    public  Task<(ErrorCode, List<RankData>)> GetUserRanking();
+    public  Task<(ErrorCode, List<RankData>)> GetTopRanking();
     public Task<(ErrorCode, Int64)> GetUserRankAsync(int uid);
 }

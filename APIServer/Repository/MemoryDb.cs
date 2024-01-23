@@ -240,14 +240,10 @@ public class MemoryDb : IMemoryDb
         return ErrorCode.None;
     }
 
-    public async Task<(ErrorCode, List<RankData>)> GetUserRanking()
+    public async Task<(ErrorCode, List<RankData>)> GetTopRanking()
     {
         try
         {
-            // 등수, uid, score 클래스 하나 만들고
-            // 돌면서 확인 같은 점수면 그등수 그대로 카운트 늘리고
-            // 다르면 등수 바꾸고 또 계속
-            // 리턴.
             List<RankData> ranking = new();
 
             var set = new RedisSortedSet<int>(_redisConn, "user-ranking", null);
