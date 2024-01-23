@@ -26,15 +26,16 @@ CREATE TABLE account_info
 -- 테이블 생성 SQL - user
 CREATE TABLE user
 (
-    `uid`                    INT            NOT NULL    AUTO_INCREMENT COMMENT '유저아이디', 
-    `player_id`              BIGINT         NOT NULL    COMMENT '플레이어 아이디', 
-    `nickname`               VARCHAR(50)    NOT NULL    COMMENT '닉네임', 
-    `create_dt`              DATETIME       NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시', 
-    `recent_login_dt`        DATETIME       NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '최근 로그인 일시', 
-    `bestscore_ever`         INT            NOT NULL    DEFAULT 0 COMMENT '최고점수 역대', 
-    `bestscore_cur_season`   INT            NOT NULL    DEFAULT 0 COMMENT '최고점수 현재 시즌', 
-    `bestscore_prev_season`  INT            NOT NULL    DEFAULT 0 COMMENT '최고점수 이전 시즌', 
-    `star_point`             INT            NOT NULL    DEFAULT 0 COMMENT '스타 포인트', 
+    `uid`                           INT            NOT NULL    AUTO_INCREMENT COMMENT '유저아이디', 
+    `player_id`                     BIGINT         NOT NULL    COMMENT '플레이어 아이디', 
+    `nickname`                      VARCHAR(50)    NOT NULL    COMMENT '닉네임', 
+    `create_dt`                     DATETIME       NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시', 
+    `recent_login_dt`               DATETIME       NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '최근 로그인 일시', 
+    `total_bestscore`               INT            NOT NULL    DEFAULT 0 COMMENT '최고점수 역대', 
+    `total_bestscore_cur_season`    INT            NOT NULL    DEFAULT 0 COMMENT '최고점수 현재 시즌', 
+    `total_bestscore_prev_season`   INT            NOT NULL    DEFAULT 0 COMMENT '최고점수 이전 시즌', 
+    `star_point`                    INT            NOT NULL    DEFAULT 0 COMMENT '스타 포인트', 
+    `main_char_key`                 INT            NOT NULL    COMMENT '메인 캐릭터 키',
      PRIMARY KEY (uid),
      UNIQUE KEY (nickname)
 );
@@ -140,11 +141,11 @@ ALTER TABLE user_attendance
         REFERENCES user (uid) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ```
 
-## user_game 테이블
+## user_minigame 테이블
 유저의 게임 정보를 가지고 있는 테이블
 ```sql
--- 테이블 생성 SQL - user_game
-CREATE TABLE user_game
+-- 테이블 생성 SQL - user_minigame
+CREATE TABLE user_minigame
 (
     `uid`                    INT         NOT NULL    COMMENT '유저아이디', 
     `game_key`               INT         NOT NULL    COMMENT '게임 키', 
@@ -153,14 +154,14 @@ CREATE TABLE user_game
     `bestscore_prev_season`  INT         NOT NULL    COMMENT '최고점수 이전 시즌', 
     `new_record_dt`          DATETIME    NOT NULL    DEFUALT CURRENT_TIMESTAMP COMMENT '신 기록 일시', 
     `recent_play_dt`         DATETIME    NOT NULL    DEFUALT CURRENT_TIMESTAMP COMMENT '최근 플레이 일시', 
-    `char_key`               INT         NOT NULL    COMMENT '캐릭터 키', 
+    `play_char_key`          INT         NOT NULL    COMMENT '플레이 캐릭터 키', 
     `create_dt`              DATETIME    NOT NULL    COMMENT '생성 일시', 
      PRIMARY KEY (uid, game_key)
 );
 
--- Foreign Key 설정 SQL - user_game(uid) -> user(uid)
-ALTER TABLE user_game
-    ADD CONSTRAINT FK_user_game_uid_user_uid FOREIGN KEY (uid)
+-- Foreign Key 설정 SQL - user_minigame(uid) -> user(uid)
+ALTER TABLE user_minigame
+    ADD CONSTRAINT FK_user_minigame_uid_user_uid FOREIGN KEY (uid)
         REFERENCES user (uid) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ```
 
