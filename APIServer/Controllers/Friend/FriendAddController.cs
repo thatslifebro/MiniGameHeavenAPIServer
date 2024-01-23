@@ -24,8 +24,8 @@ public class FriendAdd : ControllerBase
     //TODO 최흥배: 기능은 단순하게 하는 것이 좋습니다. 친구 요청과 요청 수락은 나누도록 하시죠 
 
     /// <summary>
-    /// 친구 요청을 보내거나 친구 요청을 수락하는 API </br>
-    /// 상대 방의 친구 요청 유무에 따라 친구 수락 혹은 친구 요청 보내기를 수행합니다.
+    /// 친구 요청 API </br>
+    /// 상대방에게 친구 요청을 보냅니다.
     /// </summary>
     [HttpPost]
     public async Task<FriendAddResponse> AddFriend([FromHeader] HeaderDTO header, FriendAddRequest request)
@@ -37,7 +37,7 @@ public class FriendAdd : ControllerBase
             return response;
         }
         
-        var errorCode = await _friendService.SendFriendReqOrAcceptReq(header.Uid, request.FriendUid);
+        var errorCode = await _friendService.SendFriendReq(header.Uid, request.FriendUid);
         if(errorCode != ErrorCode.None)
         {
             response.Result = errorCode;

@@ -7,6 +7,7 @@ using APIServer.DTO.User;
 using APIServer.Models;
 using APIServer.Models.GameDB;
 using APIServer.Repository.Interfaces;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySqlConnector;
@@ -19,7 +20,6 @@ public partial class GameDb : IGameDb
     readonly IOptions<DbConfig> _dbConfig;
 
     //TODO 최흥배: 이런 값을 코드에 넣으면 안됩니다. 마스터 데이터에서 읽어와서 사용해야 합니다. 프로그램은 데이터드리븐으로 동작하는 것이 좋습니다 
-    const int InitCharacterKey = 1001;  
     
     IDbConnection _dbConn;
     SqlKata.Compilers.MySqlCompiler _compiler;
@@ -55,14 +55,14 @@ public partial class GameDb : IGameDb
                                 .FirstOrDefaultAsync<GdbUserInfo>();
     }
 
-    public async Task<GdbUserInfo> GetUserByNickname(string nickname)
+    public async Task<GdbUserInfo> GetUserByNickname(string nickname, IDbTransaction transaction)
     {
         return await _queryFactory.Query("user")
                                 .Where("nickname", nickname)
-                                .FirstOrDefaultAsync<GdbUserInfo>();
+                                .FirstOrDefaultAsync<GdbUserInfo>(transaction);
     }
 
-    public async Task<int> InsertUser(Int64 playerId, string nickname)
+    public async Task<int> InsertUser(Int64 playerId, string nickname, IDbTransaction transaction)
     {
         return await _queryFactory.Query("user")
                                 .InsertGetIdAsync<int>(new
@@ -71,7 +71,7 @@ public partial class GameDb : IGameDb
                                     nickname = nickname,
                                     create_dt = DateTime.Now,
                                     recent_login_dt = DateTime.Now,
-                                });
+                                }, transaction);
     }
 
     public async Task<int> DeleteAccount(int uid)

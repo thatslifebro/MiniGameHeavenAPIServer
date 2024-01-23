@@ -11,8 +11,10 @@ namespace APIServer.Services;
 //TODO 최흥배: 테이블의 모든 필드는 NULL을 가지지 않습니다. NULL을 의미하는 값을 대신 넣어주세요
 
 //TODO 최흥배: user_game 에서 char_key는 어떤 의미일까요?
+//김성연 : 각 게임마다 플레이할 캐릭터를 정할 수 있어서 넣었습니다.
 
 //TODO 최흥배: user 와 user_game 테이블이 나누어질 이유는 없을 것 같습니다
+//김성연 : user_game 테이블에 유저가 보유한 게임마다 row가 생성됩니다. 보유한 게임 정보, 게임마다 기록을 저장하기 위해서 나누었습니다.
 
 public partial class GameDb : IGameDb
 {
@@ -24,24 +26,24 @@ public partial class GameDb : IGameDb
             .GetAsync<GdbGameInfo>();
     }
 
-    public async Task<int> InsertInitGameList(int uid, IDbTransaction transaction)
+    public async Task<int> InsertInitGameList(int uid, int initCharKey, IDbTransaction transaction)
     {
         var now = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
         return await _queryFactory.Query("user_game").InsertAsync(new[] { "uid", "game_key", "create_dt", "char_key" }, new[]
         {
-            new object[]{uid,1,now, InitCharacterKey},
-            new object[]{uid,2,now, InitCharacterKey},
-            new object[]{uid,3,now, InitCharacterKey},
+            new object[]{uid,1,now, initCharKey},
+            new object[]{uid,2,now, initCharKey},
+            new object[]{uid,3,now, initCharKey},
         }, transaction);
     }
 
-    public async Task<int> InsertGame(int uid, int gameKey)
+    public async Task<int> InsertGame(int uid, int initCharKey, int gameKey)
     {
         return await _queryFactory.Query("user_game").InsertAsync(
             new
             {
                 uid = uid,
-                char_key = InitCharacterKey,
+                char_key = initCharKey,
                 game_key = gameKey,
                 create_dt = DateTime.Now
             });
@@ -99,14 +101,15 @@ public partial class GameDb : IGameDb
                                                 });
     }
 
-    public async Task<int> InsertInitCharacter(int uid, IDbTransaction transaction)
+    public async Task<int> InsertInitCharacter(int uid, int initCharKey, IDbTransaction transaction)
     {
         return await _queryFactory.Query("user_char").InsertAsync(
             new
             {
                 uid = uid,
-                char_key = InitCharacterKey,
-                create_dt = DateTime.Now
+                char_key = initCharKey,
+                create_dt = DateTime.Now,
+                costume_json = "{\"face\" : 0, \"hand\" : 0, \"head\" : 0}"
             }, transaction);
     }
 
@@ -124,7 +127,8 @@ public partial class GameDb : IGameDb
         return await _queryFactory.Query("user_attendance").InsertAsync(
              new
              {
-                 uid = uid
+                 uid = uid,
+                 recent_attendance_dt = DateTime.Now.AddDays(-1)
              }, transaction);
     }
 

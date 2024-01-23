@@ -20,12 +20,13 @@ public class FriendSentReqList : ControllerBase
     }
 
     //TODO 최흥배: 클라이언트를 만든다는 가정하에 이 API는 어떤 상황에서 호출 되는 것일까요?
+    // 김성연 : 자신이 보낸 친구요청을 볼 때 사용하는 API 입니다.
 
     /// <summary>
     /// 보낸 친구 요청 조회 API
     /// 내가 받은 친구 요청 목록을 조회합니다.
     /// </summary>
-    [HttpGet]
+    [HttpPost]
     public async Task<FriendRequestListResponse> GetFriendSentList([FromHeader] HeaderDTO header)
     {
         FriendRequestListResponse response = new();

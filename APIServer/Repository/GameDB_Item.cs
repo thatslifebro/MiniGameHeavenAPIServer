@@ -33,7 +33,7 @@ public partial class GameDb : IGameDb
 
     public async Task<int> InsertUserChar(int uid, int charKey, int cnt)
     {
-        return await _queryFactory.Query("user_char").InsertAsync(new { uid, char_key = charKey,char_cnt = cnt, create_dt = DateTime.Now});
+        return await _queryFactory.Query("user_char").InsertAsync(new { uid, char_key = charKey,char_cnt = cnt, create_dt = DateTime.Now, costume_json = "{\"face\" : 0, \"hand\" : 0, \"head\" : 0}" });
     }
 
     public async Task<int> LevelUpChar(int uid, int charKey, int level, int cnt)

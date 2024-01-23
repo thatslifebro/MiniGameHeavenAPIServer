@@ -1,4 +1,6 @@
-﻿namespace APIServer.DTO.User
+﻿using System;
+
+namespace APIServer.DTO.User
 {
     public class UserInfoRequest
     {
@@ -20,6 +22,6 @@
         public int main_char_key { get; set; }
         public int main_char_skin_key { get; set; }
         public string main_char_costume_json { get; set; }
-        public long rank;
+        public Int64 rank;
     }
 }

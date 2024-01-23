@@ -9,7 +9,8 @@ namespace APIServer.Models.GameDB
         public string mail_title { get; set; }
         public DateTime create_dt { get; set; }
         public DateTime expire_dt { get; set; }
-        public DateTime? receive_dt { get; set; }
+        public DateTime receive_dt { get; set; }
+        public bool receive_yn { get; set; }
     }
 
     public class GdbMailboxRewardInfo : RewardData

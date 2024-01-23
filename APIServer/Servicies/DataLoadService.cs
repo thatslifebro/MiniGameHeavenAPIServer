@@ -1,4 +1,5 @@
 ﻿using APIServer.DTO.DataLoad;
+using APIServer.Models;
 using APIServer.Servicies.Interfaces;
 using System.Threading.Tasks;
 
@@ -25,9 +26,10 @@ public class DataLoadService : IDataLoadService
 
     //TODO 최흥배: 한번에 너무 많은 데이터를 로딩합니다. DB를 오래독점하고, 클라이언트에 보내는 데이터 량이 한번에 너무 많습니다
     // 나누어서 로딩하는 것이 좋을 것 같습니다.
-    public async Task<(ErrorCode, UserDataLoadInfo)> LoadUserData(int uid)
+    // 김성연 : 3가지로 나누었습니다. 로그인 시에는 LoadUserData만 호출합니다. 이후 다른 정보는 클라이언트가 원할 때 호출 하여 얻습니다.
+    public async Task<(ErrorCode, DataLoadUserInfo)> LoadUserData(int uid)
     {
-        UserDataLoadInfo loadData = new();
+        DataLoadUserInfo loadData = new();
         (var errorCode, loadData.UserInfo) = await _userService.GetUserInfo(uid);
         if (errorCode != ErrorCode.None)
         {
@@ -40,13 +42,20 @@ public class DataLoadService : IDataLoadService
             return (errorCode, null);
         }
 
-        (errorCode, loadData.FriendList) = await _friendService.GetFriendList(uid);
+        (errorCode, loadData.AttendanceInfo) = await _attendanceService.GetAttendance(uid);
         if (errorCode != ErrorCode.None)
         {
             return (errorCode, null);
         }
 
-        (errorCode, loadData.GameList) = await _gameService.GetGameList(uid);
+        return (ErrorCode.None, loadData);
+    }
+
+    public async Task<(ErrorCode, DataLoadGameInfo)> LoadGameData(int uid)
+    {
+        DataLoadGameInfo loadData = new();
+
+        (var errorCode, loadData.GameList) = await _gameService.GetGameList(uid);
         if (errorCode != ErrorCode.None)
         {
             return (errorCode, null);
@@ -76,13 +85,20 @@ public class DataLoadService : IDataLoadService
             return (errorCode, null);
         }
 
-        (errorCode, loadData.MailList) = await _mailService.GetMailList(uid);
+        return (ErrorCode.None, loadData);
+    }
+
+    public async Task<(ErrorCode, DataLoadSocialInfo)> LoadSocialData(int uid)
+    {
+        DataLoadSocialInfo loadData = new();
+
+        (var errorCode, loadData.MailList) = await _mailService.GetMailList(uid);
         if (errorCode != ErrorCode.None)
         {
             return (errorCode, null);
         }
 
-        (errorCode, loadData.AttendanceInfo) = await _attendanceService.GetAttendance(uid);
+        (errorCode, loadData.FriendList) = await _friendService.GetFriendList(uid);
         if (errorCode != ErrorCode.None)
         {
             return (errorCode, null);

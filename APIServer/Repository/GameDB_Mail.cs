@@ -30,10 +30,10 @@ public partial class GameDb : IGameDb
                                                 .GetAsync<GdbMailboxRewardInfo>();
     }
 
-    public async Task<int> UpdateReceiveDt(int mailSeq)
+    public async Task<int> UpdateReceiveMail(int mailSeq)
     {
         return await _queryFactory.Query("mailbox").Where("mail_seq", mailSeq)
-                                                .UpdateAsync(new { receive_dt = DateTime.Now });
+                                                .UpdateAsync(new { receive_dt = DateTime.Now, receive_yn = true });
     }
 
     public async Task<int> DeleteMail(int mailSeq)

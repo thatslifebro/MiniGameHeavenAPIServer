@@ -59,7 +59,7 @@ public class MailService : IMailService
             {
                 return (ErrorCode.MailReceiveFailMailNotExist, null);
             }
-            if (mailInfo.receive_dt != null)
+            if (mailInfo.receive_yn == true)
             {
                 return (ErrorCode.MailReceiveFailAlreadyReceived, null);
             }
@@ -116,8 +116,8 @@ public class MailService : IMailService
                 }
             }
 
-            //수령일자 업데이트
-            var rowCount = await _gameDb.UpdateReceiveDt(mailSeq);
+            //수령일자 및 수령여부 업데이트
+            var rowCount = await _gameDb.UpdateReceiveMail(mailSeq);
             if (rowCount != 1)
             {
                 return (ErrorCode.MailReceiveFailUpdateReceiveDt, null);

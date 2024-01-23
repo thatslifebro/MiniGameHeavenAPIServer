@@ -25,7 +25,7 @@ public class AuthService : IAuthService
         _logger = logger;
         _hiveServerAddress = configuration.GetSection("HiveServerAddress").Value + "/verifytoken";
     }
-    public async Task<bool> VerifyTokenToHive(Int64 playerId, string token)
+    public async Task<ErrorCode> VerifyTokenToHive(Int64 playerId, string token)
     {
         try
         {
@@ -35,45 +35,24 @@ public class AuthService : IAuthService
             if (hiveResponse == null || !ValidateHiveResponse(hiveResponse))
             {
                 _logger.ZLogDebug($"[VerifyTokenToHive Service] ErrorCode:{ErrorCode.Hive_Fail_InvalidResponse}, PlayerID = {playerId}, Token = {token}, StatusCode = {hiveResponse?.StatusCode}");
-                return false;
+                return ErrorCode.Hive_Fail_InvalidResponse;
             }
 
             var authResult = await hiveResponse.Content.ReadFromJsonAsync<ErrorCodeDTO>();
-            return ValidateHiveAuthErrorCode(authResult);
+            if (!ValidateHiveAuthErrorCode(authResult))
+            {
+                return ErrorCode.Hive_Fail_InvalidResponse;
+            }
+
+            return ErrorCode.None;
         }
         catch
         {
             _logger.ZLogDebug($"[VerifyTokenToHive Service] ErrorCode:{ErrorCode.Hive_Fail_InvalidResponse}, PlayerID = {playerId}, Token = {token}");
-            return false;
+            return ErrorCode.Hive_Fail_InvalidResponse;
         }
     }
 
-    public async Task<(ErrorCode, int)> CreateAccountAsync(Int64 playerId, string nickname)
-    {
-        try
-        {
-            if(string.IsNullOrEmpty(nickname))
-            {
-                _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountNicknameFail}, nickname : {nickname}");
-                return (ErrorCode.CreateAccountNicknameFail,0);
-            }
-            //nickname 중복 체크
-            var existUser = await _gameDb.GetUserByNickname(nickname);
-            if (existUser is not null)
-            {
-                _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountDuplicateFail}, nickname : {nickname}");
-                return (ErrorCode.CreateAccountDuplicateFail,0);
-            }
-            //account 생성
-            return (ErrorCode.None, await _gameDb.InsertUser(playerId, nickname));
-        }
-        catch (Exception e)
-        {
-            _logger.ZLogError(e,
-                $"[CreateAccount] ErrorCode: {ErrorCode.CreateAccountFailException}, PlayerId: {playerId}");
-            return (ErrorCode.CreateAccountFailException,0);
-        }
-    }
     public async Task<ErrorCode> DeleteAccountAsync(int uid)
     {
         try
@@ -135,7 +114,7 @@ public class AuthService : IAuthService
         {
             _logger.ZLogError(e,
                 $"[UpdateLastLoginTime] ErrorCode: {ErrorCode.LoginUpdateRecentLoginFailException}, Uid: {uid}");
-            return ErrorCode.CreateAccountFailException;
+            return ErrorCode.CreateUserFailException;
         }
     }
 

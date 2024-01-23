@@ -17,9 +17,9 @@ public enum ErrorCode : UInt16
     InvalidMasterDataVersion = 1012,
 
     // Auth 2000 ~
-    CreateAccountFailException = 2001,
-    CreateAccountNicknameFail = 2002,
-    CreateAccountDuplicateFail = 2003,
+    CreateUserFailException = 2001,
+    CreateUserFailNoNickname = 2002,
+    CreateUserFailDuplicateNickname = 2003,
     LoginFailException = 2004,
     LoginFailUserNotExist = 2005,
     LoginFailPwNotMatch = 2006,
@@ -32,7 +32,7 @@ public enum ErrorCode : UInt16
     AuthTokenFailSetNx = 2013,
     AccountIdMismatch = 2014,
     DuplicatedLogin = 2015,
-    CreateAccountFailInsert = 2016,
+    CreateUserFailInsert = 2016,
     LoginFailAddRedis = 2017,
     CheckAuthFailNotExist = 2018,
     CheckAuthFailNotMatch = 2019,
@@ -64,6 +64,10 @@ public enum ErrorCode : UInt16
     FriendDeleteReqFailDelete = 2114,
     FriendDeleteReqFailException = 2115,
     FriendAcceptFailException = 2116,
+    FriendAcceptFailSameUid = 2117,
+    AcceptFriendRequestFailUserNotExist = 2118,
+    AcceptFriendRequestFailAlreadyFriend = 2119,
+    AcceptFriendRequestFailException = 2120,
 
     // Game 2200
     GameListFailException = 2201,

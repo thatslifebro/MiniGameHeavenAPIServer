@@ -20,8 +20,7 @@ public partial class GameDb : IGameDb
                                                   $"SET attendance_cnt = attendance_cnt +1, " +
                                                       $"recent_attendance_dt = '{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}' " +
                                                   $"WHERE uid = {uid} AND " +
-                                                      $"( DATE(recent_attendance_dt) < '{DateTime.Today.ToString("yyyy-MM-dd")}' " +
-                                                      $"OR recent_attendance_dt IS NULL);");
+                                                      $"DATE(recent_attendance_dt) < '{DateTime.Today.ToString("yyyy-MM-dd")}';");
     }
     
 }

@@ -10,26 +10,25 @@ namespace APIServer.Controllers.DataLoad;
 
 [ApiController]
 [Route("[controller]")]
-public class DataLoad : ControllerBase
+public class UserDataLoad : ControllerBase
 {
-    readonly ILogger<DataLoad> _logger;
+    readonly ILogger<UserDataLoad> _logger;
     readonly IDataLoadService _dataLoadService;
 
-    public DataLoad(ILogger<DataLoad> logger, IDataLoadService dataLoadService)
+    public UserDataLoad(ILogger<UserDataLoad> logger, IDataLoadService dataLoadService)
     {
         _logger = logger;
         _dataLoadService = dataLoadService;
     }
 
     /// <summary>
-    /// 유저 기본 데이터 로드 API
-    /// 게임에 필요한 정보(유저의 정보(점수,머니), 게임 정보, 친구 정보, 아이템 보유정보(캐릭터, 스킨, 코스튬, 푸드 및 푸드기어), 우편정보, 출석정보)을 조회합니다.
+    /// 유저 데이터 로드 API
+    /// 게임에 필요한 유저 정보(유저의 정보(점수,재화), 출석 정보)를 조회합니다.
     /// </summary>
-
-    [HttpGet]
-    public async Task<DataLoadResponse> GetDataLoad([FromHeader] HeaderDTO header)
+    [HttpPost]
+    public async Task<UserDataLoadResponse> LoadUserData([FromHeader] HeaderDTO header)
     {
-        DataLoadResponse response = new();
+        UserDataLoadResponse response = new();
 
         (response.Result, response.UserData) = await _dataLoadService.LoadUserData(header.Uid);
 

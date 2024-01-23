@@ -18,7 +18,6 @@ namespace APIServer.Models.GameDB
         public string nickname { get; set; }
         public int bestscore { get; set; }
         public DateTime recent_login_dt { get; set; }
-        // 데이터 추가 필요 - 대표 캐릭터 정보, 최근 접속 일자 등
     }
 
     public class FriendReqListInfo

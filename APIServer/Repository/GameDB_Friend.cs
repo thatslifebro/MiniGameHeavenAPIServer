@@ -50,15 +50,13 @@ public partial class GameDb : IGameDb
         }, transaction);
     }
 
-    public async Task<IEnumerable<FriendUserInfo>> GetFriendUserInfoList(int uid, string orderby)
+    public async Task<IEnumerable<FriendUserInfo>> GetFriendUserInfoList(int uid)
     {
         return await _queryFactory.Query("friend")
                                 .Join("user", "user.uid", "friend.friend_uid")
                                 .Where("friend.uid", uid)
                                 .Where("accept_yn", true)
-                                .Select("user.uid", "nickname", $"{orderby}", "recent_login_dt")// AdbFriendUserInfo에 따라 변경 필요
-                                .OrderByDesc(orderby)
-                                .OrderBy("nickname")
+                                .Select("user.uid", "nickname", "bestscore_ever", "recent_login_dt")
                                 .GetAsync<FriendUserInfo>();
     }
 

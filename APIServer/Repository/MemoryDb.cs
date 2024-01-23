@@ -286,7 +286,7 @@ public class MemoryDb : IMemoryDb
         }
     }
 
-    public async Task<(ErrorCode, long)> GetUserRankAsync(int uid)
+    public async Task<(ErrorCode, Int64)> GetUserRankAsync(int uid)
     {
         try
         {

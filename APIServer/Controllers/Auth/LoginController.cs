@@ -36,44 +36,24 @@ public class Login : ControllerBase
     [HttpPost]
     public async Task<LoginResponse> Post(LoginRequest request)
     {
-        //TODO 최흥배: 큰 기능별로 함수로 나누는 것이 코드 가독성으로 좋겠습니다
-
         LoginResponse response = new();
-        var hiveTokenValid = await _authService.VerifyTokenToHive(request.PlayerId, request.HiveToken);
 
-        if (!hiveTokenValid)
+        //하이브 토큰 체크
+        var errorCode = await _authService.VerifyTokenToHive(request.PlayerId, request.HiveToken);
+        if (errorCode != ErrorCode.None)
         {
-            response.Result = ErrorCode.Hive_Fail_InvalidResponse;
+            response.Result = errorCode;
             return response;
         }
 
-        //유저가 있는지 확인
-        (var errorCode, var uid) = await _authService.VerifyUser(request.PlayerId);
-        //없다면 생성
+        //유저 있는지 확인
+        (errorCode, var uid) = await _authService.VerifyUser(request.PlayerId);
+        // 유저가 없다면 유저 데이터 생성
         if(errorCode == ErrorCode.LoginFailUserNotExist)
         {
-            //TODO 최흥배: 함수 이름이 적절하지 않은 것 같습니다. 계정이 만들어지는 것이 아니고 게임DB에 유저 데이터가 만들어지는 것 아닌가요?
-            (errorCode, uid) = await _authService.CreateAccountAsync(request.PlayerId, request.Nickname);
-            if (errorCode != ErrorCode.None)
-            {
-                response.Result = errorCode;
-                return response;
-            }
-
-            //TODO 최흥배: CreateAccountAsync와 같이 만들어지는 것이 더 좋을 것 같습니다. 궂이 이것과 분리할 필요가 있을까요
-            // 같은 트랜잭션에 있으면 CreateAccountAsync 에 대한 롤백도 별도로 필요 없겠죠
-            
-            // 게임 데이터 생성 및 실패시 롤백
-            errorCode = await _gameService.InitNewUserGameData(uid);
-            // 실패시 앞서 만든 계정 다시 삭제.
-            if (errorCode != ErrorCode.None)
-            {
-                await _authService.DeleteAccountAsync(uid);
-                response.Result = errorCode;
-                return response;
-            }
+            (errorCode, uid) = await _gameService.InitNewUserGameData(request.PlayerId, request.Nickname);
         }
-        else if (errorCode != ErrorCode.None)
+        if (errorCode != ErrorCode.None)
         {
             response.Result = errorCode;
             return response;
@@ -99,6 +79,11 @@ public class Login : ControllerBase
 
         //유저 데이터 로드
         (errorCode, response.userData) = await _dataLoadService.LoadUserData(uid);
+        if (errorCode != ErrorCode.None)
+        {
+            response.Result = errorCode;
+            return response;
+        }
 
         _logger.ZLogInformation($"[Login] Uid : {uid}, Token : {token}, PlayerId : {request.PlayerId}");
 

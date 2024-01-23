@@ -22,13 +22,14 @@ public class FriendCancelReq : ControllerBase
     }
 
     //TODO 최흥배: 이미 Delete가 있는데 이것은 무엇인가요? 그리고 파일과 API 이름이 서로 다릅니다. 일치시켜주세요
+    // 김성연 : 친구 삭제가 아닌 보낸 친구 요청의 취소 API입니다.
 
     /// <summary>
-    /// 보낸 친구요청을 취소하는 API
+    /// 친구 요청 취소 API
     /// 보낸 친구 요청을 취소합니다.
     /// </summary>
     [HttpDelete]
-    public async Task<FriendDeleteResponse> DeleteFriendReq([FromHeader] HeaderDTO header, FriendDeleteRequest request)
+    public async Task<FriendDeleteResponse> CancelFriendReq([FromHeader] HeaderDTO header, FriendDeleteRequest request)
     {
         FriendDeleteResponse response = new();
         if (header.Uid == request.FriendUid)
@@ -37,7 +38,7 @@ public class FriendCancelReq : ControllerBase
             return response;
         }
 
-        var errorCode = await _friendService.DeleteFriendReq(header.Uid, request.FriendUid);
+        var errorCode = await _friendService.CancelFriendReq(header.Uid, request.FriendUid);
         if (errorCode != ErrorCode.None)
         {
             response.Result = errorCode;

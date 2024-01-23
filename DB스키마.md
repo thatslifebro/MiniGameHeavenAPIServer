@@ -10,8 +10,8 @@ CREATE TABLE account_info
     `email`             VARCHAR(50)     NOT NULL    COMMENT '이메일',
     `salt_value`        VARCHAR(100)    NOT NULL    COMMENT '암호화 값',
     `pw`                VARCHAR(100)    NOT NULL    COMMENT '해싱된 비밀번호',
-    `create_dt`         DATETIME NOT    NULL        DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시',
-    `recent_login_dt`   DATETIME        NULL        COMMENT '최근 로그인 일시',
+    `create_dt`         DATETIME        NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시',
+    `recent_login_dt`   DATETIME        NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '최근 로그인 일시',
      PRIMARY KEY (player_id),
      UNIQUE KEY (email)
 )
@@ -29,8 +29,8 @@ CREATE TABLE user
     `uid`                    INT            NOT NULL    AUTO_INCREMENT COMMENT '유저아이디', 
     `player_id`              BIGINT         NOT NULL    COMMENT '플레이어 아이디', 
     `nickname`               VARCHAR(50)    NOT NULL    COMMENT '닉네임', 
-    `create_dt`              DATETIME       NOT NULL    COMMENT '생성 일시', 
-    `recent_login_dt`        DATETIME       NULL        COMMENT '최근 로그인 일시', 
+    `create_dt`              DATETIME       NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시', 
+    `recent_login_dt`        DATETIME       NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '최근 로그인 일시', 
     `bestscore_ever`         INT            NOT NULL    DEFAULT 0 COMMENT '최고점수 역대', 
     `bestscore_cur_season`   INT            NOT NULL    DEFAULT 0 COMMENT '최고점수 현재 시즌', 
     `bestscore_prev_season`  INT            NOT NULL    DEFAULT 0 COMMENT '최고점수 이전 시즌', 
@@ -69,7 +69,7 @@ CREATE TABLE friend
     `uid`         INT         NOT NULL    COMMENT '유저아이디', 
     `friend_uid`  INT         NOT NULL    COMMENT '친구 유저아이디', 
     `accept_yn`   TINYINT     NOT NULL    DEFAULT 0  COMMENT '승인 유무', 
-    `create_dt`   DATETIME    NOT NULL    COMMENT '생성 일시', 
+    `create_dt`   DATETIME    NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시', 
      PRIMARY KEY (uid, friend_uid)
 );
 -- Foreign Key 설정 SQL - friend(uid) -> user(uid)
@@ -94,7 +94,8 @@ CREATE TABLE mailbox
     `mail_title`  VARCHAR(100)    NOT NULL    COMMENT '우편 제목', 
     `create_dt`   DATETIME        NOT NULL    COMMENT '생성 일시', 
     `expire_dt`   DATETIME        NOT NULL    COMMENT '만료 일시', 
-    `receive_dt`  DATETIME        NULL        COMMENT '수령 일시', 
+    `receive_dt`  DATETIME        NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '수령 일시', 
+    `receive_yn`  TINYINT         NOT NULL    DEFAULT 0 COMMENT '수령 유무',
      PRIMARY KEY (mail_seq)
 );
 -- Foreign Key 설정 SQL - mailbox(uid) -> user(uid)
@@ -130,7 +131,7 @@ CREATE TABLE user_attendance
 (
     `uid`                   INT         NOT NULL    COMMENT '유저아이디', 
     `attendance_cnt`        INT         NOT NULL    COMMENT '출석 횟수', 
-    `recent_attendance_dt`  DATETIME    NULL        COMMENT '최근 출석 일시', 
+    `recent_attendance_dt`  DATETIME    NOT NULL    COMMENT '최근 출석 일시', 
      PRIMARY KEY (uid)
 );
 -- Foreign Key 설정 SQL - user_attendance(uid) -> user(uid)
@@ -150,8 +151,8 @@ CREATE TABLE user_game
     `bestscore`              INT         NOT NULL    COMMENT '최고점수', 
     `bestscore_cur_season`   INT         NOT NULL    COMMENT '최고점수 현재 시즌', 
     `bestscore_prev_season`  INT         NOT NULL    COMMENT '최고점수 이전 시즌', 
-    `new_record_dt`          DATETIME    NULL        COMMENT '신 기록 일시', 
-    `recent_play_dt`         DATETIME    NULL        COMMENT '최근 플레이 일시', 
+    `new_record_dt`          DATETIME    NOT NULL    DEFUALT CURRENT_TIMESTAMP COMMENT '신 기록 일시', 
+    `recent_play_dt`         DATETIME    NOT NULL    DEFUALT CURRENT_TIMESTAMP COMMENT '최근 플레이 일시', 
     `char_key`               INT         NOT NULL    COMMENT '캐릭터 키', 
     `create_dt`              DATETIME    NOT NULL    COMMENT '생성 일시', 
      PRIMARY KEY (uid, game_key)
@@ -173,9 +174,9 @@ CREATE TABLE user_char
     `char_key`      INT         NOT NULL    COMMENT '캐릭터 키', 
     `char_level`    INT         NOT NULL    DEFAULT 1 COMMENT '캐릭터 레벨', 
     `char_cnt`      INT         NOT NULL    DEFAULT 1 COMMENT '캐릭터 개수',
-    `skin_key`      INT         NULL        COMMENT '스킨 키', 
+    `skin_key`      INT         NOT NULL    DEFAULT 0 COMMENT '스킨 키', 
     `create_dt`     DATETIME    NOT NULL    COMMENT '생성 일시', 
-    `costume_json`  JSON        NULL        COMMENT '코스튬 JSON', 
+    `costume_json`  JSON        NOT NULL    COMMENT '코스튬 JSON', 
      PRIMARY KEY (uid, char_key)
 );
 -- Foreign Key 설정 SQL - user_char(uid) -> user(uid)
@@ -231,7 +232,7 @@ CREATE TABLE user_skin
 (
     `uid`        INT         NOT NULL    COMMENT '유저아이디', 
     `skin_key`   INT         NOT NULL    COMMENT '스킨 키', 
-    `create_dt`  DATETIME    NULL        COMMENT '생성 일시', 
+    `create_dt`  DATETIME    NOT NULL    COMMENT '생성 일시', 
      PRIMARY KEY (uid, skin_key)
 );
 -- Foreign Key 설정 SQL - user_skin(uid) -> user(uid)
@@ -322,7 +323,7 @@ CREATE TABLE master_costume
     `costume_name`  VARCHAR(50)    NOT NULL    COMMENT '코스튬 이름', 
     `costume_type`  INT            NOT NULL    COMMENT '코스튬 종류', 
     `create_dt`     DATETIME       NOT NULL    COMMENT '생성 일시', 
-    `set_key`       INT            NULL        COMMENT '세트 키', 
+    `set_key`       INT            NOT NULL    DEFAULT 0 COMMENT '세트 키', 
      PRIMARY KEY (costume_key)
 );
 ```
@@ -374,7 +375,7 @@ CREATE TABLE master_skill
     `skill_key`         INT         NOT NULL    COMMENT '스킬 키', 
     `act_prob_percent`  INT         NOT NULL    COMMENT '발동 확률 퍼센트', 
     `create_dt`         DATETIME    NOT NULL    COMMENT '생성 일시', 
-    `char_key`          INT         NULL        COMMENT '캐릭터 키', 
+    `char_key`          INT         NOR NULL    DEFAULT 0 COMMENT '캐릭터 키', 
      PRIMARY KEY (skill_key)
 );
 -- Foreign Key 설정 SQL - master_skill(char_key) -> master_char(char_key)

@@ -6,6 +6,7 @@ using APIServer.Servicies.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using ZLogger;
 
@@ -15,10 +16,14 @@ public class GameService :IGameService
 {
     readonly ILogger<GameService> _logger;
     readonly IGameDb _gameDb;
-    public GameService(ILogger<GameService> logger, IGameDb gameDb)
+    readonly IMasterDb _masterDb;
+    int initCharKey;
+    public GameService(ILogger<GameService> logger, IGameDb gameDb, IMasterDb masterDb)
     {
         _logger = logger;
         _gameDb = gameDb;
+        _masterDb = masterDb;
+        initCharKey = _masterDb._characterList[0].char_key;
     }
 
     public async Task<(ErrorCode, IEnumerable<GdbGameInfo>)> GetGameList(int uid)
@@ -46,7 +51,7 @@ public class GameService :IGameService
                 return ErrorCode.GameUnlockFailAlreadyUnlocked;
             }
 
-            var rowCount = await _gameDb.InsertGame(uid, gameKey);
+            var rowCount = await _gameDb.InsertGame(uid, initCharKey, gameKey);
             if(rowCount != 1)
             {
                 _logger.ZLogDebug(
@@ -128,52 +133,87 @@ public class GameService :IGameService
         }
     }
 
-    public async Task<ErrorCode> InitNewUserGameData(int uid)
+    public async Task<(ErrorCode, int)> InitNewUserGameData(Int64 playerId, string nickname)
     {
         var transaction = _gameDb.GDbConnection().BeginTransaction();
         try
         {
-            var rowCount = await _gameDb.InsertInitCharacter(uid, transaction);
+            var (errorCode, uid) = await CreateUserAsync(playerId, nickname, transaction);
+            if(errorCode != ErrorCode.None)
+            {
+                transaction.Rollback();
+                return (errorCode,0);
+            }
+
+            var rowCount = await _gameDb.InsertInitCharacter(uid, initCharKey, transaction);
             if (rowCount != 1)
             {
                 transaction.Rollback();
-                return ErrorCode.InitNewUserGameDataFailCharacter;
+                return (ErrorCode.InitNewUserGameDataFailCharacter, 0);
             }
 
-            rowCount = await _gameDb.InsertInitGameList(uid, transaction);
+            rowCount = await _gameDb.InsertInitGameList(uid, initCharKey, transaction);
             if (rowCount != 3)
             {
                 transaction.Rollback();
-                return ErrorCode.InitNewUserGameDataFailGameList;
+                return (ErrorCode.InitNewUserGameDataFailGameList, 0);
             }
 
             rowCount = await _gameDb.InsertInitMoneyInfo(uid, transaction);
             if (rowCount != 1)
             {
                 transaction.Rollback();
-                return ErrorCode.InitNewUserGameDataFailMoney;
+                return (ErrorCode.InitNewUserGameDataFailMoney, 0);
             }
 
             rowCount = await _gameDb.InsertInitAttendance(uid, transaction);
             if (rowCount != 1)
             {
                 transaction.Rollback();
-                return ErrorCode.InitNewUserGameDataFailAttendance;
+                return (ErrorCode.InitNewUserGameDataFailAttendance, 0);
             }
 
             transaction.Commit();
-            return ErrorCode.None;
+            return (ErrorCode.None, uid);
         }
         catch (Exception e)
         {
             transaction.Rollback();
             _logger.ZLogError(e,
-                $"[Game.InitNewUserGameData] ErrorCode: {ErrorCode.InitNewUserGameDataFailException}, Uid: {uid}");
-            return ErrorCode.GameSetNewUserListFailException;
+                $"[Game.InitNewUserGameData] ErrorCode: {ErrorCode.InitNewUserGameDataFailException}, PlayerId : {playerId}");
+            return (ErrorCode.GameSetNewUserListFailException, 0);
         }
         finally
         {
             transaction.Dispose();
+        }
+    }
+
+    async Task<(ErrorCode,int)> CreateUserAsync(Int64 playerId, string nickname, IDbTransaction transaction)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(nickname))
+            {
+                _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateUserFailNoNickname}, nickname : {nickname}");
+                return (ErrorCode.CreateUserFailNoNickname,0);
+            }
+            //nickname 중복 체크
+            var existUser = await _gameDb.GetUserByNickname(nickname, transaction);
+            if (existUser is not null)
+            {
+                _logger.ZLogError($"[CreateAccount] ErrorCode: {ErrorCode.CreateUserFailDuplicateNickname}, nickname : {nickname}");
+                return (ErrorCode.CreateUserFailDuplicateNickname,0);
+            }
+
+            //유저 생성
+            return (ErrorCode.None, await _gameDb.InsertUser(playerId, nickname, transaction));
+        }
+        catch (Exception e)
+        {
+            _logger.ZLogError(e,
+                $"[CreateAccount] ErrorCode: {ErrorCode.CreateUserFailException}, PlayerId: {playerId}");
+            return (ErrorCode.CreateUserFailException, 0);
         }
     }
 

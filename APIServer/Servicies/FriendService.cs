@@ -1,12 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
-using System;
-using ZLogger;
-using System.Collections.Generic;
-using APIServer.Servicies.Interfaces;
-using System.Linq;
+﻿using APIServer.Models.GameDB;
 using APIServer.Repository.Interfaces;
-using APIServer.Models.GameDB;
+using APIServer.Servicies.Interfaces;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using ZLogger;
 
 namespace APIServer.Servicies;
 
@@ -20,7 +20,7 @@ public class FriendService : IFriendService
         _logger = logger;
     }
 
-    public async Task<ErrorCode> SendFriendReqOrAcceptReq(int uid, int friendUid)
+    public async Task<ErrorCode> SendFriendReq(int uid, int friendUid)
     {
         try
         {
@@ -29,7 +29,7 @@ public class FriendService : IFriendService
             if (userInfo is null)
             {
                 _logger.ZLogDebug(
-                $"[Friend.SendFriendReqOrAcceptReq] ErrorCode: {ErrorCode.FriendAddFailUserNotExist}, Uid: {uid}, FriendUid : {friendUid}");
+                $"[Friend.SendFriendReq] ErrorCode: {ErrorCode.FriendAddFailUserNotExist}, Uid: {uid}, FriendUid : {friendUid}");
                 return ErrorCode.FriendAddFailUserNotExist;
             }
             //이미 친구신청 했을 때
@@ -37,46 +37,63 @@ public class FriendService : IFriendService
             if (friendReqInfo is not null)
             {
                 _logger.ZLogDebug(
-                $"[Friend.SendFriendReqOrAcceptReq] ErrorCode: {ErrorCode.FriendAddFailAlreadyFriend}, Uid: {uid}, FriendUid : {friendUid}");
+                $"[Friend.SendFriendReq] ErrorCode: {ErrorCode.FriendAddFailAlreadyFriend}, Uid: {uid}, FriendUid : {friendUid}");
                 return ErrorCode.FriendAddFailAlreadyFriend;
             }
             //친구 요청
-            friendReqInfo = await _gameDb.GetFriendReqInfo(friendUid, uid);
-            var rowCount = 0;
-            if (friendReqInfo is null)
+            var rowCount = await _gameDb.InsertFriendReq(uid, friendUid);
+            if (rowCount != 1)
             {
-                rowCount = await _gameDb.InsertFriendReq(uid, friendUid);
-                if(rowCount != 1)
-                {
-                    _logger.ZLogDebug(
-                    $"[Friend.SendFriendReqOrAcceptReq] ErrorCode: {ErrorCode.FriendAddFailInsert}, Uid: {uid}, FriendUid : {friendUid}");
-                    return ErrorCode.FriendAddFailInsert;
-                }
-                return ErrorCode.None;
+                _logger.ZLogDebug(
+                $"[Friend.SendFriendReq] ErrorCode: {ErrorCode.FriendAddFailInsert}, Uid: {uid}, FriendUid : {friendUid}");
+                return ErrorCode.FriendAddFailInsert;
             }
-            //친구 요청 승낙
-            return await AcceptFriendRequest(uid, friendUid);
+            return ErrorCode.None;
         }
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                $"[Friend.SendFriendReqOrAcceptReq] ErrorCode: {ErrorCode.FriendAddFailException}, Uid: {uid}, FriendUid : {friendUid}");
+                $"[Friend.SendFriendReq] ErrorCode: {ErrorCode.FriendAddFailException}, Uid: {uid}, FriendUid : {friendUid}");
             return ErrorCode.FriendAddFailException;
         }
     }
 
-    public async Task<(ErrorCode, IEnumerable<FriendUserInfo>)> GetFriendList(int uid, string orderby = "bestscore_ever")
+    public async Task<ErrorCode> AcceptFriendReq(int uid, int friendUid)
     {
         try
         {
-            if(!new[] {"bestscore_ever", "bestscore_prev_season", "bestscore_cur_season" }.Contains(orderby))
+            GdbUserInfo userInfo = await _gameDb.GetUserByUid(friendUid);
+            //없는 유저일 때
+            if (userInfo is null)
             {
                 _logger.ZLogDebug(
-                $"[Friend.GetFriendList] ErrorCode: {ErrorCode.FriendGetListFailOrderby}, orderby: {orderby}");
-                return (ErrorCode.FriendGetListFailOrderby, null);
+                $"[Friend.AcceptFriendRequest] ErrorCode: {ErrorCode.FriendAddFailUserNotExist}, Uid: {uid}, FriendUid : {friendUid}");
+                return ErrorCode.AcceptFriendRequestFailUserNotExist;
             }
+            //이미 친구신청 했을 때
+            GdbFriendInfo friendReqInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
+            if (friendReqInfo is not null)
+            {
+                _logger.ZLogDebug(
+                $"[Friend.AcceptFriendRequest] ErrorCode: {ErrorCode.FriendAddFailAlreadyFriend}, Uid: {uid}, FriendUid : {friendUid}");
+                return ErrorCode.AcceptFriendRequestFailAlreadyFriend;
+            }
+            //친구 요청 승낙
+            return await AcceptRequest(uid, friendUid);
+        }
+        catch (Exception e)
+        {
+            _logger.ZLogError(e,
+                $"[Friend.AcceptFriendRequest] ErrorCode: {ErrorCode.AcceptFriendRequestFailException}, Uid: {uid}, FriendUid : {friendUid}");
+            return ErrorCode.AcceptFriendRequestFailException;
+        }
+    }
 
-            return (ErrorCode.None, await _gameDb.GetFriendUserInfoList(uid, orderby));
+    public async Task<(ErrorCode, IEnumerable<FriendUserInfo>)> GetFriendList(int uid)
+    {
+        try
+        {
+            return (ErrorCode.None, await _gameDb.GetFriendUserInfoList(uid));
         }
         catch (Exception e)
         {
@@ -144,7 +161,7 @@ public class FriendService : IFriendService
         }
     }
 
-    public async Task<ErrorCode> DeleteFriendReq(int uid, int friendUid)
+    public async Task<ErrorCode> CancelFriendReq(int uid, int friendUid)
     {
         try
         {
@@ -173,7 +190,7 @@ public class FriendService : IFriendService
         }
     }
 
-    async Task<ErrorCode> AcceptFriendRequest(int uid, int friendUid)
+    async Task<ErrorCode> AcceptRequest(int uid, int friendUid)
     {
         var transaction = _gameDb.GDbConnection().BeginTransaction();
         try

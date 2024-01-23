@@ -8,7 +8,7 @@ namespace APIServer.DTO.Auth;
 public class LoginRequest
 {
     [Required]
-    public long PlayerId { get; set; }
+    public Int64 PlayerId { get; set; }
 
     [Required]
     public string HiveToken { get; set; }
@@ -21,5 +21,5 @@ public class LoginResponse
     [Required] public string Token { get; set; } = "";
     [Required] public int Uid { get; set; } = 0;
 
-    public UserDataLoadInfo userData { get; set; }
+    public DataLoadUserInfo userData { get; set; }
 }

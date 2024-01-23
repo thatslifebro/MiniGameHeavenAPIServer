@@ -1,5 +1,6 @@
 ﻿using APIServer.Models;
 using CloudStructures.Structures;
+using System;
 using System.Collections.Generic;
 
 namespace APIServer.DTO.Ranking
@@ -11,7 +12,7 @@ namespace APIServer.DTO.Ranking
 
     public class RankData
     {
-        public long rank { get; set; }
+        public Int64 rank { get; set; }
         public int uid { get; set; }
         public int score { get; set; }
     }

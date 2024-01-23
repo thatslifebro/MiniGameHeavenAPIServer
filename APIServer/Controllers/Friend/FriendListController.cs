@@ -29,13 +29,13 @@ public class FriendList : ControllerBase
     /// 친구 목록과 친구 정보를 불러옵니다.
     /// orderby에 따라서 역대 점수, 현재 시즌 점수, 이전 시즌 점수 순으로 정렬가능 합니다.
     /// </summary>
-    [HttpGet]
-    public async Task<FriendListResponse> GetFriendList([FromHeader] HeaderDTO header, [FromQuery(Name = "orderby")] string orderby = "bestscore_ever")
+    [HttpPost]
+    public async Task<FriendListResponse> GetFriendList([FromHeader] HeaderDTO header)
     {
         FriendListResponse response = new();
 
         //TODO 최흥배: 성능을 위해서 데이터를 가져올 때 정렬은 하지 않는 것이 좋습니다. 정렬은 클라이언트에서 하도록 합니다.
-        (response.Result, response.FriendList) = await _friendService.GetFriendList(header.Uid, orderby);
+        (response.Result, response.FriendList) = await _friendService.GetFriendList(header.Uid);
 
         _logger.ZLogInformation($"[FriendList] Uid : {header.Uid}");
         return response;

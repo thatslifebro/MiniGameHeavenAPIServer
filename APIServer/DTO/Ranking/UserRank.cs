@@ -1,7 +1,9 @@
-﻿namespace APIServer.DTO.Ranking
+﻿using System;
+
+namespace APIServer.DTO.Ranking
 {
     public class UserRankResponse : ErrorCodeDTO
     {
-        public long Rank { get; set; }
+        public Int64 Rank { get; set; }
     }
 }

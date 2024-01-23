@@ -1,6 +1,7 @@
 ﻿using APIServer.DTO.Ranking;
 using APIServer.Models;
 using CloudStructures.Structures;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -18,5 +19,5 @@ public interface IMemoryDb
     public  Task<ErrorCode> SetUserScore(int uid, int score);
     public  Task<ErrorCode> LoadUserScore();
     public  Task<(ErrorCode, List<RankData>)> GetUserRanking();
-    public Task<(ErrorCode, long)> GetUserRankAsync(int uid);
+    public Task<(ErrorCode, Int64)> GetUserRankAsync(int uid);
 }
