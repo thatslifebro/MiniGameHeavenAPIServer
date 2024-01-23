@@ -89,45 +89,17 @@ public class FriendService : IFriendService
         }
     }
 
-    public async Task<(ErrorCode, IEnumerable<FriendUserInfo>)> GetFriendList(int uid)
+    public async Task<(ErrorCode, IEnumerable<GdbFriendInfo>)> GetFriendList(int uid)
     {
         try
         {
-            return (ErrorCode.None, await _gameDb.GetFriendUserInfoList(uid));
+            return (ErrorCode.None, await _gameDb.GetFriendInfoList(uid));
         }
         catch (Exception e)
         {
             _logger.ZLogError(e,
                                $"[Friend.GetFriendList] ErrorCode: {ErrorCode.FriendGetListFailException}, Uid: {uid}");
             return (ErrorCode.FriendGetListFailException, null);
-        }
-    }
-
-    public async Task<(ErrorCode, IEnumerable<FriendReqListInfo>)> GetFriendReceivedReqList(int uid)
-    {
-        try
-        {
-            return (ErrorCode.None, await _gameDb.GetFriendReceivedReqInfoList(uid));
-        }
-        catch (Exception e)
-        {
-            _logger.ZLogError(e,
-                               $"[Friend.GetFriendList] ErrorCode: {ErrorCode.FriendGetRequestListFailException}, Uid: {uid}");
-            return (ErrorCode.FriendGetRequestListFailException, null);
-        }
-    }
-
-    public async Task<(ErrorCode, IEnumerable<FriendReqListInfo>)> GetFriendSentReqList(int uid)
-    {
-        try
-        {
-            return (ErrorCode.None, await _gameDb.GetFriendSentReqInfoList(uid));
-        }
-        catch (Exception e)
-        {
-            _logger.ZLogError(e,
-                               $"[Friend.GetFriendSentReqList] ErrorCode: {ErrorCode.FriendGetRequestListFailException}, Uid: {uid}");
-            return (ErrorCode.FriendGetRequestListFailException, null);
         }
     }
 

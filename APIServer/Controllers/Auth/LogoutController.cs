@@ -26,7 +26,7 @@ public class Logout : ControllerBase
     /// 해당 유저의 토큰을 삭제합니다.
     /// </summary>
     [HttpPost]
-    public async Task<LogoutResponse> Post([FromHeader] HeaderDTO request)
+    public async Task<LogoutResponse> DeleteUserToken([FromHeader] HeaderDTO request)
     {
         LogoutResponse response = new();
         var errorCode = await _memoryDb.DelUserAuthAsync(request.Uid);

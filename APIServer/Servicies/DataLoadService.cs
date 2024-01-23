@@ -24,9 +24,6 @@ public class DataLoadService : IDataLoadService
         _friendService = friendService;
     }
 
-    //TODO 최흥배: 한번에 너무 많은 데이터를 로딩합니다. DB를 오래독점하고, 클라이언트에 보내는 데이터 량이 한번에 너무 많습니다
-    // 나누어서 로딩하는 것이 좋을 것 같습니다.
-    // 김성연 : 3가지로 나누었습니다. 로그인 시에는 LoadUserData만 호출합니다. 이후 다른 정보는 클라이언트가 원할 때 호출 하여 얻습니다.
     public async Task<(ErrorCode, DataLoadUserInfo)> LoadUserData(int uid)
     {
         DataLoadUserInfo loadData = new();

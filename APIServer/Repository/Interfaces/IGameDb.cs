@@ -19,9 +19,7 @@ public interface IGameDb
     public Task<int> InsertFriendReq(int uid, int friendUid, bool accept = false);
     public Task<int> InsertFriendReq(int uid, int friendUid, IDbTransaction transaction, bool accept = false);
     public Task<int> UpdateFriendReqAccept(int uid, int friendUid, IDbTransaction transaction, bool accept = false);
-    public Task<IEnumerable<FriendUserInfo>> GetFriendUserInfoList(int uid);
-    public Task<IEnumerable<FriendReqListInfo>> GetFriendReceivedReqInfoList(int uid);
-    public Task<IEnumerable<FriendReqListInfo>> GetFriendSentReqInfoList(int uid);
+    public Task<IEnumerable<GdbFriendInfo>> GetFriendInfoList(int uid);
     public Task<int> DeleteFriendEachOther(int uid, int friendUid);
     public Task<int> DeleteFriendReq(int uid, int friendUid);
     public Task<IEnumerable<GdbGameInfo>> GetGameList(int uid);

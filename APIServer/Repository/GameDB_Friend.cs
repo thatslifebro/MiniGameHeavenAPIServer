@@ -50,34 +50,12 @@ public partial class GameDb : IGameDb
         }, transaction);
     }
 
-    public async Task<IEnumerable<FriendUserInfo>> GetFriendUserInfoList(int uid)
+    public async Task<IEnumerable<GdbFriendInfo>> GetFriendInfoList(int uid)
     {
-        return await _queryFactory.Query("friend")
-                                .Join("user", "user.uid", "friend.friend_uid")
-                                .Where("friend.uid", uid)
-                                .Where("accept_yn", true)
-                                .Select("user.uid", "nickname", "bestscore_ever", "recent_login_dt")
-                                .GetAsync<FriendUserInfo>();
-    }
-
-    public async Task<IEnumerable<FriendReqListInfo>> GetFriendReceivedReqInfoList(int uid)
-    {
-        return await _queryFactory.Query("friend")
-                                .Join("user", "user.uid", "friend.uid")
-                                .Where("friend.friend_uid", uid)
-                                .Where("accept_yn", false)
-                                .Select("user.uid", "user.nickname", "friend.create_dt")
-                                .GetAsync<FriendReqListInfo>();
-    }
-
-    public async Task<IEnumerable<FriendReqListInfo>> GetFriendSentReqInfoList(int uid)
-    {
-        return await _queryFactory.Query("friend")
-                                .Join("user", "user.uid", "friend.friend_uid")
-                                .Where("friend.uid", uid)
-                                .Where("accept_yn", false)
-                                .Select("user.uid", "user.nickname", "friend.create_dt")
-                                .GetAsync<FriendReqListInfo>();
+        return await _queryFactory.Query("friend").Where("friend_uid", uid)
+                                                  .Where("accept_yn", false)
+                                                  .OrWhere("uid", uid)
+                                                  .GetAsync<GdbFriendInfo>();
     }
 
     public async Task<int> DeleteFriendEachOther(int uid, int friendUid)

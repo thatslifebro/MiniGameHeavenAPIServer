@@ -7,5 +7,5 @@ namespace APIServer.DTO.Friend;
 
 public class FriendListResponse : ErrorCodeDTO
 {
-    public IEnumerable<FriendUserInfo> FriendList { get; set; }
+    public IEnumerable<GdbFriendInfo> FriendList { get; set; }
 }

@@ -10,7 +10,7 @@ namespace APIServer.DTO.DataLoad
 
     public class DataLoadSocialInfo
     {
-        public IEnumerable<FriendUserInfo> FriendList { get; set; }
+        public IEnumerable<GdbFriendInfo> FriendList { get; set; }
         public List<UserMailInfo> MailList { get; set; }
 
     }

@@ -34,7 +34,7 @@ public class Login : ControllerBase
     /// 하이브 토큰을 검증하고, 유저가 존재하면 토큰 발급 및 저장, 로그인 시간 업데이트를 합니다.
     /// </summary>
     [HttpPost]
-    public async Task<LoginResponse> Post(LoginRequest request)
+    public async Task<LoginResponse> LoginAndLoadData(LoginRequest request)
     {
         LoginResponse response = new();
 

@@ -26,11 +26,11 @@ public class AttendanceCheck : ControllerBase
     /// 출석 체크를 합니다.
     /// </summary>
     [HttpPost]
-    public async Task<AttendanceCheckResponse> Post([FromHeader] HeaderDTO header)
+    public async Task<AttendanceCheckResponse> CheckAttendance([FromHeader] HeaderDTO header)
     {
         AttendanceCheckResponse response = new();
                               
-        (response.Result, response.Rewards) = await _attendanceService.CheckAttendance(header.Uid);
+        (response.Result, response.Rewards) = await _attendanceService.CheckAttendanceAndReceiveRewards(header.Uid);
 
         _logger.ZLogInformation($"[AttendanceCheck] Uid : {header.Uid}");
         return response;

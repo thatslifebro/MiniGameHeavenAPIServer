@@ -52,7 +52,7 @@ public enum ErrorCode : UInt16
     FriendAddFailInsert = 2102,
     FriendAddFailException = 2103,
     FriendAddFailAlreadyFriend = 2104,
-    FriendAddFailSameUid = 2105,
+    SendFriendReqFailSameUid = 2105,
     FriendGetListFailOrderby = 2106,
     FriendGetListFailException = 2107,
     FriendGetRequestListFailException = 2108,

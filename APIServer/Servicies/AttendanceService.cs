@@ -39,7 +39,7 @@ public class AttendanceService : IAttendanceService
         }
     }
 
-    public async Task<(ErrorCode, List<ReceivedReward>)> CheckAttendance(int uid)
+    public async Task<(ErrorCode, List<ReceivedReward>)> CheckAttendanceAndReceiveRewards(int uid)
     {
         try
         {

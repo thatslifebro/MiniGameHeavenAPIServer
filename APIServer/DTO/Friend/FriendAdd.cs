@@ -2,14 +2,14 @@
 
 namespace APIServer.DTO.Friend;
 
-public class FriendAddRequest
+public class SendFriendReqRequest
 {
     [Required]
     public int FriendUid { get; set; }
 }
 
 
-public class FriendAddResponse : ErrorCodeDTO
+public class SendFriendReqResponse : ErrorCodeDTO
 {
 }
 

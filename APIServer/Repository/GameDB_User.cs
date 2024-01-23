@@ -18,8 +18,6 @@ public partial class GameDb : IGameDb
 {
     readonly ILogger<GameDb> _logger;
     readonly IOptions<DbConfig> _dbConfig;
-
-    //TODO 최흥배: 이런 값을 코드에 넣으면 안됩니다. 마스터 데이터에서 읽어와서 사용해야 합니다. 프로그램은 데이터드리븐으로 동작하는 것이 좋습니다 
     
     IDbConnection _dbConn;
     SqlKata.Compilers.MySqlCompiler _compiler;
