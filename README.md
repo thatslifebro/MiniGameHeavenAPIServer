@@ -19,7 +19,11 @@
 | -------------------------------------------- | --------- |
 | [로그인]						              | ✅        |
 | [로그아웃]								       | ✅        |
+
+**데이터 로드**
+| [유저 데이터 로드]	                		 | ✅        |
 | [게임 데이터 로드]	                		 | ✅        |
+| [소셜 데이터 로드]	                		 | ✅        |
 
 - **친구 기능**
 
@@ -27,8 +31,7 @@
 | ----------------------------------------------- | --------- |
 | [친구 목록 조회]								  | ✅        |
 | [친구 요청]								  | ✅        |
-| [친구 받은 요청 조회]								  | ✅        |
-| [친구 보낸 요청 조회]								  | ✅        |
+| [친구 요청 수락]								  | ✅        |
 | [친구 삭제]								  | ✅        |
 | [친구 요청 취소]								  | ✅        |
 
@@ -92,17 +95,9 @@
 
 | 기능                                         | 완료 여부 |
 | -------------------------------------------- | --------- |
-| [내 정보 조회]		                        | ⬜        |
-| [대표 캐릭터 변경]						    | ⬜        |
-| [사용자 조회]		                        | ⬜        |
+| [대표 캐릭터 변경]						    | ✅        |
+| [다른 사용자 조회]		                        | ✅        |
 
-- **상점 기능**
-
-| 기능                                            | 완료 여부 |
-| ----------------------------------------------- | --------- |
-| [보석 패키지 구매]								  | ⬜        |
-| [푸드 변환]								  | ⬜        |
-| [푸드 기어 변환]								  | ⬜        |
 
 ---
 
@@ -230,7 +225,7 @@ Content-Type: application/json
 1. 게임 서버가 고유번호와 토큰을 하이브 서버에 검증.
 1. 게임 서버가 새로운 토큰을 생성하여 클라이언트에 전달.
 1. 게임 서버가 Redis에 토큰 저장
-1. 게임 데이터 로드 (버전 데이터 + 게임 데이터 정의 후 추가 예정)
+1. 유저 데이터 로드 
 1. 최근 로그인 시간 갱신
 
 클라이언트 → 서버 전송 데이터
@@ -270,12 +265,37 @@ Content-Type: application/json
 ```
 {
     "result": 0,
-    "token": "ijqdlgbfcbffwhw79jck5wbg4",
-    "uid": 1,
+    "token": "6wu4stcad9ibavnva7m5uh9t0",
+    "uid": 17,
+    "userData": {
+        "userInfo": {
+            "uid": 17,
+            "player_id": "24",
+            "nickname": "syaaa1",
+            "main_char_key": 1001,
+            "create_dt": "2024-01-23T12:15:13",
+            "recent_login_dt": "2024-01-23T15:56:39",
+            "bestscore_ever": 0,
+            "bestscore_cur_season": 0,
+            "bestscore_prev_season": 0,
+            "star_point": 0
+        },
+        "moneyInfo": {
+            "uid": 17,
+            "jewelry": 0,
+            "gold_medal": 0,
+            "sunchip": 0,
+            "cash": 0
+        },
+        "attendanceInfo": {
+            "uid": 17,
+            "attendance_cnt": 0,
+            "recent_attendance_dt": "2024-01-22T12:15:13"
+        }
+    }
 }
 ```
 
-게임 데이터 정의 완료 후 추가 예정
 
 ---
 
@@ -308,7 +328,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-DELETE http://localhost:11500/logout
+POST http://localhost:11500/logout
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"
@@ -331,10 +351,10 @@ Content-Type: application/json
 
 ---
 
-## 게임 데이터 로드
+## 유저 데이터 로드
 
 **컨텐츠 설명**
-- 유저의 데이터를 모두 가져옵니다.
+- 유저의 정보(점수, 재화, 출석 정보)를 가져옵니다.
 
 **로직**
 1. 유저아이디, 토큰, 앱 버전, 마스터 데이터 버전을 게임 서버에 전달.
@@ -344,10 +364,6 @@ Content-Type: application/json
 
     - 점수 정보
     - 재화 정보
-    - 친구 정보
-    - 게임 정보
-    - 캐릭터, 스킨, 코스튬, 푸드 정보
-    - 우편 정보
     - 출석 정보
 
 클라이언트 → 서버 전송 데이터
@@ -365,7 +381,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-GET http://localhost:11500/DataLoad
+POST http://localhost:11500/UserDataLoad
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"
@@ -400,7 +416,65 @@ Content-Type: application/json
             "sunchip": 0,
             "cash": 0
         },
-        "friendList": [],
+        "attendanceInfo": {
+            "uid": 6,
+            "attendance_count": 0,
+            "recent_attendance_dt": "0001-01-01T00:00:00"
+        }
+    },
+    "result": 0
+}
+```
+
+---
+
+
+## 게임 데이터 로드
+
+**컨텐츠 설명**
+- 게임에 필요한 정보(보유한 게임, 캐릭터, 스킨, 코스튬, 푸드)를 가져옵니다.
+
+**로직**
+1. 유저아이디, 토큰, 앱 버전, 마스터 데이터 버전을 게임 서버에 전달.
+1. [미들웨어] 앱 버전과 마스터 데이터 버전 검증
+1. [미들웨어] 토큰 검증
+1. 유저의 정보를 전달
+
+    - 게임 정보
+    - 캐릭터, 스킨, 코스튬, 푸드 정보
+
+클라이언트 → 서버 전송 데이터
+- Header 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
+| 유저아이디               | 게임서버의 uid |
+| 토큰                | 레디스에 저장되어 있는 토큰 |
+| 앱 버전 정보        |  |
+| 게임 데이터 정보     |  |
+
+#### 요청 및 응답 예시
+
+- 요청 예시
+
+```
+POST http://localhost:11500/GameDataLoad
+
+AppVersion : "0.1",
+MasterDataVersion : "0.1"
+Uid : 1
+Token : "c9v3arfa83vaugm0rxb7txm0c!"
+
+Content-Type: application/json
+{
+}
+```
+
+- 응답 예시
+
+```
+{
+    "gameData": {
         "gameList": [
             {
                 "game_key": 1,
@@ -427,12 +501,6 @@ Content-Type: application/json
         "skinList": [],
         "costumeList": [],
         "foodList": [],
-        "mailList": [],
-        "attendanceInfo": {
-            "uid": 6,
-            "attendance_count": 0,
-            "recent_attendance_dt": "0001-01-01T00:00:00"
-        }
     },
     "result": 0
 }
@@ -440,25 +508,19 @@ Content-Type: application/json
 
 ---
 
-
-## 친구 목록 조회
+## 소셜 데이터 로드
 
 **컨텐츠 설명**
-- 자신의 친구 목록을 조회합니다.
+- 소셜 정보(친구 정보, 우편 정보)를 가져옵니다.
 
 **로직**
-1. 유저아이디, 토큰, 앱 버전, 마스터 데이터 버전, 정렬조건을 게임 서버에 전달.
+1. 유저아이디, 토큰, 앱 버전, 마스터 데이터 버전을 게임 서버에 전달.
 1. [미들웨어] 앱 버전과 마스터 데이터 버전 검증
 1. [미들웨어] 토큰 검증
-1. 유저아이디와 정렬 조건을 통해 친구 목록 조회 및 전달
-1. uid, 닉네임, 정렬조건의 점수를 전달.
-- 정렬 조건
-  
-  bestscore_ever - 역대 최고 기록 (기본값)
+1. 유저의 정보를 전달
 
-  bestscore_cur_season - 현재 시즌 기록
-
-  bestscore_prev_season - 이전 시즌 기록
+    - 친구 정보
+    - 우편 정보
 
 클라이언트 → 서버 전송 데이터
 - Header 데이터
@@ -470,19 +532,12 @@ Content-Type: application/json
 | 앱 버전 정보        |  |
 | 게임 데이터 정보     |  |
 
-- Query String 데이터
-
-| 종류                  | 설명                             |
-| --------------------- | -------------------------------- |
-| 정렬조건 | 정렬조건 (역대 최고 기록, 현재 시즌 기록, 이전 시즌 기록) - 쿼리스트링 |
-
-
 #### 요청 및 응답 예시
 
 - 요청 예시
 
 ```
-GET http://localhost:11500/friendlist?orderby=bestscore_ever
+POST http://localhost:11500/SocialDataLoad
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"
@@ -496,24 +551,118 @@ Content-Type: application/json
 
 - 응답 예시
 
+```
+{
+    "socialData": {
+        "friendList": [
+            {
+                "uid": 13,
+                "friend_uid": "17",
+                "accept_yn": false,
+                "create_dt": "2024-01-23T15:56:27"
+            },
+            {
+                "uid": 17,
+                "friend_uid": "8",
+                "accept_yn": false,
+                "create_dt": "2024-01-23T15:48:29"
+            },
+            {
+                "uid": 17,
+                "friend_uid": "14",
+                "accept_yn": true,
+                "create_dt": "2024-01-23T15:34:53"
+            }
+        ],
+        "mailList": [
+            {
+                "mailInfo": {
+                    "mail_seq": 2,
+                    "uid": 8,
+                    "mail_title": "두 번째 접속 선물!!!",
+                    "create_dt": "2024-01-18T13:58:44",
+                    "expire_dt": "2024-02-01T13:58:44",
+                    "receive_dt": "2024-01-18T16:21:12"
+                },
+                "mailItems": [
+                    {
+                        "mail_seq": 2,
+                        "reward_key": 1,
+                        "reward_qty": 100,
+                        "reward_type": "money"
+                    },
+                ]
+            },
+        ],
+    },
+    "result": 0
+}
+```
+
+---
+
+
+
+## 친구 목록 조회
+
+**컨텐츠 설명**
+- 친구 목록, 보낸 요청, 받은 요청 목록을 전달합니다.
+
+**로직**
+1. 유저아이디, 토큰, 앱 버전, 마스터 데이터 버전을 게임 서버에 전달.
+1. [미들웨어] 앱 버전과 마스터 데이터 버전 검증
+1. [미들웨어] 토큰 검증
+1. 유저아이디를 통해 친구 목록, 받은 요청, 보낸 요청 목록을 전달합니다.
+
+클라이언트 → 서버 전송 데이터
+- Header 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
+| 유저아이디               | 게임서버의 uid |
+| 토큰                | 레디스에 저장되어 있는 토큰 |
+| 앱 버전 정보        |  |
+| 게임 데이터 정보     |  |
+
+#### 요청 및 응답 예시
+
+- 요청 예시
+
+```
+POST http://localhost:11500/FriendList
+
+AppVersion : "0.1",
+MasterDataVersion : "0.1"
+Uid : 1
+Token : "c9v3arfa83vaugm0rxb7txm0c!"
+
+Content-Type: application/json
+{
+}
+```
+
+- 응답 예시
 
 ```
 {
     "friendList": [
         {
-            "uid": 1,
-            "nickName": "ksy"
-            "bestScore":4000000
+            "uid": 13,
+            "friend_uid": "17",
+            "accept_yn": false,
+            "create_dt": "2024-01-23T15:56:27"
         },
         {
-            "uid": 3,
-            "nickName": "asfev"
-            "bestScore":3000000
+            "uid": 17,
+            "friend_uid": "8",
+            "accept_yn": false,
+            "create_dt": "2024-01-23T15:48:29"
         },
         {
-            "uid": 4,
-            "nickName": "sadasfev"
-            "bestScore":2000000
+            "uid": 17,
+            "friend_uid": "14",
+            "accept_yn": true,
+            "create_dt": "2024-01-23T15:34:53"
         }
     ],
     "result": 0
@@ -532,8 +681,7 @@ Content-Type: application/json
 1. [미들웨어] 토큰 검증
 1. 해당 유저의 아이디가 없는지 확인
 1. 이미 친구신청을 보냈는지 확인
-1. 상대방이 친구신청을 보낸 상태라면 서로 친구로 등록
-1. 아니라면 친구신청을 보냄
+1. 친구 신청 보내기
 
 클라이언트 → 서버 전송 데이터
 
@@ -559,7 +707,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-POST http://localhost:11500/friendadd
+POST http://localhost:11500/FriendSendReq
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"
@@ -584,123 +732,6 @@ Content-Type: application/json
 
 ---
 
-## 친구 받은 요청 조회
-**컨텐츠 설명**
-- 자신이 받은 친구 요청을 조회합니다.
-
-**로직**
-1. 유저아이디, 토큰, 앱 버전, 마스터 데이터 버전을 게임 서버에 전달.
-1. [미들웨어] 앱 버전과 마스터 데이터 버전 검증
-1. [미들웨어] 토큰 검증
-1. 유저아이디를 통해 받은 친구 요청 조회 및 전달
-
-
-클라이언트 → 서버 전송 데이터
-
-- Header 데이터
-
-| 종류                  | 설명                             |
-| --------------------- | -------------------------------- |
-| 유저아이디               | 게임서버의 uid |
-| 토큰                | 레디스에 저장되어 있는 토큰 |
-| 앱 버전 정보        |  |
-| 게임 데이터 정보     |  |
-
-
-
-#### 요청 및 응답 예시
-
-- 요청 예시
-
-```
-GET http://localhost:11500/friendreceivedreqlist
-
-AppVersion : "0.1",
-MasterDataVersion : "0.1"
-Uid : 1
-Token : "c9v3arfa83vaugm0rxb7txm0c!"
-
-Content-Type: application/json
-
-{
-}
-```
-
-- 응답 예시
-
-
-```
-{
-    "friendRequestList": [
-        {
-            "uid": 2,
-            "nickName": "adslk"
-        }
-    ],
-    "result": 0
-}
-```
-
----
-
-## 친구 보낸 요청 조회
-**컨텐츠 설명**
-- 자신이 보낸 친구 요청을 조회합니다.
-
-**로직**
-1. 유저아이디, 토큰, 앱 버전, 마스터 데이터 버전을 게임 서버에 전달.
-1. [미들웨어] 앱 버전과 마스터 데이터 버전 검증
-1. [미들웨어] 토큰 검증
-1. 유저아이디를 통해 보낸 친구 요청 조회 및 전달
-
-
-클라이언트 → 서버 전송 데이터
-
-- Header 데이터
-
-| 종류                  | 설명                             |
-| --------------------- | -------------------------------- |
-| 유저아이디               | 게임서버의 uid |
-| 토큰                | 레디스에 저장되어 있는 토큰 |
-| 앱 버전 정보        |  |
-| 게임 데이터 정보     |  |
-
-
-
-#### 요청 및 응답 예시
-
-- 요청 예시
-
-```
-GET http://localhost:11500/friendsentreqlist
-
-AppVersion : "0.1",
-MasterDataVersion : "0.1"
-Uid : 1
-Token : "c9v3arfa83vaugm0rxb7txm0c!"
-
-Content-Type: application/json
-
-{
-}
-```
-
-- 응답 예시
-
-
-```
-{
-    "friendRequestList": [
-        {
-            "uid": 2,
-            "nickName": "adslk"
-        }
-    ],
-    "result": 0
-}
-```
-
----
 
 ## 친구 삭제
 **컨텐츠 설명**
@@ -737,7 +768,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-DELETE http://localhost:11500/friendsentreqlist
+POST http://localhost:11500/FriendDelete
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"
@@ -797,7 +828,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-DELETE http://localhost:11500/friendcancelreq
+POST http://localhost:11500/FriendCancelReq
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"
@@ -849,7 +880,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-GET http://localhost:11500/GameList
+POST http://localhost:11500/GameList
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"
@@ -1154,7 +1185,7 @@ Token : "c9v3arfa83vaugm0rxb7txm0c!"
 - 요청 예시
 
 ```
-GET http://localhost:11500/AttendanceInfo
+POST http://localhost:11500/AttendanceInfo
 
 "uid" : 1,
 "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
@@ -1273,7 +1304,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-GET http://localhost:11500/MailboxInfo
+POST http://localhost:11500/MailboxInfo
 
 "uid" : 1,
 "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
@@ -1441,7 +1472,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-DELETE http://localhost:11500/MailDELETE
+POST http://localhost:11500/MailDelete
 
 "uid" : 1,
 "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
@@ -1511,7 +1542,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-GET http://localhost:11500/Ranking
+POST http://localhost:11500/Ranking
 
 "uid" : 1,
 "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
@@ -1575,7 +1606,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-GET http://localhost:11500/UserRank
+POST http://localhost:11500/UserRank
 
 "uid" : 1,
 "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
@@ -1623,7 +1654,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-GET http://localhost:11500/CharacterList
+POST http://localhost:11500/CharacterList
 
 "uid" : 1,
 "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
@@ -1724,6 +1755,132 @@ Content-Type: application/json
 
 ```
 {
+    "result": 0
+}
+```
+
+---
+
+## 대표 캐릭터 변경
+**컨텐츠 설명**
+- 유저의 대표 캐릭터를 변경합니다.
+
+**로직**
+1. 유저아이디, 토큰, 앱 버전, 마스터 데이터 버전, 캐릭터 키를 게임 서버에 전달.
+1. [미들웨어] 앱 버전과 마스터 데이터 버전 검증
+1. [미들웨어] 토큰 검증
+1. 캐릭터 키를 통해 유저가 보유한 캐릭터인지 확인합니다.
+1. 대표 캐릭터를 변경합니다.
+
+클라이언트 → 서버 전송 데이터
+ - Header 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
+| 유저아이디               | 게임서버의 uid |
+| 토큰                | 레디스에 저장되어 있는 토큰 |
+| 앱 버전 정보        | |
+| 게임 데이터 정보     |  |
+
+ - Body 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
+| 캐릭터 키               | 캐릭터의 고유번호 |
+
+#### 요청 및 응답 예시
+
+- 요청 예시
+
+```
+POST http://localhost:11500/UserSetMainChar
+
+"uid" : 1,
+"Token" : "c9v3arfa83vaugm0rxb7txm0c!",
+"AppVersion" : "0.1",
+"MasterDataVersion" : "0.1",
+
+Content-Type: application/json
+{
+    "charKey":"1001",
+}
+```
+
+- 응답 예시
+
+```
+{
+    "result": 0
+}
+```
+
+---
+
+## 다른 사용자 조회
+**컨텐츠 설명**
+- 다른 사용자의 기본 정보를 조회합니다.
+
+**로직**
+1. 유저아이디, 토큰, 앱 버전, 마스터 데이터 버전, 유저아이디를 게임 서버에 전달.
+1. [미들웨어] 앱 버전과 마스터 데이터 버전 검증
+1. [미들웨어] 토큰 검증
+1. uid를 통해 있는 사용자인지 확인합니다.
+1. 사용자의 정보를 전달합니다.
+   - uid
+   - 닉네임
+   - 최고 점수 정보
+   - 메인 캐릭터 정보(스킨, 코스튬)
+   - 등수
+
+
+클라이언트 → 서버 전송 데이터
+ - Header 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
+| 유저아이디               | 게임서버의 uid |
+| 토큰                | 레디스에 저장되어 있는 토큰 |
+| 앱 버전 정보        | |
+| 게임 데이터 정보     |  |
+
+ - Body 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
+| 유저아이디               | uid |
+
+#### 요청 및 응답 예시
+
+- 요청 예시
+
+```
+POST http://localhost:11500/OtherUserInfo
+
+"uid" : 1,
+"Token" : "c9v3arfa83vaugm0rxb7txm0c!",
+"AppVersion" : "0.1",
+"MasterDataVersion" : "0.1",
+
+Content-Type: application/json
+{
+    "uid" : 14
+}
+```
+
+- 응답 예시
+
+```
+{
+    "userInfo": {
+        "uid": 14,
+        "nickname": "syaa1",
+        "bestscore_ever": 0,
+        "bestscore_cur_season": 0,
+        "bestscore_prev_season": 0,
+        "main_char_key": 1001,
+        "main_char_skin_key": 0,
+        "main_char_costume_json": "{\"face\": 0, \"hand\": 0, \"head\": 0}"
+    },
     "result": 0
 }
 ```
