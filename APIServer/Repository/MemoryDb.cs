@@ -41,8 +41,7 @@ public class MemoryDb : IMemoryDb
         RdbAuthUserData user = new()
         {
             Uid = uid,
-            Token = token,
-            State = UserState.Default.ToString()
+            Token = token
         };
 
         try
@@ -98,23 +97,6 @@ public class MemoryDb : IMemoryDb
 
 
         return result;
-    }
-
-    public async Task<bool> SetUserStateAsync(RdbAuthUserData user, UserState userState)
-    {
-        var key = MemoryDbKeyMaker.MakeUIDKey(user.Uid.ToString());
-        try
-        {
-            RedisString<RdbAuthUserData> redis = new(_redisConn, key, null);
-
-            user.State = userState.ToString();
-
-            return await redis.SetAsync(user) != false;
-        }
-        catch
-        {
-            return false;
-        }
     }
 
     public async Task<(bool, RdbAuthUserData)> GetUserAsync(string id)

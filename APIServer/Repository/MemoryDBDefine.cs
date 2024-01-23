@@ -1,10 +1,5 @@
 ﻿namespace APIServer.Repository;
 
-public enum UserState
-{
-    Default = 0,
-}
-
 public class RediskeyExpireTime
 {
     public const ushort NxKeyExpireSecond = 3;

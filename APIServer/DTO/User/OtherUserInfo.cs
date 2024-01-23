@@ -1,13 +1,15 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace APIServer.DTO.User
 {
-    public class UserInfoRequest
+    public class OtherUserInfoRequest
     {
+        [Required]
         public int Uid { get; set; }
     }
 
-    public class UserInfoResponse : ErrorCodeDTO
+    public class OtherUserInfoResponse : ErrorCodeDTO
     {
         public OtherUserInfo UserInfo { get; set; }
     }

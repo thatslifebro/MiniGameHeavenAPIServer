@@ -8,7 +8,6 @@ public class RdbAuthUserData
 {
     public int Uid { get; set; } = 0;
     public string Token { get; set; } = "";
-    public string State { get; set; } = ""; // enum UserState    
 }
 
 public class RdbUserScoreData

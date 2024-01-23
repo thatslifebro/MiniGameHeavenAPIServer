@@ -1,13 +1,17 @@
 ﻿
 using APIServer.Models;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace APIServer.DTO.Game;
 
 public class GameSaveRequest
 {
+    [Required]
     public int GameKey { get; set; }
+    [Required]
     public int Score { get; set; }
+    [Required]
     public List<UsedFoodData> Foods { get; set; }
 }
 

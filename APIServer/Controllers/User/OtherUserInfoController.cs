@@ -27,9 +27,9 @@ public class OtherUserInfo : ControllerBase
     /// </summary>
 
     [HttpPost]
-    public async Task<UserInfoResponse> GetOtherUserInfo(UserInfoRequest request)
+    public async Task<OtherUserInfoResponse> GetOtherUserInfo(OtherUserInfoRequest request)
     {
-        UserInfoResponse response = new();
+        OtherUserInfoResponse response = new();
 
         (response.Result, response.UserInfo) = await _userService.GetOtherUserInfo(request.Uid);
 

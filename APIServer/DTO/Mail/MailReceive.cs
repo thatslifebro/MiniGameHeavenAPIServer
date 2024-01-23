@@ -1,12 +1,14 @@
 ﻿using APIServer.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace APIServer.DTO.Mail
 {
 
     public class MailReceiveRequest
     {
+        [Required]
         public int MailSeq { get; set; }
     }
 

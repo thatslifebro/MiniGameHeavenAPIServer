@@ -7,6 +7,7 @@ namespace APIServer.DTO.Game;
 
 public class GameInfoRequest
 {
+    [Required]
     public int GameKey { get; set; }
 }
 
