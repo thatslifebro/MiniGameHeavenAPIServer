@@ -28,7 +28,7 @@ public class FriendCancelReq : ControllerBase
     /// 친구 요청 취소 API
     /// 보낸 친구 요청을 취소합니다.
     /// </summary>
-    [HttpDelete]
+    [HttpPost]
     public async Task<FriendDeleteResponse> CancelFriendReq([FromHeader] HeaderDTO header, FriendDeleteRequest request)
     {
         FriendDeleteResponse response = new();

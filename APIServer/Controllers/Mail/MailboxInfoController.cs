@@ -25,7 +25,7 @@ public class MailboxInfo : ControllerBase
     /// 메일함 정보 API
     /// 유저의 메일함 정보를 가져옵니다.
     /// </summary>
-    [HttpGet]
+    [HttpPost]
     public async Task<MailboxInfoResponse> GetMailboxInfo([FromHeader] HeaderDTO header)
     {
         MailboxInfoResponse response = new();

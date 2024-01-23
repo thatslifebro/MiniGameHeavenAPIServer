@@ -25,7 +25,7 @@ public class AttendanceInfo : ControllerBase
     /// 출석 정보 API </br>
     /// 유저의 출석 정보(누적 출석일, 최근 출석 일시)를 전달합니다.
     /// </summary>
-    [HttpGet]
+    [HttpPost]
     public async Task<AttendanceInfoResponse> GetAttendanceInfo([FromHeader] HeaderDTO header)
     {
         AttendanceInfoResponse response = new();

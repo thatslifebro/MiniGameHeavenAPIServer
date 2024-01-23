@@ -25,7 +25,7 @@ public class Logout : ControllerBase
     /// 로그아웃 API </br>
     /// 해당 유저의 토큰을 삭제합니다.
     /// </summary>
-    [HttpDelete]
+    [HttpPost]
     public async Task<LogoutResponse> Post([FromHeader] HeaderDTO request)
     {
         LogoutResponse response = new();

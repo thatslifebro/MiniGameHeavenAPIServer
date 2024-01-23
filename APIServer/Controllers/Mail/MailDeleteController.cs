@@ -25,7 +25,7 @@ public class MailDelete : ControllerBase
     /// 메일 삭제 API
     /// 메일함에서 메일을 삭제합니다.
     /// </summary>
-    [HttpDelete]
+    [HttpPost]
     public async Task<MailDeleteResponse> GetMailDelete([FromHeader] HeaderDTO header, MailDeleteRequest request)
     {
         MailDeleteResponse response = new();

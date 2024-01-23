@@ -23,7 +23,7 @@ public class FriendDelete : ControllerBase
     /// 친구를 삭제하는 API
     /// 서로 친구를 삭제합니다.
     /// </summary>
-    [HttpDelete]
+    [HttpPost]
     public async Task<FriendDeleteResponse> DeleteFriend([FromHeader] HeaderDTO header, FriendDeleteRequest request)
     {
         FriendDeleteResponse response = new();
