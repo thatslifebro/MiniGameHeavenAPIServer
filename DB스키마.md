@@ -376,7 +376,7 @@ CREATE TABLE master_skill
     `skill_key`         INT         NOT NULL    COMMENT '스킬 키', 
     `act_prob_percent`  INT         NOT NULL    COMMENT '발동 확률 퍼센트', 
     `create_dt`         DATETIME    NOT NULL    COMMENT '생성 일시', 
-    `char_key`          INT         NOR NULL    DEFAULT 0 COMMENT '캐릭터 키', 
+    `char_key`          INT         NOT NULL    DEFAULT 0 COMMENT '캐릭터 키', 
      PRIMARY KEY (skill_key)
 );
 -- Foreign Key 설정 SQL - master_skill(char_key) -> master_char(char_key)
