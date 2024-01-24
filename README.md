@@ -21,6 +21,9 @@
 | [로그아웃]								       | ✅        |
 
 **데이터 로드**
+
+| 기능                                         | 완료 여부 |
+| -------------------------------------------- | --------- |
 | [유저 데이터 로드]	                		 | ✅        |
 | [게임 데이터 로드]	                		 | ✅        |
 | [소셜 데이터 로드]	                		 | ✅        |
@@ -123,11 +126,9 @@
 - 확률을 통해 타입을 정하고, 그 타입의 아이템들 중 하나를 뽑는 방식으로 구현.
 
 ---
----
----
+
 
 ## 하이브 로그인
-(LoginHive)
 
 **컨텐츠 설명**
 - 하이브에 로그인 하여 고유번호와 토큰을 받습니다.
@@ -150,7 +151,7 @@
 - 요청 예시
 
 ```
-POST http://localhost:11502/loginhive
+POST http://localhost:11502/LoginHive
 Content-Type: application/json
 
 {
@@ -195,7 +196,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-POST http://localhost:11502/verifytoken
+POST http://localhost:11502/VerifyToken
 Content-Type: application/json
 
 {
@@ -223,10 +224,11 @@ Content-Type: application/json
 1. 고유번호와 토큰, 앱 버전, 마스터 데이터 버전을 게임 서버에 전달.
 1. [미들웨어] 앱 버전과 마스터 데이터 버전 검증
 1. 게임 서버가 고유번호와 토큰을 하이브 서버에 검증.
-1. 게임 서버가 새로운 토큰을 생성하여 클라이언트에 전달.
-1. 게임 서버가 Redis에 토큰 저장
-1. 유저 데이터 로드 
+1. 기존 유저가 아니라면 유저 데이터 생성
+1. 게임 서버가 새로운 토큰을 생성 및 Redis 저장 
 1. 최근 로그인 시간 갱신
+1. 유저 데이터 로드
+1. uid, 토큰, 유저데이터 전달
 
 클라이언트 → 서버 전송 데이터
 - Header 데이터
@@ -249,7 +251,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-POST http://localhost:11500/login
+POST http://localhost:11500/Login
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"
@@ -328,7 +330,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-POST http://localhost:11500/logout
+POST http://localhost:11500/Logout
 
 AppVersion : "0.1",
 MasterDataVersion : "0.1"
@@ -341,7 +343,6 @@ Content-Type: application/json
 ```
 
 - 응답 예시
-
 
 ```
 {
@@ -733,10 +734,70 @@ Content-Type: application/json
 
 ---
 
+## 친구 요청 수락
+**컨텐츠 설명**
+- 받은 친구 요청에 대해 수락합니다.
+
+**로직**
+1. 유저아이디, 토큰, 앱 버전, 마스터 데이터 버전, 친구 아이디를 게임 서버에 전달.
+1. [미들웨어] 앱 버전과 마스터 데이터 버전 검증
+1. [미들웨어] 토큰 검증
+1. 해당 유저의 아이디가 없는지 확인
+1. 상대가 친구 요청을 보냈는지, 이미 친구인지 확인
+1. 친구 요청 수락
+
+클라이언트 → 서버 전송 데이터
+
+- Header 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
+| 유저아이디               | 게임서버의 uid |
+| 토큰                | 레디스에 저장되어 있는 토큰 |
+| 앱 버전 정보        |  |
+| 게임 데이터 정보     |  |
+
+- Body 데이터
+
+| 종류                  | 설명                             |
+| --------------------- | -------------------------------- |
+| 친구 아이디 | 친구 요청을 보낸 유저의 아이디 |
+
+
+
+#### 요청 및 응답 예시
+
+- 요청 예시
+
+```
+POST http://localhost:11500/FriendAccept
+
+AppVersion : "0.1",
+MasterDataVersion : "0.1"
+Uid : 1
+Token : "c9v3arfa83vaugm0rxb7txm0c!"
+
+Content-Type: application/json
+
+{
+    "friendId" : 2
+}
+```
+
+- 응답 예시
+
+
+```
+{
+    "result": 0
+}
+```
+
+---
 
 ## 친구 삭제
 **컨텐츠 설명**
-- 한명의 친구를 삭제합니다.
+- 친구를 삭제합니다.
 
 **로직**
 1. 유저아이디, 토큰, 앱 버전, 마스터 데이터 버전, 친구 아이디를 게임 서버에 전달.
@@ -761,7 +822,7 @@ Content-Type: application/json
 
 | 종류                  | 설명                             |
 | --------------------- | -------------------------------- |
-| 친구 아이디 | 친구로 등록할 유저의 아이디 |
+| 친구 아이디 | 친구 삭제할 유저의 아이디 |
 
 
 #### 요청 및 응답 예시
@@ -821,7 +882,7 @@ Content-Type: application/json
 
 | 종류                  | 설명                             |
 | --------------------- | -------------------------------- |
-| 친구 아이디 | 친구로 등록할 유저의 아이디 |
+| 친구 아이디 | 친구 요청한 유저의 아이디 |
 
 
 #### 요청 및 응답 예시
@@ -1083,7 +1144,13 @@ Token : "c9v3arfa83vaugm0rxb7txm0c!"
 
 {
     "gameKey": 5,
-    "score" : 1000
+    "score" : 1000,
+    "foods" :[
+        {
+            "foodKey" : 4001,
+            "foodQty" : 7
+        }
+    ]
 }
 ```
 
@@ -1540,7 +1607,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-POST http://localhost:11500/Ranking
+POST http://localhost:11500/TopRanking
 
 "uid" : 1,
 "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
