@@ -32,7 +32,7 @@ public class UserRank : ControllerBase
 
         (response.Result, response.Rank) = await _memoryDb.GetUserRankAsync(request.Uid);
 
-        _logger.ZLogInformation($"[GetUserRank] Uid:{request.Uid}, Result:{response.Result}, Rank:{response.Rank}");
+        _logger.ZLogInformation($"[UserRank] Uid:{request.Uid}, Result:{response.Result}, Rank:{response.Rank}");
         return response;
     }
 }

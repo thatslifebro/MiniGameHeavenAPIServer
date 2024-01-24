@@ -1,5 +1,4 @@
-﻿using APIServer.Controllers.Auth;
-using APIServer.Models.GameDB;
+﻿using APIServer.Models.GameDB;
 using APIServer.Repository.Interfaces;
 using APIServer.Servicies.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -16,12 +15,10 @@ public class AuthService : IAuthService
 {
     readonly ILogger<AuthService> _logger;
     readonly IGameDb _gameDb;
-    readonly IMemoryDb _memoryDb;
     string _hiveServerAPIAddress;
 
-    public AuthService(ILogger<AuthService> logger, IConfiguration configuration, IGameDb gameDb, IMemoryDb memoryDb)
+    public AuthService(ILogger<AuthService> logger, IConfiguration configuration, IGameDb gameDb)
     {
-        _memoryDb = memoryDb;
         _gameDb = gameDb;
         _logger = logger;
         _hiveServerAPIAddress = configuration.GetSection("HiveServerAddress").Value + "/verifytoken";

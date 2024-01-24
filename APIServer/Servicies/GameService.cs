@@ -1,5 +1,4 @@
 ﻿using APIServer.DTO.Game;
-using APIServer.Models;
 using APIServer.Models.GameDB;
 using APIServer.Repository.Interfaces;
 using APIServer.Servicies.Interfaces;
@@ -38,7 +37,7 @@ public class GameService :IGameService
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                $"[Game.GetGameList] ErrorCode: {ErrorCode.MiniGameListFailException}, Uid: {uid}");
+                $"[Game.GetMiniGameList] ErrorCode: {ErrorCode.MiniGameListFailException}, Uid: {uid}");
             return (ErrorCode.MiniGameListFailException, null);
         }
     }
@@ -50,7 +49,7 @@ public class GameService :IGameService
             var gameInfo = await _gameDb.GetMiniGameInfo(uid, gameKey);
             if (gameInfo != null)
             {
-                _logger.ZLogDebug($"[Game.GameUnlock] ErrorCode: { ErrorCode.MiniGameUnlockFailAlreadyUnlocked}, Uid: { uid}");
+                _logger.ZLogDebug($"[Game.UnlockMiniGame] ErrorCode: { ErrorCode.MiniGameUnlockFailAlreadyUnlocked}, Uid: { uid}");
                 return ErrorCode.MiniGameUnlockFailAlreadyUnlocked;
             }
 
@@ -58,7 +57,7 @@ public class GameService :IGameService
             if(rowCount != 1)
             {
                 _logger.ZLogDebug(
-                $"[Game.GameUnlock] ErrorCode: {ErrorCode.MiniGameUnlockFailInsert}, Uid: {uid}");
+                $"[Game.UnlockMiniGame] ErrorCode: {ErrorCode.MiniGameUnlockFailInsert}, Uid: {uid}");
                 return ErrorCode.MiniGameUnlockFailInsert;
             }
 
@@ -67,7 +66,7 @@ public class GameService :IGameService
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                $"[Game.GameUnlock] ErrorCode: {ErrorCode.MiniGameUnlockFailException}, Uid: {uid}");
+                $"[Game.UnlockMiniGame] ErrorCode: {ErrorCode.MiniGameUnlockFailException}, Uid: {uid}");
             return ErrorCode.MiniGameUnlockFailException;
         }
     }
@@ -81,7 +80,7 @@ public class GameService :IGameService
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                $"[Game.GetGameList] ErrorCode: {ErrorCode.MiniGameInfoFailException}, Uid: {uid}");
+                $"[Game.GetMiniGameInfo] ErrorCode: {ErrorCode.MiniGameInfoFailException}, Uid: {uid}");
             return (ErrorCode.MiniGameInfoFailException, null);
         }
     }
@@ -94,7 +93,7 @@ public class GameService :IGameService
 
             if (gameInfo == null)
             {
-                _logger.ZLogError($"[Game.GameSave] ErrorCode: {ErrorCode.MiniGameSaveFailGameLocked}, Uid: {uid}");
+                _logger.ZLogError($"[Game.SaveMiniGame] ErrorCode: {ErrorCode.MiniGameSaveFailGameLocked}, Uid: {uid}");
                 return ErrorCode.MiniGameSaveFailGameLocked;
             }
 
@@ -131,7 +130,7 @@ public class GameService :IGameService
                     rowCount = await _gameDb.FoodDecrement(uid, food.FoodKey, food.FoodQty);
                     if (rowCount != 1)
                     {
-                        _logger.ZLogError($"[Game.GameSave] ErrorCode: {ErrorCode.MiniGameSaveFailFoodDecrement}, Uid: {uid}");
+                        _logger.ZLogError($"[Game.SaveMiniGame] ErrorCode: {ErrorCode.MiniGameSaveFailFoodDecrement}, Uid: {uid}");
                         return ErrorCode.MiniGameSaveFailFoodDecrement;
                     }
                 }
@@ -142,7 +141,7 @@ public class GameService :IGameService
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                               $"[Game.GameSave] ErrorCode: {ErrorCode.MiniGameSaveFailException}, Uid: {uid}");
+                               $"[Game.SaveMiniGame] ErrorCode: {ErrorCode.MiniGameSaveFailException}, Uid: {uid}");
             return ErrorCode.MiniGameSaveFailException;
         }
     }
@@ -244,7 +243,7 @@ public class GameService :IGameService
             var rowCount = await _gameDb.UpdateMiniGamePlayChar(uid, gameKey, charKey);
             if (rowCount != 1)
             {
-                _logger.ZLogError($"[Game.SetPlayChar] ErrorCode: {ErrorCode.MiniGameSetPlayCharFailUpdate}, Uid: {uid}");
+                _logger.ZLogError($"[Game.SetMiniGamePlayChar] ErrorCode: {ErrorCode.MiniGameSetPlayCharFailUpdate}, Uid: {uid}");
                 return ErrorCode.MiniGameSetPlayCharFailUpdate;
             }
 
@@ -253,7 +252,7 @@ public class GameService :IGameService
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                               $"[Game.SetPlayChar] ErrorCode: {ErrorCode.MiniGameSetPlayCharFailException}, Uid: {uid}");
+                               $"[Game.SetMiniGamePlayChar] ErrorCode: {ErrorCode.MiniGameSetPlayCharFailException}, Uid: {uid}");
             return ErrorCode.MiniGameSetPlayCharFailException;
         }
     }

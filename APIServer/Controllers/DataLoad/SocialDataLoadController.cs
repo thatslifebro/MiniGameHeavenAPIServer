@@ -32,7 +32,7 @@ public class SocialDataLoad : ControllerBase
 
         (response.Result, response.SocialData) = await _dataLoadService.LoadSocialData(header.Uid);
 
-        _logger.ZLogInformation($"[DataLoad] Uid : {header.Uid}");
+        _logger.ZLogInformation($"[SocialDataLoad] Uid : {header.Uid}");
         return response;
     }
 }

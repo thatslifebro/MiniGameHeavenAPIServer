@@ -25,7 +25,6 @@ public class MasterDb : IMasterDb
     readonly IMemoryDb _memoryDb;
     
     public VersionDAO _version { get; set; }
-
     public List<AttendanceRewardData> _attendanceRewardList { get; set; }
     public List<CharacterData> _characterList { get; set; }
     public List<SkinData> _skinList { get; set; }

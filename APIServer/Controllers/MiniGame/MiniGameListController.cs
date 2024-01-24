@@ -22,8 +22,8 @@ public class MiniGameList : ControllerBase
     }
 
     /// <summary>
-    /// 보유 게임 정보 조회 API
-    /// 보유한 게임의 목록과 정보를 조회합니다.
+    /// 보유 미니게임 정보 조회 API
+    /// 보유한 미니게임의 목록과 정보를 조회합니다.
     /// </summary>
     [HttpPost]
     public async Task<MiniGameListResponse> GetMiniGameList([FromHeader] HeaderDTO header)
@@ -32,7 +32,7 @@ public class MiniGameList : ControllerBase
 
         (response.Result, response.MiniGameList) = await _gameService.GetMiniGameList(header.Uid);
 
-        _logger.ZLogInformation($"[GameList] Uid : {header.Uid}");
+        _logger.ZLogInformation($"[MiniGameList] Uid : {header.Uid}");
         return response;
     }
 }

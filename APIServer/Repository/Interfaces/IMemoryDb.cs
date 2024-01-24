@@ -1,6 +1,5 @@
 ﻿using APIServer.DTO.Ranking;
 using APIServer.Models;
-using CloudStructures.Structures;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

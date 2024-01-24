@@ -5,13 +5,8 @@ using APIServer.Repository.Interfaces;
 using APIServer.Servicies.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Net.Http.Headers;
-using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ZLogger;
 
@@ -115,7 +110,7 @@ namespace APIServer.Servicies
                 {
                     if (await _gameDb.GetCostumeInfo(uid, costumeInfo.Head) == null)
                     {
-                        return ErrorCode.SetCharCostumeFailHeadNotExist;
+                        return ErrorCode.CharSetCostumeFailHeadNotExist;
                     }
                 }
 
@@ -123,7 +118,7 @@ namespace APIServer.Servicies
                 {
                     if (await _gameDb.GetCostumeInfo(uid, costumeInfo.Face) == null)
                     {
-                        return ErrorCode.SetCharCostumeFailFaceNotExist;
+                        return ErrorCode.CharSetCostumeFailFaceNotExist;
                     }
                 }
 
@@ -131,7 +126,7 @@ namespace APIServer.Servicies
                 {
                     if (await _gameDb.GetCostumeInfo(uid, costumeInfo.Hand) == null)
                     {
-                        return ErrorCode.SetCharCostumeFailHandNotExist;
+                        return ErrorCode.CharSetCostumeFailHandNotExist;
                     }
                 }
 

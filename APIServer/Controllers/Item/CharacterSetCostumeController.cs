@@ -21,8 +21,12 @@ public class CharacterSetCostume : ControllerBase
         _itemService = itemService;
     }
 
+    /// <summary>
+    /// 캐릭터 코스튬 변경 API
+    /// 캐릭터의 코스튬을 변경합니다.
+    /// </summary>
     [HttpPost]
-    public async Task<CharacterSetCostumeResponse> PostCharacterSetCostume([FromHeader] HeaderDTO header, [FromBody] CharacterSetCostumeRequest request)
+    public async Task<CharacterSetCostumeResponse> SetCharCostume([FromHeader] HeaderDTO header, [FromBody] CharacterSetCostumeRequest request)
     {
         CharacterSetCostumeResponse response = new();
 

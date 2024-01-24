@@ -26,7 +26,7 @@ public class UserSetMainChar : ControllerBase
     /// 유저의 메인 캐릭터를 설정합니다.
     /// </summary>
     [HttpPost]
-    public async Task<UserSetMainCharResponse> SetUserMainChar([FromHeader] HeaderDTO header, [FromBody] UserSetMainCharRequest request)
+    public async Task<UserSetMainCharResponse> SetUserMainChar([FromHeader] HeaderDTO header, UserSetMainCharRequest request)
     {
         UserSetMainCharResponse response = new();
 

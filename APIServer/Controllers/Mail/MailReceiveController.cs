@@ -23,16 +23,16 @@ public class MailReceive : ControllerBase
 
     /// <summary>
     /// 메일 보상 수령 API
-    /// 메일에 포함된 보상 모두를 수령합니다.
+    /// 메일에 포함된 보상을 모두 수령하고, 수령한 보상을 반환합니다.
     /// </summary>
     [HttpPost]
-    public async Task<MailReceiveResponse> GetMailReceive([FromHeader] HeaderDTO header, MailReceiveRequest request)
+    public async Task<MailReceiveResponse> ReceiveMail([FromHeader] HeaderDTO header, MailReceiveRequest request)
     {
         MailReceiveResponse response = new();
 
         (response.Result, response.Rewards) = await _mailService.ReceiveMail(header.Uid, request.MailSeq);
 
-        _logger.ZLogInformation($"[MailboxInfo] Uid : {header.Uid}");
+        _logger.ZLogInformation($"[MailReceive] Uid : {header.Uid}");
         return response;
     }
 }

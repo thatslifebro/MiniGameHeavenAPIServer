@@ -68,7 +68,7 @@ namespace APIServer.Servicies
             catch (Exception e)
             {
                 _logger.ZLogError(e,
-                                       $"[User.SetMainChar] ErrorCode: {ErrorCode.SetMainCharFailException}, Uid: {uid}, CharKey: {charKey}");
+                    $"[User.SetMainChar] ErrorCode: {ErrorCode.SetMainCharFailException}, Uid: {uid}, CharKey: {charKey}");
                 return ErrorCode.SetMainCharFailException;
             }
         }
@@ -111,7 +111,7 @@ namespace APIServer.Servicies
             catch (Exception e)
             {
                 _logger.ZLogError(e,
-                                       $"[User.GetOtherUserInfo] ErrorCode: {ErrorCode.GetOtherUserInfoFailException}, Uid: {uid}");
+                    $"[User.GetOtherUserInfo] ErrorCode: {ErrorCode.GetOtherUserInfoFailException}, Uid: {uid}");
                 return (ErrorCode.GetOtherUserInfoFailException, null);
             }
         }

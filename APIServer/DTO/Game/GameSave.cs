@@ -11,7 +11,6 @@ public class MiniGameSaveRequest
     public int GameKey { get; set; }
     [Required]
     public int Score { get; set; }
-    [Required]
     public List<UsedFoodData> Foods { get; set; }
 }
 

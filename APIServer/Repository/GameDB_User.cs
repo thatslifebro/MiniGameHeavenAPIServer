@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
-using APIServer.DTO.User;
 using APIServer.Models;
 using APIServer.Models.GameDB;
 using APIServer.Repository.Interfaces;
-using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySqlConnector;
@@ -70,13 +67,6 @@ public partial class GameDb : IGameDb
                                     create_dt = DateTime.Now,
                                     recent_login_dt = DateTime.Now,
                                 }, transaction);
-    }
-
-    public async Task<int> DeleteAccount(int uid)
-    {
-        return await _queryFactory.Query("user")
-                                .Where("uid", uid)
-                                .DeleteAsync();
     }
 
     public async Task<int> UpdateRecentLogin(int uid)

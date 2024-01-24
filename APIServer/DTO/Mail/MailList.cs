@@ -6,7 +6,7 @@ namespace APIServer.DTO.Mail
 {
     public class MailboxInfoResponse : ErrorCodeDTO
     {
-        public List<UserMailInfo> MailInfo { get; set; }
+        public List<UserMailInfo> MailList { get; set; }
     }
 
 }

@@ -1,5 +1,4 @@
-﻿using APIServer.DTO;
-using APIServer.DTO.User;
+﻿using APIServer.DTO.User;
 using APIServer.Servicies.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -23,9 +22,8 @@ public class OtherUserInfo : ControllerBase
 
     /// <summary>
     /// 다른 유저 조회 API
-    /// 다른 유저의 정보를 uid를 통해 조회합니다.
+    /// 다른 유저의 정보(uid, 닉네임, 점수 정보, 대표 캐릭터 정보, 등수)를 조회합니다.
     /// </summary>
-
     [HttpPost]
     public async Task<OtherUserInfoResponse> GetOtherUserInfo(OtherUserInfoRequest request)
     {
@@ -33,7 +31,7 @@ public class OtherUserInfo : ControllerBase
 
         (response.Result, response.UserInfo) = await _userService.GetOtherUserInfo(request.Uid);
 
-        _logger.ZLogInformation($"[UserInfo] Uid : {request.Uid}");
+        _logger.ZLogInformation($"[OtherUserInfo] Uid : {request.Uid}");
         return response;
     }
 }

@@ -23,7 +23,7 @@ public class Logout : ControllerBase
 
     /// <summary>
     /// 로그아웃 API </br>
-    /// 해당 유저의 토큰을 삭제합니다.
+    /// 해당 유저의 토큰을 Redis에서 삭제합니다.
     /// </summary>
     [HttpPost]
     public async Task<LogoutResponse> DeleteUserToken([FromHeader] HeaderDTO request)

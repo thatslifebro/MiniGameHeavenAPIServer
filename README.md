@@ -1302,7 +1302,7 @@ Content-Type: application/json
 - 요청 예시
 
 ```
-POST http://localhost:11500/MailboxInfo
+POST http://localhost:11500/MailList
 
 "uid" : 1,
 "Token" : "c9v3arfa83vaugm0rxb7txm0c!",
@@ -1318,7 +1318,7 @@ Content-Type: application/json
 
 ```
 {
-    "mailInfo": [
+    "mailList": [
         {
             "mailInfo": {
                 "mail_seq": 2,

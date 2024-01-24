@@ -22,8 +22,8 @@ public class MiniGameSetPlayChar : ControllerBase
     }
 
     /// <summary>
-    /// 게임 플레이 캐릭터 설정 API
-    /// 게임 플레이에 사용할 캐릭터를 설정합니다.
+    /// 미니게임 플레이 캐릭터 설정 API
+    /// 미니게임 플레이에 사용할 캐릭터를 설정합니다.
     /// </summary>
     [HttpPost]
     public async Task<MiniGameSetPlayCharResponse> SetMiniGamePlayChar([FromHeader] HeaderDTO header, MiniGameSetPlayCharRequest request)
@@ -32,7 +32,7 @@ public class MiniGameSetPlayChar : ControllerBase
 
         response.Result = await _gameService.SetMiniGamePlayChar(header.Uid, request.GameKey, request.CharKey);
 
-        _logger.ZLogInformation($"[GameSetPlayChar] Uid : {header.Uid}, CharKey : {request.CharKey}");
+        _logger.ZLogInformation($"[MiniGameSetPlayChar] Uid : {header.Uid}, CharKey : {request.CharKey}");
         return response;
     }
 

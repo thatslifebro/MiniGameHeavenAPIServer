@@ -22,17 +22,17 @@ public class MiniGameUnlock : ControllerBase
     }
 
     ///<summary>
-    /// 게임 잠금 해제 API
-    /// 게임을 잠금 해제합니다.
+    /// 미니게임 잠금 해제 API
+    /// 미니게임을 잠금 해제합니다.
     /// </summary>
     [HttpPost]
     public async Task<MiniGameUnlockResponse> UnlockMiniGame([FromHeader] HeaderDTO header, MiniGameUnlockRequest request)
     {
-    MiniGameUnlockResponse response = new();
+        MiniGameUnlockResponse response = new();
 
-    response.Result = await _gameService.UnlockMiniGame(header.Uid, request.GameKey);
+        response.Result = await _gameService.UnlockMiniGame(header.Uid, request.GameKey);
     
-    _logger.ZLogInformation($"[GameUnlock] Uid : {header.Uid}, GameId : {request.GameKey}");
+        _logger.ZLogInformation($"[MiniGameUnlock] Uid : {header.Uid}, GameKey : {request.GameKey}");
         return response;
     }
 }

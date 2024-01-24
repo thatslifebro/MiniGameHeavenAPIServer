@@ -42,7 +42,7 @@ public class FriendSendReq : ControllerBase
             return response;
         }
 
-        _logger.ZLogInformation($"[SendFriendReq] Uid : {header.Uid}");
+        _logger.ZLogInformation($"[FriendSendReq] Uid : {header.Uid}");
         return response;
 
     }

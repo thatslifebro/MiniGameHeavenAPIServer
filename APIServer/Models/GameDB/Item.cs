@@ -1,6 +1,4 @@
-﻿using MySqlConnector;
-using System;
-using System.Text.Json.Nodes;
+﻿using System;
 
 namespace APIServer.Models.GameDB
 {

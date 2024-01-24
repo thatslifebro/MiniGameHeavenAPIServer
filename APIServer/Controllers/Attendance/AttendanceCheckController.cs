@@ -23,7 +23,7 @@ public class AttendanceCheck : ControllerBase
 
     /// <summary>
     /// 출석 체크 API </br>
-    /// 출석 체크를 합니다.
+    /// 출석 체크를 하고 받은 보상을 반환합니다.
     /// </summary>
     [HttpPost]
     public async Task<AttendanceCheckResponse> CheckAttendance([FromHeader] HeaderDTO header)

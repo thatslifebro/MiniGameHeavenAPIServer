@@ -48,10 +48,10 @@ public enum ErrorCode : UInt16
     InitNewUserGameDataFailAttendance = 2029,
 
     // Friend 2100
-    FriendAddFailUserNotExist = 2101,
-    FriendAddFailInsert = 2102,
-    FriendAddFailException = 2103,
-    FriendAddFailAlreadyFriend = 2104,
+    FriendSendReqFailUserNotExist = 2101,
+    FriendSendReqFailInsert = 2102,
+    FriendSendReqFailException = 2103,
+    FriendSendReqFailAlreadyExist = 2104,
     SendFriendReqFailSameUid = 2105,
     FriendGetListFailOrderby = 2106,
     FriendGetListFailException = 2107,
@@ -68,6 +68,7 @@ public enum ErrorCode : UInt16
     AcceptFriendRequestFailUserNotExist = 2118,
     AcceptFriendRequestFailAlreadyFriend = 2119,
     AcceptFriendRequestFailException = 2120,
+    FriendSendReqFailNeedAccept = 2121,
 
     // Game 2200
     MiniGameListFailException = 2201,
@@ -107,9 +108,9 @@ public enum ErrorCode : UInt16
     CostumeReceiveFailIncrementCharCnt = 3033,
     CostumeReceiveFailException = 3034,
     CostumeListFailException = 3035,
-    SetCharCostumeFailHeadNotExist= 3036,
-    SetCharCostumeFailFaceNotExist = 3037,
-    SetCharCostumeFailHandNotExist = 3038,
+    CharSetCostumeFailHeadNotExist= 3036,
+    CharSetCostumeFailFaceNotExist = 3037,
+    CharSetCostumeFailHandNotExist = 3038,
 
     FoodReceiveFailInsert = 3041,
     FoodReceiveFailIncrementFoodQty = 3042,
@@ -149,6 +150,7 @@ public enum ErrorCode : UInt16
     MailDeleteFailDeleteMailReward = 8008,
     MailDeleteFailException = 8009,
     MailReceiveFailNotMailOwner = 8010,
+    MailReceiveRewardsFailException = 8011,
 
     // Attendance
     AttendanceInfoFailException = 9001,

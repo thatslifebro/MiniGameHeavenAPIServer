@@ -3,7 +3,6 @@ using APIServer.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -156,7 +155,6 @@ public class CheckUserAuthAndLoadUserData
         }
         return !isOk;
     }
-
 
     class MiddlewareResponse
     {

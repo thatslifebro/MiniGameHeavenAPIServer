@@ -4,14 +4,10 @@ using APIServer.Repository.Interfaces;
 using APIServer.Services;
 using CloudStructures;
 using CloudStructures.Structures;
-using Dapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using ZLogger;
 
@@ -279,5 +275,4 @@ public class MemoryDb : IMemoryDb
             return (ErrorCode.GetUserRankFailException, 0);
         }
     }
-
 }

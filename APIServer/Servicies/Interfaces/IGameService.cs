@@ -1,5 +1,4 @@
 ﻿using APIServer.DTO.Game;
-using APIServer.Models;
 using APIServer.Models.GameDB;
 using System;
 using System.Collections.Generic;

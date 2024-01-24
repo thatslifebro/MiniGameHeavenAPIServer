@@ -22,17 +22,17 @@ public class MiniGameSave : ControllerBase
     }
 
     /// <summary>
-    /// 게임 플레이 정보 저장 API
-    /// 게임 플레이 정보(아이템 사용량, 점수, 획득 보상 등)를 저장합니다.
+    /// 미니게임 플레이 정보 저장 API
+    /// 미니게임 플레이 정보(아이템 사용량, 점수, 획득 보상 등)를 저장합니다.
     /// </summary>
     [HttpPost]
     public async Task<MiniGameSaveResponse> SaveMiniGame([FromHeader] HeaderDTO header, MiniGameSaveRequest request)
     {
-     MiniGameSaveResponse response = new();
+        MiniGameSaveResponse response = new();
 
-    response.Result = await _gameService.SaveMiniGame(header.Uid, request.GameKey, request.Score, request.Foods);
+        response.Result = await _gameService.SaveMiniGame(header.Uid, request.GameKey, request.Score, request.Foods);
     
-    _logger.ZLogInformation($"[GameSave] Uid : {header.Uid}, GameId : {request.GameKey}, Score : {request.Score}");
+        _logger.ZLogInformation($"[MiniGameSave] Uid : {header.Uid}, GameKey : {request.GameKey}, Score : {request.Score}");
         return response;
     }
 }

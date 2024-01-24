@@ -21,8 +21,8 @@ public class TopRanking : ControllerBase
     }
 
     /// <summary>
-    /// 랭킹 조회 API
-    /// 상위 랭킹을 조회합니다.
+    /// 상위 랭킹 조회 API
+    /// 상위 100명의 랭킹을 조회합니다.
     /// </summary>
     [HttpPost]
     public async Task<RankingResponse> GetTopRanking()
@@ -31,7 +31,7 @@ public class TopRanking : ControllerBase
     
         (response.Result, response.RankingData) = await _memoryDb.GetTopRanking();
 
-        _logger.ZLogInformation($"[Ranking] GetRanking");
+        _logger.ZLogInformation($"[TopRanking] GetTopRanking");
         return response;
     }
 }

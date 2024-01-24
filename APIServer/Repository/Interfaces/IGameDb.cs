@@ -13,7 +13,6 @@ public interface IGameDb
     public Task<GdbUserInfo> GetUserByUid(int uid);
     public Task<GdbUserInfo> GetUserByNickname(string nickname, IDbTransaction transaction);
     public Task<int> InsertUser(Int64 playerId, string nickname, IDbTransaction transaction);
-    public Task<int> DeleteAccount(int uid);
     public Task<int> UpdateRecentLogin(int uid);
     public Task<GdbFriendInfo> GetFriendReqInfo(int uid, int friendUid);
     public Task<int> InsertFriendReq(int uid, int friendUid, bool accept = false);

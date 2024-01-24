@@ -23,7 +23,7 @@ public class FriendAccept : ControllerBase
 
     /// <summary>
     /// 친구 요청을 수락하는 API </br>
-    /// 친구 요청을 수락합니다.
+    /// 요청이 왔는지, 이미 친구 인지 확인 후 친구 요청을 수락합니다.
     /// </summary>
     [HttpPost]
     public async Task<FriendAcceptResponse> AcceptFriend([FromHeader] HeaderDTO header, FriendAcceptRequest request)

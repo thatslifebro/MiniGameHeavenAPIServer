@@ -10,29 +10,29 @@ namespace APIServer.Controllers.Mail;
 
 [ApiController]
 [Route("[controller]")]
-public class MailboxInfo : ControllerBase
+public class MailList : ControllerBase
 {
-    readonly ILogger<MailboxInfo> _logger;
+    readonly ILogger<MailList> _logger;
     readonly IMailService _mailService;
 
-    public MailboxInfo(ILogger<MailboxInfo> logger, IMailService mailService)
+    public MailList(ILogger<MailList> logger, IMailService mailService)
     {
         _logger = logger;
         _mailService = mailService;
     }
 
     /// <summary>
-    /// 메일함 정보 API
-    /// 유저의 메일함 정보를 가져옵니다.
+    /// 메일 목록 정보 API
+    /// 유저의 메일 목록 정보를 가져옵니다.
     /// </summary>
     [HttpPost]
-    public async Task<MailboxInfoResponse> GetMailboxInfo([FromHeader] HeaderDTO header)
+    public async Task<MailboxInfoResponse> GetMailList([FromHeader] HeaderDTO header)
     {
         MailboxInfoResponse response = new();
 
-        (response.Result, response.MailInfo) = await _mailService.GetMailList(header.Uid);
+        (response.Result, response.MailList) = await _mailService.GetMailList(header.Uid);
 
-        _logger.ZLogInformation($"[MailboxInfo] Uid : {header.Uid}");
+        _logger.ZLogInformation($"[MailList] Uid : {header.Uid}");
         return response;
     }
 }

@@ -32,7 +32,7 @@ public class GameDataLoad : ControllerBase
 
         (response.Result, response.GameData) = await _dataLoadService.LoadGameData(header.Uid);
 
-        _logger.ZLogInformation($"[DataLoad] Uid : {header.Uid}");
+        _logger.ZLogInformation($"[GameDataLoad] Uid : {header.Uid}");
         return response;
     }
 }

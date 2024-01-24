@@ -5,7 +5,6 @@ using APIServer.Servicies.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Threading.Tasks;
 using ZLogger;
 
@@ -128,8 +127,8 @@ public class MailService : IMailService
         catch (Exception e)
         {
             _logger.ZLogError(e,
-                $"[Mail.ReceiveMail] ErrorCode: {ErrorCode.MailReceiveFailException}, MailSeq: {mailSeq}");
-            return (ErrorCode.MailReceiveFailException, null);
+                $"[Mail.ReceiveMail] ErrorCode: {ErrorCode.MailReceiveRewardsFailException}, MailSeq: {mailSeq}");
+            return (ErrorCode.MailReceiveRewardsFailException, null);
         }
     }
 

@@ -32,7 +32,7 @@ public class UserDataLoad : ControllerBase
 
         (response.Result, response.UserData) = await _dataLoadService.LoadUserData(header.Uid);
 
-        _logger.ZLogInformation($"[DataLoad] Uid : {header.Uid}");
+        _logger.ZLogInformation($"[UserDataLoad] Uid : {header.Uid}");
         return response;
     }
 }

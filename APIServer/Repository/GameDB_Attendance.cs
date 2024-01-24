@@ -22,5 +22,4 @@ public partial class GameDb : IGameDb
                                                   $"WHERE uid = {uid} AND " +
                                                       $"DATE(recent_attendance_dt) < '{DateTime.Today.ToString("yyyy-MM-dd")}';");
     }
-    
 }
