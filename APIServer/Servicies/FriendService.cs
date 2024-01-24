@@ -109,7 +109,7 @@ public class FriendService : IFriendService
         {
             //친구가 아닐 때
             GdbFriendInfo friendInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
-            if (friendInfo is null || friendInfo.accept_yn==false)
+            if (friendInfo is null || friendInfo.friend_yn==false)
             {
                 _logger.ZLogDebug(
                 $"[Friend.DeleteFriend] ErrorCode: {ErrorCode.FriendDeleteFailNotFriend}, Uid: {uid}, FriendUid : {friendUid}");
@@ -139,7 +139,7 @@ public class FriendService : IFriendService
         {
             //친구 요청을 안했거나 친구 상태 일때
             GdbFriendInfo friendInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
-            if (friendInfo is null || friendInfo.accept_yn == true)
+            if (friendInfo is null || friendInfo.friend_yn == true)
             {
                 _logger.ZLogDebug(
                 $"[Friend.DeleteFriendReq] ErrorCode: {ErrorCode.FriendDeleteReqFailNotFriend}, Uid: {uid}, FriendUid : {friendUid}");

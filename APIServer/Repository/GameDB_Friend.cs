@@ -25,7 +25,7 @@ public partial class GameDb : IGameDb
                                 {
                                     uid = uid,
                                     friend_uid = friendUid,
-                                    accept_yn = accept,
+                                    friend_yn = accept,
                                     create_dt = DateTime.Now,
                                 });
     }
@@ -37,7 +37,7 @@ public partial class GameDb : IGameDb
                                 {
                                     uid = uid,
                                     friend_uid = friendUid,
-                                    accept_yn = accept,
+                                    friend_yn = accept,
                                     create_dt = DateTime.Now,
                                 }, transaction);
     }
@@ -46,14 +46,14 @@ public partial class GameDb : IGameDb
     {
         return await _queryFactory.Query("friend").Where("uid", friendUid).Where("friend_uid", uid).UpdateAsync(new
         {
-            accept_yn = accept,
+            friend_yn = accept,
         }, transaction);
     }
 
     public async Task<IEnumerable<GdbFriendInfo>> GetFriendInfoList(int uid)
     {
         return await _queryFactory.Query("friend").Where("friend_uid", uid)
-                                                  .Where("accept_yn", false)
+                                                  .Where("friend_yn", false)
                                                   .OrWhere("uid", uid)
                                                   .GetAsync<GdbFriendInfo>();
     }

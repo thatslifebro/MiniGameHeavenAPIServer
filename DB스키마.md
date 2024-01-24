@@ -69,7 +69,7 @@ CREATE TABLE friend
 (
     `uid`         INT         NOT NULL    COMMENT '유저아이디', 
     `friend_uid`  INT         NOT NULL    COMMENT '친구 유저아이디', 
-    `accept_yn`   TINYINT     NOT NULL    DEFAULT 0  COMMENT '승인 유무', 
+    `friend_yn`   TINYINT     NOT NULL    DEFAULT 0  COMMENT '친구 여부', 
     `create_dt`   DATETIME    NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시', 
      PRIMARY KEY (uid, friend_uid)
 );

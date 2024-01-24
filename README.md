@@ -559,19 +559,19 @@ Content-Type: application/json
             {
                 "uid": 13,
                 "friend_uid": "17",
-                "accept_yn": false,
+                "friend_yn": false,
                 "create_dt": "2024-01-23T15:56:27"
             },
             {
                 "uid": 17,
                 "friend_uid": "8",
-                "accept_yn": false,
+                "friend_yn": false,
                 "create_dt": "2024-01-23T15:48:29"
             },
             {
                 "uid": 17,
                 "friend_uid": "14",
-                "accept_yn": true,
+                "friend_yn": true,
                 "create_dt": "2024-01-23T15:34:53"
             }
         ],
@@ -650,19 +650,19 @@ Content-Type: application/json
         {
             "uid": 13,
             "friend_uid": "17",
-            "accept_yn": false,
+            "friend_yn": false,
             "create_dt": "2024-01-23T15:56:27"
         },
         {
             "uid": 17,
             "friend_uid": "8",
-            "accept_yn": false,
+            "friend_yn": false,
             "create_dt": "2024-01-23T15:48:29"
         },
         {
             "uid": 17,
             "friend_uid": "14",
-            "accept_yn": true,
+            "friend_yn": true,
             "create_dt": "2024-01-23T15:34:53"
         }
     ],
