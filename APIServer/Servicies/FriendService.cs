@@ -70,9 +70,9 @@ public class FriendService : IFriendService
                 $"[Friend.AcceptFriendRequest] ErrorCode: {ErrorCode.FriendAddFailUserNotExist}, Uid: {uid}, FriendUid : {friendUid}");
                 return ErrorCode.AcceptFriendRequestFailUserNotExist;
             }
-            //이미 친구요청 수락 했을 때
-            GdbFriendInfo friendReqInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
-            if (friendReqInfo is not null)
+            //친구 요청이 안왔거나, 이미 친구 일 때
+            GdbFriendInfo friendReqInfo = await _gameDb.GetFriendReqInfo(friendUid, uid);
+            if (friendReqInfo is null || friendReqInfo.friend_yn == true)
             {
                 _logger.ZLogDebug(
                 $"[Friend.AcceptFriendRequest] ErrorCode: {ErrorCode.FriendAddFailAlreadyFriend}, Uid: {uid}, FriendUid : {friendUid}");
