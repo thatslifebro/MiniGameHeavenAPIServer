@@ -1,5 +1,6 @@
 ﻿using APIServer.Models.GameDB;
 using APIServer.Repository.Interfaces;
+using APIServer.Services;
 using APIServer.Servicies.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -15,13 +16,15 @@ public class AuthService : IAuthService
 {
     readonly ILogger<AuthService> _logger;
     readonly IGameDb _gameDb;
+    readonly IMemoryDb _memoryDb;
     string _hiveServerAPIAddress;
 
-    public AuthService(ILogger<AuthService> logger, IConfiguration configuration, IGameDb gameDb)
+    public AuthService(ILogger<AuthService> logger, IConfiguration configuration, IGameDb gameDb, IMemoryDb memoryDb)
     {
         _gameDb = gameDb;
         _logger = logger;
         _hiveServerAPIAddress = configuration.GetSection("HiveServerAddress").Value + "/verifytoken";
+        _memoryDb = memoryDb;
     }
 
     public async Task<ErrorCode> VerifyTokenToHive(Int64 playerId, string token)
@@ -113,5 +116,12 @@ public class AuthService : IAuthService
         }
 
         return true;
+    }
+
+    public async Task<(ErrorCode, string)> RegisterToken(int uid)
+    {
+        var token = Security.CreateAuthToken();
+
+        return (await _memoryDb.RegistUserAsync(token, uid), token);
     }
 }

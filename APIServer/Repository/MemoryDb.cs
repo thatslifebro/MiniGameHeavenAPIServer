@@ -18,15 +18,13 @@ public class MemoryDb : IMemoryDb
     readonly RedisConnection _redisConn;
     readonly ILogger<MemoryDb> _logger;
     readonly IOptions<DbConfig> _dbConfig;
-    readonly IGameDb _gameDb;
 
-    public MemoryDb(ILogger<MemoryDb> logger, IOptions<DbConfig> dbConfig, IGameDb gameDb)
+    public MemoryDb(ILogger<MemoryDb> logger, IOptions<DbConfig> dbConfig)
     {
         _logger = logger;
         _dbConfig = dbConfig;
         RedisConfig config = new ("default", _dbConfig.Value.Redis);
         _redisConn = new RedisConnection(config);
-        _gameDb = gameDb;
     }
 
     public async Task<ErrorCode> RegistUserAsync(string token, int uid)
@@ -134,6 +132,7 @@ public class MemoryDb : IMemoryDb
         }
         catch
         {
+            _logger.ZLogError($"[SetUserReqLockAsync] Key = {key}, ErrorMessage:Redis Connection Error");
             return false;
         }
 
@@ -155,6 +154,7 @@ public class MemoryDb : IMemoryDb
         }
         catch
         {
+            _logger.ZLogError($"[DelUserReqLockAsync] Key = {key}, ErrorMessage:Redis Connection Error");
             return false;
         }
     }
@@ -205,17 +205,6 @@ public class MemoryDb : IMemoryDb
                    $"[SetUserScore] UID = {uid}, ErrorCode : {ErrorCode.SetUserScoreFailException}");
             return ErrorCode.SetUserScoreFailException;
         }
-    }
-
-    public async Task<ErrorCode> LoadUserScore()
-    {
-        var usersScore = await _gameDb.SelectAllUserScore();
-        foreach (var userScore in usersScore)
-        {
-            await SetUserScore(userScore.uid, userScore.total_bestscore);
-        }
-
-        return ErrorCode.None;
     }
 
     public async Task<(ErrorCode, List<RankData>)> GetTopRanking()

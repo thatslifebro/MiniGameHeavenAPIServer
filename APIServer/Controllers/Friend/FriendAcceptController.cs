@@ -29,18 +29,8 @@ public class FriendAccept : ControllerBase
     public async Task<FriendAcceptResponse> AcceptFriend([FromHeader] HeaderDTO header, FriendAcceptRequest request)
     {
         FriendAcceptResponse response = new();
-        if(header.Uid == request.FriendUid)
-        {
-            response.Result = ErrorCode.FriendAcceptFailSameUid;
-            return response;
-        }
         
-        var errorCode = await _friendService.AcceptFriendReq(header.Uid, request.FriendUid);
-        if(errorCode != ErrorCode.None)
-        {
-            response.Result = errorCode;
-            return response;
-        }
+        response.Result = await _friendService.AcceptFriendReq(header.Uid, request.FriendUid);
 
         _logger.ZLogInformation($"[FriendAccept] Uid : {header.Uid}");
         return response;

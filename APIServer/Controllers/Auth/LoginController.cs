@@ -60,8 +60,7 @@ public class Login : ControllerBase
         response.Uid = uid;
 
         //토큰 발급
-        var token = Security.CreateAuthToken();
-        errorCode = await _memoryDb.RegistUserAsync(token, uid);
+        (errorCode, var token) = await _authService.RegisterToken(uid);
         if (errorCode != ErrorCode.None)
         {
             response.Result = errorCode;

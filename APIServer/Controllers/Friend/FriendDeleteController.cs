@@ -27,18 +27,8 @@ public class FriendDelete : ControllerBase
     public async Task<FriendDeleteResponse> DeleteFriend([FromHeader] HeaderDTO header, FriendDeleteRequest request)
     {
         FriendDeleteResponse response = new();
-        if (header.Uid == request.FriendUid)
-        {
-            response.Result = ErrorCode.FriendDeleteFailSameUid;
-            return response;
-        }
 
-        var errorCode = await _friendService.DeleteFriend(header.Uid, request.FriendUid);
-        if (errorCode != ErrorCode.None)
-        {
-            response.Result = errorCode;
-            return response;
-        }
+        response.Result = await _friendService.DeleteFriend(header.Uid, request.FriendUid);
 
         _logger.ZLogInformation($"[FriendDelete] Uid : {header.Uid}");
         return response;

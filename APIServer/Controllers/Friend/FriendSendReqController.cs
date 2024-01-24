@@ -29,24 +29,12 @@ public class FriendSendReq : ControllerBase
     public async Task<SendFriendReqResponse> SendFriendReq([FromHeader] HeaderDTO header, SendFriendReqRequest request)
     {
         SendFriendReqResponse response = new();
-        if(header.Uid == request.FriendUid)
-        {
-            response.Result = ErrorCode.SendFriendReqFailSameUid;
-            return response;
-        }
-        
-        var errorCode = await _friendService.SendFriendReq(header.Uid, request.FriendUid);
-        if(errorCode != ErrorCode.None)
-        {
-            response.Result = errorCode;
-            return response;
-        }
+
+        response.Result = await _friendService.SendFriendReq(header.Uid, request.FriendUid);
 
         _logger.ZLogInformation($"[FriendSendReq] Uid : {header.Uid}");
         return response;
-
     }
-
 }
 
 

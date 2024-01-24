@@ -23,6 +23,7 @@ public class MasterDb : IMasterDb
     readonly SqlKata.Compilers.MySqlCompiler _compiler;
     readonly QueryFactory _queryFactory;
     readonly IMemoryDb _memoryDb;
+    readonly IGameDb _gameDb;
     
     public VersionDAO _version { get; set; }
     public List<AttendanceRewardData> _attendanceRewardList { get; set; }
@@ -35,7 +36,7 @@ public class MasterDb : IMasterDb
     public List<GachaRewardData> _gachaRewardList { get; set; }
     public List<ItemLevelData> _itemLevelList { get; set; }
 
-    public MasterDb(ILogger<MasterDb> logger, IOptions<DbConfig> dbConfig, IMemoryDb memoryDb)
+    public MasterDb(ILogger<MasterDb> logger, IOptions<DbConfig> dbConfig, IMemoryDb memoryDb, IGameDb gameDb)
     {
         _logger = logger;
         _dbConfig = dbConfig;
@@ -45,6 +46,8 @@ public class MasterDb : IMasterDb
         _compiler = new SqlKata.Compilers.MySqlCompiler();
         _queryFactory = new QueryFactory(_dbConn, _compiler);
         _memoryDb = memoryDb;
+        _gameDb = gameDb;
+
     }
 
     public void Dispose()
@@ -80,7 +83,7 @@ public class MasterDb : IMasterDb
                 _gachaRewardList.Add(gachaRewardData);
             }
 
-            await _memoryDb.LoadUserScore();
+            await LoadUserScore();
         }
         catch(Exception e)
         {
@@ -97,6 +100,17 @@ public class MasterDb : IMasterDb
         }
 
         return true;
+    }
+
+    public async Task<ErrorCode> LoadUserScore()
+    {
+        var usersScore = await _gameDb.SelectAllUserScore();
+        foreach (var userScore in usersScore)
+        {
+            await _memoryDb.SetUserScore(userScore.uid, userScore.total_bestscore);
+        }
+
+        return ErrorCode.None;
     }
 
     bool ValidateMasterData()

@@ -23,6 +23,13 @@ public class FriendService : IFriendService
     {
         try
         {
+            if (uid == friendUid)
+            {
+                _logger.ZLogDebug(
+                $"[Friend.AcceptFriendRequest] ErrorCode: {ErrorCode.FriendAcceptFailSameUid}, Uid: {uid}, FriendUid : {friendUid}");
+                return ErrorCode.FriendAcceptFailSameUid;
+            }
+
             GdbUserInfo userInfo = await _gameDb.GetUserByUid(friendUid);
             //없는 유저일 때
             if (userInfo is null)
@@ -69,6 +76,13 @@ public class FriendService : IFriendService
     {
         try
         {
+            if (uid == friendUid)
+            {
+                _logger.ZLogDebug(
+                $"[Friend.AcceptFriendRequest] ErrorCode: {ErrorCode.FriendAcceptFailSameUid}, Uid: {uid}, FriendUid : {friendUid}");
+                return ErrorCode.FriendAcceptFailSameUid;
+            }
+
             GdbUserInfo userInfo = await _gameDb.GetUserByUid(friendUid);
             //없는 유저일 때
             if (userInfo is null)
@@ -114,6 +128,13 @@ public class FriendService : IFriendService
     {
         try
         {
+            if (uid == friendUid)
+            {
+                _logger.ZLogDebug(
+                $"[Friend.AcceptFriendRequest] ErrorCode: {ErrorCode.FriendAcceptFailSameUid}, Uid: {uid}, FriendUid : {friendUid}");
+                return ErrorCode.FriendAcceptFailSameUid;
+            }
+
             //친구가 아닐 때
             GdbFriendInfo friendInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
             if (friendInfo is null || friendInfo.friend_yn==false)
@@ -144,6 +165,12 @@ public class FriendService : IFriendService
     {
         try
         {
+            if (uid == friendUid)
+            {
+                _logger.ZLogDebug(
+                $"[Friend.AcceptFriendRequest] ErrorCode: {ErrorCode.FriendAcceptFailSameUid}, Uid: {uid}, FriendUid : {friendUid}");
+                return ErrorCode.FriendAcceptFailSameUid;
+            }
             //친구 요청을 안했거나 친구 상태 일때
             GdbFriendInfo friendInfo = await _gameDb.GetFriendReqInfo(uid, friendUid);
             if (friendInfo is null || friendInfo.friend_yn == true)

@@ -29,18 +29,8 @@ public class FriendCancelReq : ControllerBase
     public async Task<FriendDeleteResponse> CancelFriendReq([FromHeader] HeaderDTO header, FriendDeleteRequest request)
     {
         FriendDeleteResponse response = new();
-        if (header.Uid == request.FriendUid)
-        {
-            response.Result = ErrorCode.FriendDeleteFailSameUid;
-            return response;
-        }
 
-        var errorCode = await _friendService.CancelFriendReq(header.Uid, request.FriendUid);
-        if (errorCode != ErrorCode.None)
-        {
-            response.Result = errorCode;
-            return response;
-        }
+        response.Result = await _friendService.CancelFriendReq(header.Uid, request.FriendUid);
 
         _logger.ZLogInformation($"[FriendCancelReq] Uid : {header.Uid}");
         return response;

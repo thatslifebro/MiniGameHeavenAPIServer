@@ -72,7 +72,7 @@ public class CheckUserAuthAndLoadUserData
         await _next(context);
 
         // 트랜잭션 해제(Redis 동기화 해제)
-        _ = await _memoryDb.DelUserReqLockAsync(userLockKey);
+        await _memoryDb.DelUserReqLockAsync(userLockKey);
     }
 
     async Task<(bool,string)> IsTokenNotExistOrReturnToken(HttpContext context)
